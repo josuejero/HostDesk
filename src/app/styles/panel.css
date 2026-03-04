@@ -1,0 +1,231 @@
+.panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 30px rgba(3, 6, 15, 0.5);
+}
+
+.panel-heading {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.panel-body {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.panel--guided .panel-body {
+  gap: 1rem;
+}
+
+.guided-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guided-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.guided-card__header strong {
+  font-size: 0.95rem;
+}
+
+.guided-keywords {
+  font-size: 0.65rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(130, 199, 255, 0.7);
+}
+
+.guided-tips {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: rgba(245, 246, 255, 0.85);
+  font-size: 0.85rem;
+}
+
+.guided-articles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.guided-article {
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.guided-article strong {
+  font-size: 0.85rem;
+  display: block;
+}
+
+.guided-article p {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 190px;
+}
+
+.guided-article button {
+  align-self: flex-start;
+}
+
+.scorecard .score-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.scorecard .score-metric:last-child {
+  border-bottom: none;
+}
+
+.scorecard .score-metric div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.scorecard .note,
+.scorecard .suggestion {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.scorecard .note {
+  color: rgba(245, 246, 255, 0.6);
+}
+
+.scorecard .suggestion {
+  color: rgba(130, 199, 255, 0.9);
+  font-size: 0.8rem;
+}
+
+.meter {
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.meter div {
+  height: 100%;
+  background: linear-gradient(135deg, #82c7ff, #67f6a0);
+}
+
+.total {
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.postmortem textarea,
+.postmortem select,
+.postmortem label,
+.postmortem-checklist textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5f6ff;
+  padding: 0.6rem;
+  resize: vertical;
+}
+
+.postmortem label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.postmortem-checklist {
+  margin-top: 0.9rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  padding-top: 0.8rem;
+}
+
+.postmortem-checklist ul {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.postmortem-checklist li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+
+.postmortem-checklist .check-detail {
+  font-size: 0.8rem;
+  color: rgba(245, 246, 255, 0.55);
+}
+
+.postmortem-checklist .check-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.postmortem-checklist .check-status.complete {
+  color: #67f6a0;
+}
+
+.thread-entry {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.thread-entry.internal {
+  border-color: rgba(255, 101, 101, 0.4);
+  background: rgba(255, 101, 101, 0.12);
+  color: #ffe7e7;
+  font-style: italic;
+}
+
+.thread-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(245, 246, 255, 0.6);
+  margin-bottom: 0.3rem;
+}
+
+.muted {
+  color: rgba(245, 246, 255, 0.5);
+  font-size: 0.9rem;
+}

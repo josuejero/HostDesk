@@ -1,0 +1,160 @@
+.primary {
+  border-radius: 999px;
+  border: none;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #020617;
+  background: linear-gradient(135deg, #82c7ff, #5b21d6);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(92, 33, 214, 0.25);
+}
+
+.kb-suggestions .kb-article {
+  border-radius: 14px;
+  background: rgba(13, 17, 35, 0.9);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.kb-article button {
+  align-self: flex-start;
+  border: none;
+  background: rgba(98, 255, 187, 0.1);
+  color: #67f6a0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.kb-article p {
+  margin: 0;
+  color: rgba(245, 246, 255, 0.75);
+}
+
+.kb-article small {
+  color: rgba(245, 246, 255, 0.4);
+}
+
+.scenario-library .panel {
+  padding: 1.5rem;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.scenario-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scenario-card h4 {
+  margin: 0;
+}
+
+.scenario-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: rgba(245, 246, 255, 0.75);
+}
+
+.scenario-card button {
+  margin-top: 0.6rem;
+  border: none;
+  background: rgba(130, 199, 255, 0.1);
+  color: #82c7ff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.scenario-card .badge.bucket {
+  margin-bottom: 0.4rem;
+  display: inline-flex;
+  background: rgba(130, 199, 255, 0.15);
+  border: 1px solid rgba(130, 199, 255, 0.3);
+}
+
+.walkthrough-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(1, 3, 10, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.walkthrough-card {
+  background: #081028;
+  border-radius: 16px;
+  border: 1px solid rgba(130, 199, 255, 0.35);
+  padding: 1.75rem;
+  max-width: 420px;
+}
+
+.walkthrough-card ul {
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+  color: rgba(245, 246, 255, 0.75);
+}
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(5, 150, 105, 0.9);
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  color: #f5f6ff;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 1200px) {
+  .workspace-grid {
+    grid-template-columns: minmax(220px, 1fr) minmax(320px, 1fr);
+  }
+
+  .detail-column {
+    order: 3;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    flex-direction: column;
+  }
+
+  .tickets-column,
+  .detail-column,
+  .views-nav {
+    width: 100%;
+  }
+
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}
