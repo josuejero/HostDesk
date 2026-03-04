@@ -11,11 +11,13 @@ import type {
   CannedReplyCategory,
   DemoState,
   KBArticle,
+  PostmortemSection,
   ScenarioSeed,
   Scorecard,
   ScorecardMetric,
   Ticket,
   ThreadEntry,
+  KnowledgeArticleStatus,
 } from './types'
 import './App.css'
 
@@ -226,6 +228,23 @@ const buildRoutingInsights = (ticket: Ticket, scenario?: ScenarioSeed): RoutingI
   }
 }
 
+const postmortemNarrativeFields = ['rootCause', 'fix', 'followUp', 'prevention'] as const
+
+const postmortemFieldLabels: Record<typeof postmortemNarrativeFields[number], string> = {
+  rootCause: 'Root cause documented',
+  fix: 'Fix applied',
+  followUp: 'Follow-up message sent',
+  prevention: 'Prevention action captured',
+}
+
+const isPostmortemNarrativeComplete = (postmortem: PostmortemSection) =>
+  postmortemNarrativeFields.every((field) => postmortem[field].trim().length > 0)
+
+const hasKnowledgeArticleAnswer = (status: KnowledgeArticleStatus) => status.trim().length > 0
+
+const isPostmortemComplete = (postmortem: PostmortemSection) =>
+  isPostmortemNarrativeComplete(postmortem) && hasKnowledgeArticleAnswer(postmortem.knowledgeArticleStatus)
+
 type DeEscalationMetricDefinition = {
   id: string
   label: string
@@ -342,8 +361,7 @@ const evaluateDeEscalationScore = (ticket: Ticket, scenario?: ScenarioSeed): Sco
   const escalationMentioned = escalationKeywords.some((keyword) => sanitizedText.includes(keyword))
 
   const closureStatuses = ['solved', 'resolved', 'closed']
-  const closureReady =
-    ticket.postmortem.rootCause.trim().length > 0 && ticket.postmortem.followUp.trim().length > 0
+  const closureReady = isPostmortemComplete(ticket.postmortem)
 
   const metrics: ScorecardMetric[] = deEscalationMetricBlueprint.map((definition) => {
     let value = 0
@@ -398,8 +416,8 @@ const evaluateDeEscalationScore = (ticket: Ticket, scenario?: ScenarioSeed): Sco
         value = closureStatuses.includes(statusNormalized) && closureReady ? 10 : 0
         if (closureStatuses.includes(statusNormalized)) {
           note = closureReady
-            ? 'Postmortem root cause and follow-up are documented before solving.'
-            : 'Penalty: add root cause and follow-up before marking as solved.'
+            ? 'Full postmortem (root cause, fix, follow-up, prevention, KB capture) is documented before solving.'
+            : 'Penalty: finish the postmortem checklist, including the KB capture question, before closing.'
         } else {
           note = 'Ticket is still open; fill these fields when wrapping up.'
         }
@@ -718,6 +736,39 @@ function App() {
       .filter((entry): entry is GuidedEntry => Boolean(entry))
   }, [subjectText])
 
+  const postmortemChecklist = useMemo(() => {
+    if (!selectedTicket) {
+      return []
+    }
+    const { postmortem } = selectedTicket
+    const narrativeItems = postmortemNarrativeFields.map((field) => {
+      const complete = postmortem[field].trim().length > 0
+      return {
+        id: field,
+        label: postmortemFieldLabels[field],
+        complete,
+        detail: complete ? 'Documented' : 'Required before closing',
+      }
+    })
+    const knowledgeComplete = hasKnowledgeArticleAnswer(postmortem.knowledgeArticleStatus)
+    const knowledgeDetail = knowledgeComplete
+      ? postmortem.knowledgeArticleStatus === 'yes'
+        ? 'Yes – KB work logged'
+        : 'No – KB update skipped'
+      : 'Pending answer'
+    return [
+      ...narrativeItems,
+      {
+        id: 'knowledge',
+        label: 'Article created or updated?',
+        complete: knowledgeComplete,
+        detail: knowledgeDetail,
+      },
+    ]
+  }, [selectedTicket])
+
+  const caseCloseReady = Boolean(selectedTicket && isPostmortemComplete(selectedTicket.postmortem))
+
   const updateTicket = (ticketId: string, updater: (ticket: Ticket) => Ticket) => {
     setState((prev) => ({
       ...prev,
@@ -845,6 +896,12 @@ function App() {
 
   const handleStatusAction = (action: keyof typeof statusActionConfig) => {
     if (!selectedTicket) {
+      return
+    }
+    if (action === 'solved' && !caseCloseReady) {
+      setToastMessage(
+        'Finish the postmortem checklist, including the KB capture question, before closing this ticket.',
+      )
       return
     }
     const config = statusActionConfig[action]
@@ -1170,10 +1227,39 @@ function App() {
                         <button type="button" className="ghost-btn" onClick={() => handleStatusAction('waiting')}>
                           Waiting on customer
                         </button>
-                        <button type="button" className="ghost-btn" onClick={() => handleStatusAction('solved')}>
+                        <button
+                          type="button"
+                          className="ghost-btn"
+                          onClick={() => handleStatusAction('solved')}
+                          disabled={!caseCloseReady}
+                          title={
+                            !caseCloseReady
+                              ? 'Complete the postmortem checklist before closing this ticket.'
+                              : undefined
+                          }
+                        >
                           Solved
                         </button>
                       </div>
+                      {postmortemChecklist.length > 0 && (
+                        <div className="postmortem-checklist">
+                          <strong>Case-close checklist</strong>
+                          <p className="muted">Finish these steps before marking the ticket as solved.</p>
+                          <ul>
+                            {postmortemChecklist.map((item) => (
+                              <li key={item.id}>
+                                <div>
+                                  <span>{item.label}</span>
+                                  <small className="check-detail">{item.detail}</small>
+                                </div>
+                                <span className={clsx('check-status', { complete: item.complete })}>
+                                  {item.complete ? 'Complete' : 'Pending'}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="panel composer-panel">
@@ -1357,19 +1443,35 @@ function App() {
                       <BookOpenCheck size={18} />
                       <h3>Postmortem</h3>
                     </div>
-                    <div className="panel-body postmortem">
-                      {(['rootCause', 'fix', 'followUp', 'prevention'] as const).map((field) => (
-                        <label key={field}>
-                          <span>{field === 'rootCause' ? 'Root cause' : field === 'fix' ? 'Fix' : field === 'followUp' ? 'Follow-up' : 'Prevention'}</span>
-                          <textarea
-                            value={selectedTicket.postmortem[field]}
-                            onChange={(event) => handlePostmortemChange(field, event.target.value)}
-                            rows={2}
-                          />
-                        </label>
-                      ))}
-                    </div>
+                  <div className="panel-body postmortem">
+                    {postmortemNarrativeFields.map((field) => (
+                      <label key={field}>
+                        <span>{postmortemFieldLabels[field]}</span>
+                        <textarea
+                          value={selectedTicket.postmortem[field]}
+                          onChange={(event) => handlePostmortemChange(field, event.target.value)}
+                          rows={2}
+                        />
+                      </label>
+                    ))}
+                    <label>
+                      <span>Article created or updated?</span>
+                      <select
+                        value={selectedTicket.postmortem.knowledgeArticleStatus}
+                        onChange={(event) =>
+                          handlePostmortemChange('knowledgeArticleStatus', event.target.value as KnowledgeArticleStatus)
+                        }
+                      >
+                        <option value="">Select an answer</option>
+                        <option value="yes">Yes – article created or updated</option>
+                        <option value="no">No – no KB work was needed</option>
+                      </select>
+                      <small className="muted">
+                        Capturing whether this case resulted in a KB update keeps knowledge reporting alive.
+                      </small>
+                    </label>
                   </div>
+                </div>
 
                   <div className="panel panel--guided">
                     <div className="panel-heading">

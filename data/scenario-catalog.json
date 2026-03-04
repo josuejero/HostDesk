@@ -4,7 +4,12 @@
     "bucket": "Billing/Account",
     "title": "Billing Suspension",
     "description": "Invoice shows paid but the container host is still suspended; customer is frustrated and wants ownership.",
-    "tags": ["billing", "suspension", "invoice", "ownership"],
+    "tags": [
+      "billing",
+      "suspension",
+      "invoice",
+      "ownership"
+    ],
     "ticket": {
       "id": "ticket-billing-suspension",
       "subject": "Invoice paid, but site still suspended",
@@ -47,12 +52,15 @@
           "message": "Billing clearing webhook is delayed; invoice is marked paid but suspension lock still on database."
         }
       ],
-      "kbMatches": ["kb-billing-suspension-works"],
+      "kbMatches": [
+        "kb-billing-suspension-works"
+      ],
       "postmortem": {
         "rootCause": "Suspension flag not cleared after manual payment reconciliation.",
         "fix": "Cleared the suspension flag and re-ran the notification job.",
         "followUp": "Notify billing automation to recheck the webhook within 15 minutes.",
-        "prevention": "Add coverage to the reconciliation job to release suspensions when invoices hit paid state."
+        "prevention": "Add coverage to the reconciliation job to release suspensions when invoices hit paid state.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 73,
@@ -127,7 +135,12 @@
     "bucket": "Technical",
     "title": "Minecraft Plugin Crash",
     "description": "New modpack plugin causes the dedicated host to crash at startup, blocking the customer's community.",
-    "tags": ["technical", "plugin", "minecraft", "mod conflict"],
+    "tags": [
+      "technical",
+      "plugin",
+      "minecraft",
+      "mod conflict"
+    ],
     "ticket": {
       "id": "ticket-minecraft-plugin",
       "subject": "Server crashes when the new economy plugin loads",
@@ -163,12 +176,16 @@
           "message": "Resembles ModEconomy conflict with the custom Harmony patch. Container logs show stack overflow after plugin init."
         }
       ],
-      "kbMatches": ["kb-minecraft-server-plugin-start", "kb-mod-conflicts"],
+      "kbMatches": [
+        "kb-minecraft-server-plugin-start",
+        "kb-mod-conflicts"
+      ],
       "postmortem": {
         "rootCause": "Harmony patch conflicted with ModEconomy v3.2, leading to repeated stack overflows.",
         "fix": "Rolled back to ModEconomy v3.0 and patched Harmony to respect new APIs.",
         "followUp": "Recommend plugin compatibility check before deploying any new mod on this host.",
-        "prevention": "Add a mod compatibility checklist to the KB and rerun automated sanity tests."
+        "prevention": "Add a mod compatibility checklist to the KB and rerun automated sanity tests.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 78,
@@ -243,7 +260,12 @@
     "bucket": "Technical",
     "title": "Discord Bot Overnight Outage",
     "description": "Discord moderation bot hosted on HostDesk went offline overnight; premium customer needs postmortem.",
-    "tags": ["bot", "incident", "premium", "sla"],
+    "tags": [
+      "bot",
+      "incident",
+      "premium",
+      "sla"
+    ],
     "ticket": {
       "id": "ticket-discord-bot",
       "subject": "Bot went offline between 03:00 and 05:00",
@@ -286,12 +308,15 @@
           "message": "App server crashed when Discord API hits exceeded the user tier; listener thread failed to reregister."
         }
       ],
-      "kbMatches": ["kb-bot-offline-overnight"],
+      "kbMatches": [
+        "kb-bot-offline-overnight"
+      ],
       "postmortem": {
         "rootCause": "Rate-limit spike triggered automatic restarts but the reconnection loop never finished.",
         "fix": "Restarted the discord bot with throttled re-registration and force update on the API token.",
         "followUp": "Revisit premium tier concurrency limits and note it in the incident report.",
-        "prevention": "Add jittered back-off to the listener and monitor the queue depth."
+        "prevention": "Add jittered back-off to the listener and monitor the queue depth.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 79,
@@ -366,7 +391,12 @@
     "bucket": "Technical",
     "title": "cPanel Login Loop",
     "description": "Customer cannot break out of the cPanel login loop after repeated 2FA failures; they fear an attack.",
-    "tags": ["panel", "access", "security", "cPanel"],
+    "tags": [
+      "panel",
+      "access",
+      "security",
+      "cPanel"
+    ],
     "ticket": {
       "id": "ticket-cpanel-loop",
       "subject": "cPanel keeps kicking me back to the login screen",
@@ -402,12 +432,15 @@
           "message": "Artifact from SSO session cookie; reissuing cookie should fix loop."
         }
       ],
-      "kbMatches": ["kb-panel-login-loop"],
+      "kbMatches": [
+        "kb-panel-login-loop"
+      ],
       "postmortem": {
         "rootCause": "SSO cookie had expired token, causing redirect loop.",
         "fix": "Cleared cPanel session and forced new SSO handshake.",
         "followUp": "Document the cookie refresh steps for frontline staff.",
-        "prevention": "Add a KB snippet on cookie refresh to the login article."
+        "prevention": "Add a KB snippet on cookie refresh to the login article.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 62,
@@ -481,7 +514,12 @@
     "bucket": "Technical",
     "title": "Backup Restore Failure",
     "description": "Customer ran the restore button but their database stays at the pre-rollback state.",
-    "tags": ["backup", "restore", "confusion", "database"],
+    "tags": [
+      "backup",
+      "restore",
+      "confusion",
+      "database"
+    ],
     "ticket": {
       "id": "ticket-backup-restore",
       "subject": "Restored backup but site still old version",
@@ -517,12 +555,15 @@
           "message": "Restore completed but caching layer still pointing to cached HTML. Need to flush CDN."
         }
       ],
-      "kbMatches": ["kb-backup-restore-checks"],
+      "kbMatches": [
+        "kb-backup-restore-checks"
+      ],
       "postmortem": {
         "rootCause": "CDN cache and database were not invalidated after restore.",
         "fix": "Ran cache flush and validated file timestamps.",
         "followUp": "Add note to run CDN purge automatically after restores for this tier.",
-        "prevention": "Document the CDN flush step in the restore KB article."
+        "prevention": "Document the CDN flush step in the restore KB article.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 65,
@@ -596,7 +637,12 @@
     "bucket": "Technical",
     "title": "DNS Change Not Propagating",
     "description": "DNS change landed in registrars but the domain still points to the old host across Europe.",
-    "tags": ["dns", "propagation", "network", "domain"],
+    "tags": [
+      "dns",
+      "propagation",
+      "network",
+      "domain"
+    ],
     "ticket": {
       "id": "ticket-dns-propagation",
       "subject": "DNS record update not propagating",
@@ -632,12 +678,15 @@
           "message": "Current NS set includes legacy overlay; plan to push new NS group and monitor."
         }
       ],
-      "kbMatches": ["kb-dns-propagation"],
+      "kbMatches": [
+        "kb-dns-propagation"
+      ],
       "postmortem": {
         "rootCause": "Legacy NS group slowed propagation across the European edge nodes.",
         "fix": "Updated NS group, confirmed propagation in 10 minutes, and cleared CDN caches.",
         "followUp": "Add stub to KB about checking registrar NS after hot changes.",
-        "prevention": "Prep DNS change checklist with propagation monitoring steps."
+        "prevention": "Prep DNS change checklist with propagation monitoring steps.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 74,
@@ -711,7 +760,12 @@
     "bucket": "Technical",
     "title": "High Ping / Lag Complaint",
     "description": "Customer sees constant 300+ ms ping spikes during peak night hours despite premium plan.",
-    "tags": ["performance", "lag", "ping", "monitoring"],
+    "tags": [
+      "performance",
+      "lag",
+      "ping",
+      "monitoring"
+    ],
     "ticket": {
       "id": "ticket-high-lag",
       "subject": "Players seeing 300ms latency spikes in the evening",
@@ -747,12 +801,15 @@
           "message": "Host metrics show CPU climb; suspect cron job spike affecting IO."
         }
       ],
-      "kbMatches": ["kb-high-ping-triage-checklist"],
+      "kbMatches": [
+        "kb-high-ping-triage-checklist"
+      ],
       "postmortem": {
         "rootCause": "Nightly backup cron job contended with game server threads, spiking latency.",
         "fix": "Rescheduled backups and added CPU guard rails.",
         "followUp": "Add automation to pause non-critical jobs during peak concurrency.",
-        "prevention": "Document the CPU scheduling guidelines in the performance KB."
+        "prevention": "Document the CPU scheduling guidelines in the performance KB.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 81,
@@ -826,7 +883,11 @@
     "bucket": "Technical",
     "title": "Mod Conflict",
     "description": "Two mods try to write to the same file, causing a startup failure and a crash dump for the server.",
-    "tags": ["mod conflict", "crash", "modpack"],
+    "tags": [
+      "mod conflict",
+      "crash",
+      "modpack"
+    ],
     "ticket": {
       "id": "ticket-mod-conflict",
       "subject": "Modpack crashes with stack trace pointing to textures.json",
@@ -862,12 +923,15 @@
           "message": "Mods A and B both write textures.json; need to modify the override order."
         }
       ],
-      "kbMatches": ["kb-minecraft-server-plugin-start"],
+      "kbMatches": [
+        "kb-minecraft-server-plugin-start"
+      ],
       "postmortem": {
         "rootCause": "Two textures mods fighting over the same file when the world loads.",
         "fix": "Temporarily disabled the secondary mod and documented the override order.",
         "followUp": "Recommend mod compatibility check before patching next update.",
-        "prevention": "Add mod conflict detection to automation."
+        "prevention": "Add mod conflict detection to automation.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 72,
@@ -942,7 +1006,12 @@
     "bucket": "Billing/Account",
     "title": "Upgrade Request Without Data Loss",
     "description": "Customer wants to move from Standard to Pro without downtime and needs assurance on migration steps.",
-    "tags": ["upgrade", "workflow", "billing", "planning"],
+    "tags": [
+      "upgrade",
+      "workflow",
+      "billing",
+      "planning"
+    ],
     "ticket": {
       "id": "ticket-upgrade-request",
       "subject": "Requesting upgrade to Pro tier without losing configs",
@@ -978,12 +1047,15 @@
           "message": "Plan change requires a short downtime to scale storage. Need to coordinate with billing ops."
         }
       ],
-      "kbMatches": ["kb-safe-upgrade-path"],
+      "kbMatches": [
+        "kb-safe-upgrade-path"
+      ],
       "postmortem": {
         "rootCause": "n/a",
         "fix": "n/a",
         "followUp": "Coordinate change window for upgrade.",
-        "prevention": "Document upgrade workflow in KB."
+        "prevention": "Document upgrade workflow in KB.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 68,
@@ -1057,7 +1129,11 @@
     "bucket": "Billing/Account",
     "title": "Downgrade & Refund Question",
     "description": "Customer wants to downgrade due to budget pressure and asks about prorated refunds.",
-    "tags": ["billing", "refund", "billing cycle"],
+    "tags": [
+      "billing",
+      "refund",
+      "billing cycle"
+    ],
     "ticket": {
       "id": "ticket-downgrade-refund",
       "subject": "Need to downgrade and refund unused days",
@@ -1093,12 +1169,15 @@
           "message": "Refund policy allows prorated credit; need finance approval for early downgrade."
         }
       ],
-      "kbMatches": ["kb-refunds-downgrade"],
+      "kbMatches": [
+        "kb-refunds-downgrade"
+      ],
       "postmortem": {
         "rootCause": "n/a",
         "fix": "n/a",
         "followUp": "Prepare downgrade instructions for future CFO inquiries.",
-        "prevention": "Add plan comparison to billing KB."
+        "prevention": "Add plan comparison to billing KB.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 66,
@@ -1172,7 +1251,11 @@
     "bucket": "Billing/Account",
     "title": "Domain Renewal Confusion",
     "description": "Customer says domain expired despite auto-renew being on; they want clarity before renewal hits their card.",
-    "tags": ["domain", "renewal", "billing"],
+    "tags": [
+      "domain",
+      "renewal",
+      "billing"
+    ],
     "ticket": {
       "id": "ticket-domain-renewal",
       "subject": "Domain renewal charged twice",
@@ -1208,12 +1291,15 @@
           "message": "Registrar report says auto-renew failed due to expired card; need to coordinate refund for duplicate charge."
         }
       ],
-      "kbMatches": ["kb-domain-renewal"],
+      "kbMatches": [
+        "kb-domain-renewal"
+      ],
       "postmortem": {
         "rootCause": "Failed card prevented auto-renew so registrar issued manual charge.",
         "fix": "Processed refund for duplicate charge and updated card on file.",
         "followUp": "Send confirmation of renewal status once registrar updates records.",
-        "prevention": "Refresh billing KB to call out manual renewal steps."
+        "prevention": "Refresh billing KB to call out manual renewal steps.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 64,
@@ -1287,7 +1373,11 @@
     "bucket": "Billing/Account",
     "title": "Failed Autopay, Active Card",
     "description": "Autopay bounced despite an active card; customer worries service may suspend even though payment is ready.",
-    "tags": ["billing", "autopay", "payment"],
+    "tags": [
+      "billing",
+      "autopay",
+      "payment"
+    ],
     "ticket": {
       "id": "ticket-autopay",
       "subject": "Autopay failed even though card is valid",
@@ -1323,12 +1413,15 @@
           "message": "Gateway sent 402 but the card response indicates AVS mismatch; need to verify address."
         }
       ],
-      "kbMatches": ["kb-verify-service-activation-after-payment"],
+      "kbMatches": [
+        "kb-verify-service-activation-after-payment"
+      ],
       "postmortem": {
         "rootCause": "Autopay retried after AVS mismatch; system queued service hold.",
         "fix": "Reauthorized card manually with updated billing address.",
         "followUp": "Document the AVS issue in autopay KB.",
-        "prevention": "Add a 2-step verification before triggering suspension."
+        "prevention": "Add a 2-step verification before triggering suspension.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 69,
@@ -1402,7 +1495,11 @@
     "bucket": "Communication/Judgment",
     "title": "Angry Customer After Repeated Outages",
     "description": "Customer is irate after multiple brief outages this week and expects ownership.",
-    "tags": ["communication", "empathy", "escalation"],
+    "tags": [
+      "communication",
+      "empathy",
+      "escalation"
+    ],
     "ticket": {
       "id": "ticket-angry-customer",
       "subject": "Outages keep happening, this is unacceptable",
@@ -1438,12 +1535,15 @@
           "message": "Outages align with nightly patch window; need better expectation-setting."
         }
       ],
-      "kbMatches": ["kb-outage-communication"],
+      "kbMatches": [
+        "kb-outage-communication"
+      ],
       "postmortem": {
         "rootCause": "Patch window overlapped with peak usage, resulting in multiple restarts.",
         "fix": "Shifted patch window and proactively notified the team.",
         "followUp": "Offer loyalty gesture and proactive monitoring summary.",
-        "prevention": "Document the new maintenance calendar."
+        "prevention": "Document the new maintenance calendar.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 72,
@@ -1518,7 +1618,11 @@
     "bucket": "Communication/Judgment",
     "title": "Unsupported Admin Action Request",
     "description": "Customer asks for unsupported command permissions; the agent must say no while offering alternatives.",
-    "tags": ["communication", "judgment", "policy"],
+    "tags": [
+      "communication",
+      "judgment",
+      "policy"
+    ],
     "ticket": {
       "id": "ticket-unsupported-action",
       "subject": "Can you give me root shell access to install custom kernel?",
@@ -1554,12 +1658,15 @@
           "message": "Policy forbids root shell; suggest container layering instead."
         }
       ],
-      "kbMatches": ["kb-policy-root-access"],
+      "kbMatches": [
+        "kb-policy-root-access"
+      ],
       "postmortem": {
         "rootCause": "n/a",
         "fix": "n/a",
         "followUp": "Provide KB guidance about container layering.",
-        "prevention": "Link policy KB to the request form."
+        "prevention": "Link policy KB to the request form.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 63,
@@ -1633,7 +1740,11 @@
     "bucket": "Communication/Judgment",
     "title": "Vague Complaint",
     "description": "Customer writes 'site is broken, fix now' without context; need to ask clarifying questions.",
-    "tags": ["communication", "clarification", "prioritization"],
+    "tags": [
+      "communication",
+      "clarification",
+      "prioritization"
+    ],
     "ticket": {
       "id": "ticket-vague-complaint",
       "subject": "Site is broken, fix now",
@@ -1669,12 +1780,15 @@
           "message": "Need clarifying diagnostics before triaging."
         }
       ],
-      "kbMatches": ["kb-clarify-issues"],
+      "kbMatches": [
+        "kb-clarify-issues"
+      ],
       "postmortem": {
         "rootCause": "Pending details.",
         "fix": "Pending details.",
         "followUp": "Guide customer through diagnostics form.",
-        "prevention": "Link diagnostics checklist in the reply."
+        "prevention": "Link diagnostics checklist in the reply.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 55,
@@ -1748,7 +1862,11 @@
     "bucket": "Communication/Judgment",
     "title": "Premium Customer Expecting Faster Turnaround",
     "description": "Premium-tier customer notes competitor SLA and demands immediate fix despite ongoing diagnostics.",
-    "tags": ["premium", "sla", "expectations"],
+    "tags": [
+      "premium",
+      "sla",
+      "expectations"
+    ],
     "ticket": {
       "id": "ticket-premium-expectation",
       "subject": "Competitor replied faster; please match it",
@@ -1784,12 +1902,15 @@
           "message": "Need to reinforce SLA entitlement and focus on current diagnostics."
         }
       ],
-      "kbMatches": ["kb-premium-expectations"],
+      "kbMatches": [
+        "kb-premium-expectations"
+      ],
       "postmortem": {
         "rootCause": "n/a",
         "fix": "n/a",
         "followUp": "Document our SLA philosophy vs. competitor claims.",
-        "prevention": "Add doc that sets expectation windows for Enterprise plan."
+        "prevention": "Add doc that sets expectation windows for Enterprise plan.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 70,
@@ -1864,7 +1985,11 @@
     "bucket": "Communication/Judgment",
     "title": "Duplicate Tickets from Same Incident",
     "description": "Multiple tickets opened for the same outage; triage must merge and de-escalate.",
-    "tags": ["duplicate", "judgment", "triage"],
+    "tags": [
+      "duplicate",
+      "judgment",
+      "triage"
+    ],
     "ticket": {
       "id": "ticket-duplicate",
       "subject": "Issue still happening (duplicate)",
@@ -1900,12 +2025,15 @@
           "message": "Link to ticket #5123 and merge updates in original thread."
         }
       ],
-      "kbMatches": ["kb-duplicate-tickets"],
+      "kbMatches": [
+        "kb-duplicate-tickets"
+      ],
       "postmortem": {
         "rootCause": "Customer not sure whether their first ticket dropped off.",
         "fix": "Merged tickets and mirrored updates.",
         "followUp": "Remind them to reference the ongoing incident moving forward.",
-        "prevention": "Add guidance on duplicate reporting to KB."
+        "prevention": "Add guidance on duplicate reporting to KB.",
+        "knowledgeArticleStatus": ""
       },
       "scorecard": {
         "total": 61,

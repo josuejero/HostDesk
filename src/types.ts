@@ -8,11 +8,14 @@ export interface ThreadEntry {
   message: string
 }
 
+export type KnowledgeArticleStatus = 'yes' | 'no' | ''
+
 export interface PostmortemSection {
   rootCause: string
   fix: string
   followUp: string
   prevention: string
+  knowledgeArticleStatus: KnowledgeArticleStatus
 }
 
 export interface ScorecardMetric {
