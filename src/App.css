@@ -8,6 +8,15 @@
   gap: 1.5rem;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(130, 199, 255, 0.9);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px rgba(130, 199, 255, 0.35);
+}
+
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -202,6 +211,23 @@
   min-height: 0;
 }
 
+.empty-state {
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(2, 6, 18, 0.75);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
 .ticket-card {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
@@ -211,7 +237,13 @@
   flex-direction: column;
   gap: 0.65rem;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  color: inherit;
+  appearance: none;
 }
 
 .ticket-card:hover {
@@ -223,6 +255,11 @@
   background: rgba(103, 246, 160, 0.08);
   transform: translateY(-1px);
   box-shadow: 0 15px 30px rgba(3, 6, 15, 0.6);
+}
+
+.ticket-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(130, 199, 255, 0.45), 0 15px 30px rgba(3, 6, 15, 0.35);
 }
 
 .ticket-card-top {
@@ -243,12 +280,30 @@
   color: rgba(245, 246, 255, 0.65);
 }
 
-.ticket-card-timer {
-  display: flex;
+.ticket-card-timer,
+.sla {
+  display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: #82c7ff;
   font-size: 0.85rem;
+}
+
+.ticket-card-timer svg,
+.sla svg {
+  stroke: currentColor;
+}
+
+.timer-normal {
+  color: #67f6a0;
+}
+
+.timer-warning {
+  color: #facc15;
+}
+
+.timer-overdue {
+  color: #ff6b6b;
+  font-weight: 600;
 }
 
 .ticket-card-meta {
@@ -283,6 +338,11 @@
   padding: 2rem;
   text-align: center;
   color: rgba(245, 246, 255, 0.75);
+}
+
+.detail-empty p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
 }
 
 .ticket-shell {
@@ -338,18 +398,62 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  color: #82c7ff;
 }
 
 .timer-value svg {
-  stroke: #82c7ff;
+  stroke: currentColor;
 }
 
 .badge {
   font-size: 0.75rem;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(7, 9, 24, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #f5f6ff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.badge span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.badge svg {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 1.5;
+  stroke: currentColor;
+}
+
+.badge.department {
+  background: rgba(103, 246, 160, 0.12);
+  border-color: rgba(103, 246, 160, 0.5);
+  color: #c7ffe9;
+}
+
+.badge.status {
+  background: rgba(130, 199, 255, 0.15);
+  border-color: rgba(130, 199, 255, 0.45);
+  color: #9ad8ff;
+}
+
+.badge.priority {
+  background: rgba(255, 179, 71, 0.15);
+  border-color: rgba(255, 179, 71, 0.35);
+  color: #ffd35a;
+}
+
+.badge.severity {
+  background: rgba(255, 107, 107, 0.18);
+  border-color: rgba(255, 107, 107, 0.45);
+  color: #ffb0b0;
 }
 
 .header-row {
@@ -357,14 +461,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-}
-
-.sla {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.95rem;
-  color: #82c7ff;
 }
 
 .metadata {

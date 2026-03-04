@@ -1,6 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { type KeyboardEvent, useEffect, useMemo, useState } from 'react'
 import { addMinutes, differenceInSeconds, formatDuration, intervalToDuration } from 'date-fns'
-import { BookOpenCheck, Clock, Layers, MessageCircle, ShieldAlert, Sparkles } from 'lucide-react'
+import {
+  AlertTriangle,
+  BookOpenCheck,
+  Clock,
+  Flag,
+  Layers,
+  MessageCircle,
+  ShieldAlert,
+  Sparkles,
+  Zap,
+} from 'lucide-react'
 import clsx from 'clsx'
 
 import { scenarioCatalog, kbArticles, cannedReplies, scoringRubric } from './data'
@@ -73,6 +83,28 @@ const getCountdownLabel = (ticket: Ticket) => {
 
   const duration = intervalToDuration({ start: new Date(), end: target })
   return `${formatDuration(duration, { format: ['hours', 'minutes'] })} remaining`
+}
+
+type TimerStatus = 'normal' | 'warning' | 'overdue'
+
+const timerStateThresholdSeconds = 5 * 60
+
+const timerStatusDescriptions: Record<TimerStatus, string> = {
+  normal: 'Within SLA expectations',
+  warning: 'Approaching the SLA window',
+  overdue: 'SLA missed and ticket is overdue',
+}
+
+const getTimerStatus = (ticket: Ticket): TimerStatus => {
+  const target = addMinutes(new Date(ticket.createdAt), ticket.slaTargetMinutes)
+  const secondsRemaining = differenceInSeconds(target, new Date())
+  if (secondsRemaining <= 0) {
+    return 'overdue'
+  }
+  if (secondsRemaining <= timerStateThresholdSeconds) {
+    return 'warning'
+  }
+  return 'normal'
 }
 
 type PanelStatusContext = {
@@ -680,6 +712,9 @@ function App() {
     () => (selectedTicket ? buildRoutingInsights(selectedTicket, selectedScenario) : null),
     [selectedTicket, selectedScenario],
   )
+  const selectedCountdownLabel = selectedTicket ? getCountdownLabel(selectedTicket) : ''
+  const selectedTimerStatus: TimerStatus = selectedTicket ? getTimerStatus(selectedTicket) : 'normal'
+  const selectedTimerDescription = timerStatusDescriptions[selectedTimerStatus]
   const deEscalationScorecard = useMemo(
     () => (selectedTicket ? evaluateDeEscalationScore(selectedTicket, selectedScenario) : null),
     [selectedTicket, selectedScenario],
@@ -936,6 +971,12 @@ function App() {
     setToastMessage('Demo data reset. Welcome back to square one!')
   }
 
+  const handleWalkthroughKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      handleToggleWalkthrough()
+    }
+  }
+
   useEffect(() => {
     if (!toastMessage) {
       return
@@ -1003,6 +1044,7 @@ function App() {
                   type="button"
                   className={clsx('view-link', { active: activeView?.id === view.id })}
                   onClick={() => setSelectedViewId(view.id)}
+                  aria-pressed={activeView?.id === view.id}
                 >
                   <div>
                     <strong>{view.label}</strong>
@@ -1033,46 +1075,72 @@ function App() {
               filteredTickets.map((ticket) => {
                 const scenario = scenarioMap.get(ticket.id)
                 const isActive = selectedTicket?.id === ticket.id
+                const countdownLabel = getCountdownLabel(ticket)
+                const cardTimerStatus = getTimerStatus(ticket)
+                const timerAssistive = timerStatusDescriptions[cardTimerStatus]
                 return (
-                  <li
-                    key={ticket.id}
-                    className={clsx('ticket-card', { active: isActive })}
-                    onClick={() => handleSelectTicket(ticket.id)}
-                  >
-                    <div className="ticket-card-top">
-                      <div>
-                        <h3>{ticket.subject}</h3>
-                        <p className="ticket-card-subtext">
-                          {ticket.department} • {ticket.priority} priority • {ticket.status}
-                        </p>
+                  <li key={ticket.id}>
+                    <button
+                      type="button"
+                      className={clsx('ticket-card', { active: isActive })}
+                      onClick={() => handleSelectTicket(ticket.id)}
+                      aria-pressed={isActive}
+                      aria-label={`Open case "${ticket.subject}", ${ticket.priority} priority, currently ${ticket.status}`}
+                    >
+                      <div className="ticket-card-top">
+                        <div>
+                          <h3>{ticket.subject}</h3>
+                          <p className="ticket-card-subtext">
+                            {ticket.department} • {ticket.priority} priority • {ticket.status}
+                          </p>
+                        </div>
+                        <div
+                          className={clsx('ticket-card-timer', `timer-${cardTimerStatus}`)}
+                          role="status"
+                          aria-live="polite"
+                          aria-label={`${timerAssistive}. ${countdownLabel}`}
+                        >
+                          <Clock size={16} aria-hidden="true" />
+                          <span>{countdownLabel}</span>
+                        </div>
                       </div>
-                      <div className="ticket-card-timer">
-                        <Clock size={16} />
-                        <span>{getCountdownLabel(ticket)}</span>
-                      </div>
-                    </div>
-                    <div className="ticket-card-meta">
-                      <span className="badge dept">{ticket.department}</span>
-                      <span
-                        className={clsx('badge status', ticket.status.toLowerCase().replace(/\s+/g, '-'))}
-                      >
-                        {ticket.status}
-                      </span>
-                      <span className="badge priority">{ticket.priority}</span>
-                      <span className="badge severity">{ticket.severity}</span>
-                    </div>
-                    <div className="tag-row compact">
-                      {(scenario?.tags ?? []).map((tag) => (
-                        <span key={tag} className="tag">
-                          {tag}
+                      <div className="ticket-card-meta">
+                        <span className="badge department" aria-label={`Department: ${ticket.department}`}>
+                          <Flag size={12} aria-hidden="true" />
+                          <span>{ticket.department}</span>
                         </span>
-                      ))}
-                    </div>
+                        <span
+                          className={clsx('badge status', ticket.status.toLowerCase().replace(/\s+/g, '-'))}
+                          aria-label={`Status: ${ticket.status}`}
+                        >
+                          <ShieldAlert size={12} aria-hidden="true" />
+                          <span>{ticket.status}</span>
+                        </span>
+                        <span className="badge priority" aria-label={`Priority: ${ticket.priority}`}>
+                          <Zap size={12} aria-hidden="true" />
+                          <span>{ticket.priority}</span>
+                        </span>
+                        <span className="badge severity" aria-label={`Severity: ${ticket.severity}`}>
+                          <AlertTriangle size={12} aria-hidden="true" />
+                          <span>{ticket.severity}</span>
+                        </span>
+                      </div>
+                      <div className="tag-row compact">
+                        {(scenario?.tags ?? []).map((tag) => (
+                          <span key={tag} className="tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
                   </li>
                 )
               })
             ) : (
-              <li className="empty-state">No tickets match this view and search.</li>
+              <li className="empty-state" role="status" aria-live="polite">
+                <p>No tickets match this view and search yet.</p>
+                <p>Try clearing the search, picking a different view, or using the reset control above.</p>
+              </li>
             )}
           </ul>
         </section>
@@ -1086,10 +1154,20 @@ function App() {
             <section className="ticket-shell">
               <article className="ticket-header">
                 <div className="ticket-chip">
-                  <span className="badge severity">{selectedTicket.severity}</span>
-                  <span className="badge department">{selectedTicket.department}</span>
-                  <span className={clsx('badge status', selectedTicket.status.toLowerCase().replace(/\s+/g, '-'))}>
-                    {selectedTicket.status}
+                  <span className="badge severity" aria-label={`Severity: ${selectedTicket.severity}`}>
+                    <AlertTriangle size={12} aria-hidden="true" />
+                    <span>{selectedTicket.severity}</span>
+                  </span>
+                  <span className="badge department" aria-label={`Department: ${selectedTicket.department}`}>
+                    <Flag size={12} aria-hidden="true" />
+                    <span>{selectedTicket.department}</span>
+                  </span>
+                  <span
+                    className={clsx('badge status', selectedTicket.status.toLowerCase().replace(/\s+/g, '-'))}
+                    aria-label={`Status: ${selectedTicket.status}`}
+                  >
+                    <ShieldAlert size={12} aria-hidden="true" />
+                    <span>{selectedTicket.status}</span>
                   </span>
                 </div>
                 {routingInsights && (
@@ -1160,9 +1238,14 @@ function App() {
                 )}
                 <div className="header-row">
                   <h2>{selectedTicket.subject}</h2>
-                  <div className="sla">
+                  <div
+                    className={clsx('sla', `timer-${selectedTimerStatus}`)}
+                    role="status"
+                    aria-live="polite"
+                    aria-label={`${selectedTimerDescription}. ${selectedCountdownLabel}`}
+                  >
                     <Clock size={18} />
-                    <span>{getCountdownLabel(selectedTicket)}</span>
+                    <span>{selectedCountdownLabel}</span>
                   </div>
                 </div>
                 <div className="metadata">
@@ -1224,7 +1307,12 @@ function App() {
                         <small>Drag logs, screenshots, or recordings here once attachments are enabled.</small>
                       </div>
                       <div className="status-actions">
-                        <button type="button" className="ghost-btn" onClick={() => handleStatusAction('waiting')}>
+                        <button
+                          type="button"
+                          className="ghost-btn"
+                          onClick={() => handleStatusAction('waiting')}
+                          aria-label="Mark ticket as waiting on customer"
+                        >
                           Waiting on customer
                         </button>
                         <button
@@ -1236,6 +1324,11 @@ function App() {
                             !caseCloseReady
                               ? 'Complete the postmortem checklist before closing this ticket.'
                               : undefined
+                          }
+                          aria-label={
+                            caseCloseReady
+                              ? 'Mark ticket as solved'
+                              : 'Complete the checklist before marking as solved'
                           }
                         >
                           Solved
@@ -1551,8 +1644,9 @@ function App() {
               </div>
             </section>
           ) : (
-            <div className="detail-empty">
+            <div className="detail-empty" role="status" aria-live="polite">
               <p>Select a ticket from the queue to load the workspace.</p>
+              <p>Need a ticket? Use the reset button or clear your filters to repopulate the queue.</p>
             </div>
           )}
         </section>
@@ -1594,9 +1688,15 @@ function App() {
       )}
 
       {state.walkthroughActive && selectedScenario && (
-        <div className="walkthrough-overlay">
-          <div className="walkthrough-card">
-            <h3>Recruiter walkthrough</h3>
+        <div
+          className="walkthrough-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="walkthrough-title"
+          onKeyDown={handleWalkthroughKeyDown}
+        >
+          <div className="walkthrough-card" tabIndex={-1}>
+            <h3 id="walkthrough-title">Recruiter walkthrough</h3>
             <p>{selectedScenario.description}</p>
             <ul>
               <li>Check SLA timer: {selectedTicket && selectedTicket.slaTargetMinutes} minutes from {new Date(selectedTicket?.createdAt || 0).toLocaleTimeString()}.</li>
@@ -1609,7 +1709,11 @@ function App() {
         </div>
       )}
 
-      {toastMessage && <div className="toast">{toastMessage}</div>}
+      {toastMessage && (
+        <div className="toast" role="status" aria-live="polite" aria-atomic="true">
+          {toastMessage}
+        </div>
+      )}
     </div>
   )
 }
