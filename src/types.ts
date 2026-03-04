@@ -82,7 +82,9 @@ export interface KBArticle {
   title: string
   summary: string
   keywords: string[]
+  labels?: string[]
   link: string
+  audience?: string
 }
 
 export type CannedReplyCategory =

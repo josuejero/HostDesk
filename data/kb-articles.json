@@ -1,31 +1,34 @@
 [
   {
-    "id": "kb-billing-hold-suspension",
-    "title": "Resolving Billing Holds & Suspensions",
-    "summary": "Steps to verify invoice state, release a suspension lock, and communicate the fix to the customer.",
-    "keywords": ["billing", "suspension", "invoice", "hold"],
-    "link": "https://hostdesk.example.com/kb/billing-hold"
+    "id": "kb-billing-suspension-works",
+    "title": "How billing suspension works",
+    "summary": "Explain the invoice verification path, suspension lock release, and how to confirm the account is unblocked.",
+    "keywords": ["billing", "suspension", "invoice", "hold", "lock", "paid"],
+    "labels": ["billing-suspension"],
+    "link": "https://hostdesk.example.com/kb/billing-suspension"
   },
   {
-    "id": "kb-plugin-compatibility",
-    "title": "Plugin Compatibility Checklist",
-    "summary": "How to test new plugins against Harmony patches and modpacks without crashing the World.",
-    "keywords": ["plugin", "mod", "crash", "compatibility"],
-    "link": "https://hostdesk.example.com/kb/plugin-compatibility"
+    "id": "kb-minecraft-server-plugin-start",
+    "title": "Minecraft server won't start after plugin install",
+    "summary": "Isolate plugin jar conflicts, missing dependencies, and mod order issues that stop the host from booting.",
+    "keywords": ["plugin", "mod", "jar", "minecraft", "startup", "crash"],
+    "labels": ["plugin-troubleshooting"],
+    "link": "https://hostdesk.example.com/kb/minecraft-plugin-start"
   },
   {
     "id": "kb-mod-conflicts",
     "title": "Handling Modpack File Conflicts",
     "summary": "Detecting duplicate assets and mod conflicts that happen when multiple mods write to the same file.",
     "keywords": ["mod", "conflict", "textures", "modpack"],
+    "labels": ["plugin-troubleshooting"],
     "link": "https://hostdesk.example.com/kb/mod-conflicts"
   },
   {
-    "id": "kb-discord-bot-restarter",
-    "title": "Discord Bot Recovery Steps",
-    "summary": "Best practices for restarting bot listeners, reissuing API tokens, and validating uptime.",
-    "keywords": ["bot", "discord", "outage", "restart"],
-    "link": "https://hostdesk.example.com/kb/discord-bot"
+    "id": "kb-bot-offline-overnight",
+    "title": "Why a bot may go offline overnight",
+    "summary": "Trace cron jobs, token refresh schedules, and idle timeouts that routinely bring bots offline between midnight and morning.",
+    "keywords": ["bot", "offline", "cron", "restart", "uptime"],
+    "link": "https://hostdesk.example.com/kb/bot-offline"
   },
   {
     "id": "kb-panel-login-loop",
@@ -49,18 +52,19 @@
     "link": "https://hostdesk.example.com/kb/dns-propagation"
   },
   {
-    "id": "kb-high-latency-troubleshooting",
-    "title": "High Latency Troubleshooting",
-    "summary": "Diagnose CPU spikes, cron job contention, and network hops causing ping spikes.",
-    "keywords": ["lag", "latency", "cpu", "performance"],
-    "link": "https://hostdesk.example.com/kb/performance"
+    "id": "kb-high-ping-triage-checklist",
+    "title": "High ping triage checklist",
+    "summary": "Checklist for capturing ping traces, ruling out burst traffic, and correlating latency with scheduled jobs.",
+    "keywords": ["lag", "high ping", "latency", "performance"],
+    "labels": ["latency-checklist"],
+    "link": "https://hostdesk.example.com/kb/high-ping"
   },
   {
-    "id": "kb-plan-upgrade-checklist",
-    "title": "Plan Upgrade Checklist",
-    "summary": "Checklist for migrating plans with minimal disruption and preserving configs.",
-    "keywords": ["upgrade", "plan", "migration", "downtime"],
-    "link": "https://hostdesk.example.com/kb/plan-upgrade"
+    "id": "kb-safe-upgrade-path",
+    "title": "Safe upgrade path with no data loss",
+    "summary": "Step-by-step upgrade path that snapshots configs, migrates data safely, and verifies checksums before cutover.",
+    "keywords": ["upgrade", "path", "data loss", "migration"],
+    "link": "https://hostdesk.example.com/kb/safe-upgrade"
   },
   {
     "id": "kb-refunds-downgrade",
@@ -77,11 +81,12 @@
     "link": "https://hostdesk.example.com/kb/domain-renewal"
   },
   {
-    "id": "kb-autopay-retry",
-    "title": "Autopay Retry Strategy",
-    "summary": "How to handle AVS mismatches, ramp up retries, and keep service online despite failed autopay.",
-    "keywords": ["autopay", "payment", "avs", "gateway"],
-    "link": "https://hostdesk.example.com/kb/autopay"
+    "id": "kb-verify-service-activation-after-payment",
+    "title": "How to verify service activation after payment",
+    "summary": "Confirm payment propagation, panel flags, and API status checks to make sure the service came back online.",
+    "keywords": ["payment", "activation", "propagation", "service", "invoice"],
+    "labels": ["payment-propagation"],
+    "link": "https://hostdesk.example.com/kb/service-activation"
   },
   {
     "id": "kb-outage-communication",

@@ -7,6 +7,7 @@
     "summary": "string",
     "keywords": "array of strings",
     "link": "URL",
+    "labels": "optional array of strings (e.g. 'plugin-troubleshooting')",
     "audience": "optional string (e.g. 'Billing', 'Technical Ops')"
   },
   "notes": "At least one keyword should map back to ticket subjects, threads, or tags for reliable suggestions."

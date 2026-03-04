@@ -47,7 +47,7 @@
           "message": "Billing clearing webhook is delayed; invoice is marked paid but suspension lock still on database."
         }
       ],
-      "kbMatches": ["kb-billing-hold-suspension"],
+      "kbMatches": ["kb-billing-suspension-works"],
       "postmortem": {
         "rootCause": "Suspension flag not cleared after manual payment reconciliation.",
         "fix": "Cleared the suspension flag and re-ran the notification job.",
@@ -163,7 +163,7 @@
           "message": "Resembles ModEconomy conflict with the custom Harmony patch. Container logs show stack overflow after plugin init."
         }
       ],
-      "kbMatches": ["kb-plugin-compatibility", "kb-mod-conflicts"],
+      "kbMatches": ["kb-minecraft-server-plugin-start", "kb-mod-conflicts"],
       "postmortem": {
         "rootCause": "Harmony patch conflicted with ModEconomy v3.2, leading to repeated stack overflows.",
         "fix": "Rolled back to ModEconomy v3.0 and patched Harmony to respect new APIs.",
@@ -286,7 +286,7 @@
           "message": "App server crashed when Discord API hits exceeded the user tier; listener thread failed to reregister."
         }
       ],
-      "kbMatches": ["kb-discord-bot-restarter"],
+      "kbMatches": ["kb-bot-offline-overnight"],
       "postmortem": {
         "rootCause": "Rate-limit spike triggered automatic restarts but the reconnection loop never finished.",
         "fix": "Restarted the discord bot with throttled re-registration and force update on the API token.",
@@ -747,7 +747,7 @@
           "message": "Host metrics show CPU climb; suspect cron job spike affecting IO."
         }
       ],
-      "kbMatches": ["kb-high-latency-troubleshooting"],
+      "kbMatches": ["kb-high-ping-triage-checklist"],
       "postmortem": {
         "rootCause": "Nightly backup cron job contended with game server threads, spiking latency.",
         "fix": "Rescheduled backups and added CPU guard rails.",
@@ -862,7 +862,7 @@
           "message": "Mods A and B both write textures.json; need to modify the override order."
         }
       ],
-      "kbMatches": ["kb-plugin-compatibility"],
+      "kbMatches": ["kb-minecraft-server-plugin-start"],
       "postmortem": {
         "rootCause": "Two textures mods fighting over the same file when the world loads.",
         "fix": "Temporarily disabled the secondary mod and documented the override order.",
@@ -978,7 +978,7 @@
           "message": "Plan change requires a short downtime to scale storage. Need to coordinate with billing ops."
         }
       ],
-      "kbMatches": ["kb-plan-upgrade-checklist"],
+      "kbMatches": ["kb-safe-upgrade-path"],
       "postmortem": {
         "rootCause": "n/a",
         "fix": "n/a",
@@ -1323,7 +1323,7 @@
           "message": "Gateway sent 402 but the card response indicates AVS mismatch; need to verify address."
         }
       ],
-      "kbMatches": ["kb-autopay-retry"],
+      "kbMatches": ["kb-verify-service-activation-after-payment"],
       "postmortem": {
         "rootCause": "Autopay retried after AVS mismatch; system queued service hold.",
         "fix": "Reauthorized card manually with updated billing address.",

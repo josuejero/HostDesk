@@ -327,6 +327,58 @@ const queueViews: ViewDefinition[] = [
   },
 ]
 
+type SubjectTrigger = {
+  id: string
+  headline: string
+  description: string
+  keywords: string[]
+  articleLabels: string[]
+  tips: string[]
+}
+
+type GuidedEntry = SubjectTrigger & {
+  articles: KBArticle[]
+}
+
+const subjectTriggers: SubjectTrigger[] = [
+  {
+    id: 'plugin-troubleshooting',
+    headline: 'Plugin troubleshooting',
+    description: 'Subject shows plugin/mod/jar hints — pair with the plugin catalog before replying.',
+    keywords: ['plugin', 'mod', 'jar'],
+    articleLabels: ['plugin-troubleshooting'],
+    tips: [
+      'Review jar versions and plugin dependencies that load during the crash.',
+      'Boot without the new plugin to confirm if it is the culprit.',
+      'Inspect the modpack order and server logs for stack overflows.',
+    ],
+  },
+  {
+    id: 'billing-suspension',
+    headline: 'Billing suspension & payment propagation',
+    description: 'Billing keywords suggest invoice or suspension holds — surface the suspension + activation KB.',
+    keywords: ['paid', 'invoice', 'suspended'],
+    articleLabels: ['billing-suspension', 'payment-propagation'],
+    tips: [
+      'Reconfirm the invoice state in accounting and clear the suspension flag.',
+      'Watch for propagation delays before the panel truly reflects the payment.',
+      'Double-check the control panel or API to prove the service is active.',
+    ],
+  },
+  {
+    id: 'latency-checklist',
+    headline: 'Latency triage checklist',
+    description: '“Lag” or “high ping” signals trigger a latency-focused checklist.',
+    keywords: ['lag', 'high ping'],
+    articleLabels: ['latency-checklist'],
+    tips: [
+      'Capture ping traces and compare them to historical baselines.',
+      'Look for cron jobs or backups that might align with the spikes.',
+      'Glean whether remote hops or edge routers are contributing to the lag.',
+    ],
+  },
+]
+
 function App() {
   const [state, setState, resetState] = useLocalStorageState('hostdesk-demo-state', getInitialState)
   const [draftReply, setDraftReply] = useState('')
@@ -439,6 +491,29 @@ function App() {
       prev && kbSuggestions.some((article) => article.id === prev) ? prev : kbSuggestions[0].id,
     )
   }, [kbSuggestions])
+
+  const subjectText = selectedTicket?.subject.toLowerCase() ?? ''
+
+  const guidedTroubleshooting = useMemo(() => {
+    if (!subjectText) {
+      return []
+    }
+    return subjectTriggers
+      .map((trigger) => {
+        const triggered = trigger.keywords.some((keyword) => subjectText.includes(keyword))
+        if (!triggered) {
+          return null
+        }
+        const matches = kbArticles.filter((article) =>
+          article.labels?.some((label) => trigger.articleLabels.includes(label)),
+        )
+        if (!matches.length) {
+          return null
+        }
+        return { ...trigger, articles: matches }
+      })
+      .filter((entry): entry is GuidedEntry => Boolean(entry))
+  }, [subjectText])
 
   const updateTicket = (ticketId: string, updater: (ticket: Ticket) => Ticket) => {
     setState((prev) => ({
@@ -1063,6 +1138,55 @@ function App() {
                           />
                         </label>
                       ))}
+                    </div>
+                  </div>
+
+                  <div className="panel panel--guided">
+                    <div className="panel-heading">
+                      <Layers size={18} />
+                      <h3>Guided troubleshooting</h3>
+                    </div>
+                    <div className="panel-body guided-body">
+                      <p className="muted">
+                        Atlassian-style subject-triggered suggestions pair keywords with KB articles and tips.
+                      </p>
+                      {guidedTroubleshooting.length ? (
+                        guidedTroubleshooting.map((group) => (
+                          <div key={group.id} className="guided-card">
+                            <div className="guided-card__header">
+                              <strong>{group.headline}</strong>
+                              <small className="muted">{group.description}</small>
+                              <small className="guided-keywords">Keywords: {group.keywords.join(', ')}</small>
+                            </div>
+                            <ul className="guided-tips">
+                              {group.tips.map((tip) => (
+                                <li key={tip}>{tip}</li>
+                              ))}
+                            </ul>
+                            <div className="guided-articles">
+                              {group.articles.slice(0, 2).map((article) => (
+                                <div key={article.id} className="guided-article">
+                                  <div>
+                                    <strong>{article.title}</strong>
+                                    <p>{article.summary}</p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className="ghost-btn"
+                                    onClick={() => handleShareKB(article)}
+                                  >
+                                    Share
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="muted">
+                          No guided path triggered yet — mention plugin, paid/invoice, or lag/high ping in the subject to unlock them.
+                        </p>
+                      )}
                     </div>
                   </div>
 
