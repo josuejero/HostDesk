@@ -85,11 +85,25 @@ export interface KBArticle {
   link: string
 }
 
+export type CannedReplyCategory =
+  | 'acknowledgement'
+  | 'billing-clarification'
+  | 'troubleshooting-step-request'
+  | 'outage-acknowledgment'
+  | 'upgrade-reassurance'
+  | 'escalation-handoff'
+  | 'closure-follow-up'
+
 export interface CannedReply {
   id: string
   title: string
   tone: string
-  body: string
+  category: CannedReplyCategory
+  segments: {
+    acknowledgment: string
+    ownership: string
+    nextStep: string
+  }
   editable: boolean
   keywords: string[]
 }

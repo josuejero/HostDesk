@@ -5,12 +5,47 @@ import clsx from 'clsx'
 
 import { scenarioCatalog, kbArticles, cannedReplies, scoringRubric } from './data'
 import { useLocalStorageState } from './hooks/useLocalStorageState'
-import type { Audience, DemoState, KBArticle, ScenarioSeed, Ticket, ThreadEntry } from './types'
+import type {
+  Audience,
+  CannedReply,
+  CannedReplyCategory,
+  DemoState,
+  KBArticle,
+  ScenarioSeed,
+  Ticket,
+  ThreadEntry,
+} from './types'
 import './App.css'
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 const cloneTicket = (ticket: Ticket) => JSON.parse(JSON.stringify(ticket)) as Ticket
+
+const cannedCategoryOrder: CannedReplyCategory[] = [
+  'acknowledgement',
+  'billing-clarification',
+  'troubleshooting-step-request',
+  'outage-acknowledgment',
+  'upgrade-reassurance',
+  'escalation-handoff',
+  'closure-follow-up',
+]
+
+const cannedCategoryLabels: Record<CannedReplyCategory, string> = {
+  acknowledgement: 'Acknowledgement',
+  'billing-clarification': 'Billing clarification',
+  'troubleshooting-step-request': 'Troubleshooting step request',
+  'outage-acknowledgment': 'Outage acknowledgment',
+  'upgrade-reassurance': 'Upgrade reassurance',
+  'escalation-handoff': 'Escalation handoff',
+  'closure-follow-up': 'Closure / follow-up',
+}
+
+const formatCannedText = (reply: CannedReply) =>
+  [reply.segments.acknowledgment, reply.segments.ownership, reply.segments.nextStep].join('\n\n')
+
+const isCustomerMessage = (entry: ThreadEntry) =>
+  entry.audience === 'customer' && entry.author.toLowerCase().includes('customer')
 
 const getInitialState = (): DemoState => {
   const cloned = scenarioCatalog.map((scenario) => cloneTicket(scenario.ticket))
@@ -300,12 +335,32 @@ function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedViewId, setSelectedViewId] = useState(queueViews[0]?.id ?? 'open')
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null)
 
   const scenarioMap = useMemo(() => {
     const map = new Map<string, ScenarioSeed>()
     scenarioCatalog.forEach((scenario) => map.set(scenario.ticket.id, scenario))
     return map
   }, [])
+
+  const cannedRepliesByCategory = useMemo(() => {
+    const grouped = cannedCategoryOrder.reduce<Record<CannedReplyCategory, CannedReply[]>>((acc, category) => {
+      acc[category] = []
+      return acc
+    }, {} as Record<CannedReplyCategory, CannedReply[]>)
+    cannedReplies.forEach((reply) => {
+      grouped[reply.category].push(reply)
+    })
+    return grouped
+  }, [])
+
+  const selectedCannedReply = useMemo(
+    () => (selectedReplyId ? cannedReplies.find((reply) => reply.id === selectedReplyId) ?? null : null),
+    [selectedReplyId],
+  )
+
+  const cannedBaselineText = selectedCannedReply ? formatCannedText(selectedCannedReply).trim() : ''
+  const requiresCannedEdit = Boolean(selectedCannedReply) && draftReply.trim() === cannedBaselineText
 
   const viewCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -375,6 +430,16 @@ function App() {
     return matches.slice(0, 3)
   }, [selectedTicket, kbText])
 
+  useEffect(() => {
+    if (!kbSuggestions.length) {
+      setSelectedArticleId(null)
+      return
+    }
+    setSelectedArticleId((prev) =>
+      prev && kbSuggestions.some((article) => article.id === prev) ? prev : kbSuggestions[0].id,
+    )
+  }, [kbSuggestions])
+
   const updateTicket = (ticketId: string, updater: (ticket: Ticket) => Ticket) => {
     setState((prev) => ({
       ...prev,
@@ -427,12 +492,39 @@ function App() {
   }
 
   const handleSendReply = () => {
+    if (!draftReply.trim()) {
+      return
+    }
+
+    if (requiresCannedEdit) {
+      setToastMessage('Please personalize the canned reply before sending so it speaks directly to the customer.')
+      return
+    }
+
     addThreadEntry(draftReply, draftAudience)
+    setDraftReply('')
+    setSelectedReplyId(null)
   }
 
-  const handleUseCannedReply = (replyId: string, body: string) => {
-    setSelectedReplyId(replyId)
-    setDraftReply(body)
+  const handleUseCannedReply = (replyId: string) => {
+    const reply = cannedReplies.find((item) => item.id === replyId)
+    if (!reply) {
+      return
+    }
+    setSelectedReplyId(reply.id)
+    setDraftReply(formatCannedText(reply))
+  }
+
+  const handleShareSelectedArticle = () => {
+    if (!selectedArticleId) {
+      return
+    }
+    const article = kbSuggestions.find((item) => item.id === selectedArticleId)
+    if (!article) {
+      return
+    }
+    handleShareKB(article)
+    setToastMessage(`Shared KB article "${article.title}" with the thread.`)
   }
 
   const handleShareKB = (article: KBArticle) => {
@@ -458,6 +550,29 @@ function App() {
         scorecard: nextScorecard,
       }
     })
+  }
+
+  const statusActionConfig = {
+    waiting: {
+      label: 'Waiting on customer',
+      status: 'Waiting on Customer',
+      message: 'I’m marking this case as waiting on customer until we gather the requested logs.',
+    },
+    solved: {
+      label: 'Solved',
+      status: 'Solved',
+      message: 'The issue is resolved, so I’m moving this ticket to solved; reply if anything else pops up.',
+    },
+  } as const
+
+  const handleStatusAction = (action: keyof typeof statusActionConfig) => {
+    if (!selectedTicket) {
+      return
+    }
+    const config = statusActionConfig[action]
+    updateTicket(selectedTicket.id, (ticket) => ({ ...ticket, status: config.status }))
+    addThreadEntry(config.message, 'customer')
+    setToastMessage(`${config.label} action queued.`)
   }
 
   const handlePostmortemChange = (field: keyof Ticket['postmortem'], value: string) => {
@@ -738,24 +853,152 @@ function App() {
 
               <div className="ticket-grid">
                 <section className="thread-column">
-                  <div className="panel">
+                  <div className="panel conversation-panel">
                     <div className="panel-heading">
                       <MessageCircle size={18} />
-                      <h3>Threaded communication</h3>
+                      <div>
+                        <h3>Threaded communication</h3>
+                        <p className="muted">Customer messages and agent replies are separated here; attachments remain handy below.</p>
+                      </div>
                     </div>
-                    <div className="panel-body">
-                      {selectedTicket.thread.map((entry) => (
-                        <div key={entry.id} className="thread-entry customer">
-                          <div className="thread-meta">
-                            <strong>{entry.author}</strong>
-                            <span>{new Date(entry.createdAt).toLocaleString()}</span>
-                          </div>
-                          <p>{entry.message}</p>
-                        </div>
-                      ))}
+                    <div className="panel-body conversation-body">
+                      <div className="conversation-stream">
+                        {selectedTicket.thread.map((entry) => {
+                          const customerAuthor = isCustomerMessage(entry)
+                          return (
+                            <div
+                              key={entry.id}
+                              className={clsx(
+                                'conversation-bubble',
+                                customerAuthor
+                                  ? 'conversation-bubble--customer'
+                                  : 'conversation-bubble--agent',
+                              )}
+                            >
+                              <div className="conversation-bubble__meta">
+                                <strong>{entry.author}</strong>
+                                <span>{new Date(entry.createdAt).toLocaleString()}</span>
+                              </div>
+                              <p>{entry.message}</p>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div className="attachments-placeholder">
+                        <p>Attachments placeholder</p>
+                        <small>Drag logs, screenshots, or recordings here once attachments are enabled.</small>
+                      </div>
+                      <div className="status-actions">
+                        <button type="button" className="ghost-btn" onClick={() => handleStatusAction('waiting')}>
+                          Waiting on customer
+                        </button>
+                        <button type="button" className="ghost-btn" onClick={() => handleStatusAction('solved')}>
+                          Solved
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="panel">
+                  <div className="panel composer-panel">
+                    <div className="panel-heading">
+                      <MessageCircle size={18} />
+                      <h3>Reply composer</h3>
+                    </div>
+                    <div className="panel-body composer-body">
+                      <label className="utility-field">
+                        <span>Canned replies</span>
+                        <select
+                          value={selectedReplyId ?? ''}
+                          onChange={(event) => {
+                            const value = event.target.value
+                            if (value) {
+                              handleUseCannedReply(value)
+                              return
+                            }
+                            setSelectedReplyId(null)
+                          }}
+                        >
+                          <option value="">Start from scratch</option>
+                          {cannedCategoryOrder.map((category) => (
+                            <optgroup key={category} label={cannedCategoryLabels[category]}>
+                              {cannedRepliesByCategory[category].map((reply) => (
+                                <option key={reply.id} value={reply.id}>
+                                  {reply.title} ({reply.tone})
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+                      </label>
+                      {selectedCannedReply && (
+                        <div className="canned-preview">
+                          <div>
+                            <strong>Acknowledgment</strong>
+                            <p>{selectedCannedReply.segments.acknowledgment}</p>
+                          </div>
+                          <div>
+                            <strong>Ownership</strong>
+                            <p>{selectedCannedReply.segments.ownership}</p>
+                          </div>
+                          <div>
+                            <strong>Next step</strong>
+                            <p>{selectedCannedReply.segments.nextStep}</p>
+                          </div>
+                        </div>
+                      )}
+                      <label className="utility-field">
+                        <span>Audience</span>
+                        <select value={draftAudience} onChange={(event) => setDraftAudience(event.target.value as Audience)}>
+                          <option value="customer">Customer-facing</option>
+                          <option value="internal">Internal note</option>
+                        </select>
+                      </label>
+                      <label className="utility-field">
+                        <span>Compose reply</span>
+                        <textarea value={draftReply} onChange={(event) => setDraftReply(event.target.value)} rows={4} />
+                      </label>
+                      {requiresCannedEdit && (
+                        <p className="muted composer-reminder">
+                          Edit the canned response so it feels personalized, empathetic, and clear about next steps.
+                        </p>
+                      )}
+                      <div className="composer-controls">
+                        <div className="kb-share-row">
+                          <select
+                            value={selectedArticleId ?? ''}
+                            onChange={(event) => setSelectedArticleId(event.target.value || null)}
+                            disabled={!kbSuggestions.length}
+                          >
+                            {kbSuggestions.length ? (
+                              kbSuggestions.map((article) => (
+                                <option key={article.id} value={article.id}>
+                                  {article.title}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="">No articles yet</option>
+                            )}
+                          </select>
+                          <button
+                            type="button"
+                            className="ghost-btn"
+                            onClick={handleShareSelectedArticle}
+                            disabled={!selectedArticleId}
+                          >
+                            Share article
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          className="primary"
+                          onClick={handleSendReply}
+                          disabled={!draftReply.trim() || requiresCannedEdit}
+                        >
+                          Send reply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="panel internal-notes-panel">
                     <div className="panel-heading">
                       <MessageCircle size={18} />
                       <h3>Internal notes</h3>
@@ -826,52 +1069,12 @@ function App() {
                   <div className="panel">
                     <div className="panel-heading">
                       <BookOpenCheck size={18} />
-                      <h3>Canned replies</h3>
-                    </div>
-                    <div className="panel-body canned">
-                      {cannedReplies.map((reply) => (
-                        <button
-                          key={reply.id}
-                          className={clsx('canned-chip', { active: reply.id === selectedReplyId })}
-                          onClick={() => handleUseCannedReply(reply.id, reply.body)}
-                        >
-                          <span>{reply.title}</span>
-                          <small>{reply.tone}</small>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="panel">
-                    <div className="panel-heading">
-                      <BookOpenCheck size={18} />
-                      <h3>SLA / KB sidebar</h3>
-                    </div>
-                    <div className="panel-body">
-                      <p className="muted">Toggle between canned replies and the editor below to keep replies human.</p>
-                      <label>
-                        <span>Audience</span>
-                        <select value={draftAudience} onChange={(event) => setDraftAudience(event.target.value as Audience)}>
-                          <option value="customer">Customer-facing</option>
-                          <option value="internal">Internal note</option>
-                        </select>
-                      </label>
-                      <label>
-                        <span>Compose reply</span>
-                        <textarea value={draftReply} onChange={(event) => setDraftReply(event.target.value)} rows={4} />
-                      </label>
-                      <button className="primary" onClick={handleSendReply}>
-                        Send reply
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="panel">
-                    <div className="panel-heading">
-                      <BookOpenCheck size={18} />
                       <h3>KB suggestions</h3>
                     </div>
                     <div className="panel-body kb-suggestions">
+                      <p className="muted">
+                        Share directly from the composer above or with the buttons here.
+                      </p>
                       {kbSuggestions.length ? (
                         kbSuggestions.map((article) => (
                           <div key={article.id} className="kb-article">

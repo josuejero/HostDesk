@@ -1,50 +1,93 @@
 [
   {
-    "id": "reply-acknowledge-escalation",
-    "title": "Acknowledge + empathy",
-    "tone": "Empathetic",
-    "body": "I completely understand how frustrating this feels. I'm reviewing the logs now and will escalate to the right tier if timing starts to slip.",
+    "id": "reply-acknowledgement-care",
+    "title": "Empathize and own it",
+    "tone": "Warm",
+    "category": "acknowledgement",
+    "segments": {
+      "acknowledgment": "I hear how disruptive this is for your team, and I appreciate you sharing the context so quickly.",
+      "ownership": "I'm taking point on getting the right specialists involved so you don't have to chase anyone down.",
+      "nextStep": "I’ll follow up in about 10 minutes with a clear next update once I confirm the plan."
+    },
     "editable": true,
-    "keywords": ["ownership", "escalation"]
+    "keywords": ["empathy", "acknowledge", "ownership"]
   },
   {
-    "id": "reply-sla-update",
-    "title": "SLA timer update",
-    "tone": "Professional",
-    "body": "You're still within our SLA window. I'm watching the countdown and will check back with the next update in roughly 15 minutes.",
-    "editable": true,
-    "keywords": ["sla", "timer", "update"]
-  },
-  {
-    "id": "reply-plugin-troubleshoot",
-    "title": "Plugin/Mod triage",
-    "tone": "Calm",
-    "body": "Would you mind disabling the latest plugin temporarily and sending me the crash log so we can confirm whether it's a compatibility issue?",
-    "editable": true,
-    "keywords": ["plugin", "crash", "log"]
-  },
-  {
-    "id": "reply-billing-clarify",
-    "title": "Billing clarity",
+    "id": "reply-billing-clarification",
+    "title": "Billing clarity commitment",
     "tone": "Supportive",
-    "body": "Let me walk you through the invoice state and next steps. I can release the suspension once the automation cycle acknowledges the paid invoice.",
+    "category": "billing-clarification",
+    "segments": {
+      "acknowledgment": "Thanks for sending over the billing details and screenshot; that makes it easy to see what the ledger is saying.",
+      "ownership": "I'm reviewing the invoice timeline and manually matching what we see in the ledger so I can confidently explain the state.",
+      "nextStep": "Once I confirm the automation cycle, I’ll outline how we release the hold and share the exact ETA."
+    },
     "editable": true,
-    "keywords": ["billing", "invoice", "suspension"]
+    "keywords": ["billing", "invoice", "clarification"]
   },
   {
-    "id": "reply-kb-share",
-    "title": "Share KB article",
-    "tone": "Helpful",
-    "body": "This KB article covers the exact steps we've been talking about. I'm happy to take you through any part that needs more explanation.",
+    "id": "reply-troubleshooting-step",
+    "title": "Step-by-step troubleshooting",
+    "tone": "Calm",
+    "category": "troubleshooting-step-request",
+    "segments": {
+      "acknowledgment": "Great detail in your log excerpt, that really helps us focus on the root cause.",
+      "ownership": "I’m coordinating with operations to parse the module output and keep the timeline short.",
+      "nextStep": "Can you temporarily disable the latest plugin and share the resulting crash log so we can compare the differences?"
+    },
     "editable": true,
-    "keywords": ["kb", "article", "link"]
+    "keywords": ["troubleshooting", "log", "plugin"]
   },
   {
-    "id": "reply-online-closure",
-    "title": "Closure reminder",
+    "id": "reply-outage-acknowledgment",
+    "title": "Outage acknowledgment",
+    "tone": "Urgent",
+    "category": "outage-acknowledgment",
+    "segments": {
+      "acknowledgment": "I can see the site is down, and I know that disruption is unacceptable for your users.",
+      "ownership": "I’m on the case with the technical operations crew and keeping the updates flowing to make this visible.",
+      "nextStep": "I’ll share either a deploy-ready fix or another status in 15 minutes, whichever happens first."
+    },
+    "editable": true,
+    "keywords": ["outage", "status", "visibility"]
+  },
+  {
+    "id": "reply-upgrade-reassurance",
+    "title": "Upgrade reassurance",
+    "tone": "Reassuring",
+    "category": "upgrade-reassurance",
+    "segments": {
+      "acknowledgment": "Thanks for checking in before proceeding with the upgrade; that keeps risk low for everyone.",
+      "ownership": "I’m coordinating with product and ops to make sure the rollback and monitoring plan are in place.",
+      "nextStep": "I’ll reconfirm the upgrade window once I verify the capacity and share the scheduled time with you."
+    },
+    "editable": true,
+    "keywords": ["upgrade", "reassurance", "coordination"]
+  },
+  {
+    "id": "reply-escalation-handoff",
+    "title": "Escalation handoff",
+    "tone": "Confident",
+    "category": "escalation-handoff",
+    "segments": {
+      "acknowledgment": "I understand why you want to level up this case, especially with the time pressure you’re under.",
+      "ownership": "I’m flagging it to Tier 3 Finance with the full summary of what we’ve parsed so far.",
+      "nextStep": "Expect a follow-up from the senior analyst within about five minutes, and I’ll stay looped in for alignment."
+    },
+    "editable": true,
+    "keywords": ["escalation", "handoff", "finance"]
+  },
+  {
+    "id": "reply-closure-follow-up",
+    "title": "Closure and follow-up",
     "tone": "Professional",
-    "body": "Before we close this ticket, I want to confirm that the follow-up plan and prevention steps are documented and that you're comfortable with the fix.",
+    "category": "closure-follow-up",
+    "segments": {
+      "acknowledgment": "Appreciate the confirmation that everything looks stable again.",
+      "ownership": "I’m wrapping this ticket up with a quick recap in our KB so the fix and follow-up are recorded.",
+      "nextStep": "If anything reoccurs just hit reply and we’ll reopen it; otherwise I’ll close this ticket by the end of the day."
+    },
     "editable": true,
-    "keywords": ["closure", "prevention", "follow-up"]
+    "keywords": ["closure", "follow-up", "documentation"]
   }
 ]
