@@ -1,0 +1,50 @@
+[
+  {
+    "id": "reply-acknowledge-escalation",
+    "title": "Acknowledge + empathy",
+    "tone": "Empathetic",
+    "body": "I completely understand how frustrating this feels. I'm reviewing the logs now and will escalate to the right tier if timing starts to slip.",
+    "editable": true,
+    "keywords": ["ownership", "escalation"]
+  },
+  {
+    "id": "reply-sla-update",
+    "title": "SLA timer update",
+    "tone": "Professional",
+    "body": "You're still within our SLA window. I'm watching the countdown and will check back with the next update in roughly 15 minutes.",
+    "editable": true,
+    "keywords": ["sla", "timer", "update"]
+  },
+  {
+    "id": "reply-plugin-troubleshoot",
+    "title": "Plugin/Mod triage",
+    "tone": "Calm",
+    "body": "Would you mind disabling the latest plugin temporarily and sending me the crash log so we can confirm whether it's a compatibility issue?",
+    "editable": true,
+    "keywords": ["plugin", "crash", "log"]
+  },
+  {
+    "id": "reply-billing-clarify",
+    "title": "Billing clarity",
+    "tone": "Supportive",
+    "body": "Let me walk you through the invoice state and next steps. I can release the suspension once the automation cycle acknowledges the paid invoice.",
+    "editable": true,
+    "keywords": ["billing", "invoice", "suspension"]
+  },
+  {
+    "id": "reply-kb-share",
+    "title": "Share KB article",
+    "tone": "Helpful",
+    "body": "This KB article covers the exact steps we've been talking about. I'm happy to take you through any part that needs more explanation.",
+    "editable": true,
+    "keywords": ["kb", "article", "link"]
+  },
+  {
+    "id": "reply-online-closure",
+    "title": "Closure reminder",
+    "tone": "Professional",
+    "body": "Before we close this ticket, I want to confirm that the follow-up plan and prevention steps are documented and that you're comfortable with the fix.",
+    "editable": true,
+    "keywords": ["closure", "prevention", "follow-up"]
+  }
+]

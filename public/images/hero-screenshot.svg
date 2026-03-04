@@ -1,0 +1,5 @@
+<svg width="400" height="240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="240" rx="18" fill="#0b1225" stroke="#4450ff" stroke-width="3"/>
+  <text x="50%" y="40%" text-anchor="middle" fill="#82c7ff" font-size="22" font-family="Inter, sans-serif">HostDesk Snapshot</text>
+  <text x="50%" y="60%" text-anchor="middle" fill="#9fb8ff" font-size="12">Ticket intake + SLA timer</text>
+</svg>

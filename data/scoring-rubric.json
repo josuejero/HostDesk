@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "focus": "Balanced SLA + empathy",
+  "metrics": [
+    {
+      "id": "slaCompliance",
+      "label": "SLA compliance",
+      "weight": 20,
+      "description": "Keeps customers informed without letting the SLA timer run out.",
+      "max": 25,
+      "suggestion": "Recheck the SLA countdown and acknowledge escalation paths early."
+    },
+    {
+      "id": "communication",
+      "label": "Communication & empathy",
+      "weight": 20,
+      "description": "Writes customer-facing replies that show ownership and calm the situation.",
+      "max": 20,
+      "suggestion": "Mirror the customer's tone, clarify next steps, and thank them for patience."
+    },
+    {
+      "id": "technicalOwnership",
+      "label": "Technical ownership",
+      "weight": 20,
+      "description": "Flags technical context, reproductions, and clear next actions.",
+      "max": 20,
+      "suggestion": "Document diagnostic steps before routing and share them internally if needed."
+    },
+    {
+      "id": "kbSelfService",
+      "label": "KB & self-service",
+      "weight": 15,
+      "description": "Shares relevant KB articles with personalization and context.",
+      "max": 15,
+      "suggestion": "Send the best-fitting KB article with a custom intro rather than pasting it raw."
+    },
+    {
+      "id": "escalationJudgment",
+      "label": "Escalation judgment",
+      "weight": 15,
+      "description": "Routes appropriately and documents when to push or hold an escalation.",
+      "max": 10,
+      "suggestion": "Note timing windows and similar incidents to justify escalation decisions."
+    },
+    {
+      "id": "closureCompleteness",
+      "label": "Closure completeness",
+      "weight": 10,
+      "description": "Includes root cause, fix, follow-up, and prevention before resolving.",
+      "max": 10,
+      "suggestion": "Finish the postmortem fields and summarize them for the customer."
+    }
+  ]
+}

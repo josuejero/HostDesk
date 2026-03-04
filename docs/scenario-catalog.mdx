@@ -1,0 +1,38 @@
+import scenarioCatalog from '../data/scenario-catalog.json';
+
+# Scenario Catalog
+
+HostDesk ships with a catalog of 17 synthetic scenarios that span Technical, Billing/Account, and Communication/Judgment buckets. Each entry is defined in `data/scenario-catalog.json` and models a realistic support shift moment with full SLA, routing, KB, and scoring context.
+
+## Category breakdown
+
+- **Technical** (Mod/plugin failures, DNS, access and performance incidents):
+  - Minecraft Plugin Crash
+  - Discord Bot Overnight Outage
+  - cPanel Login Loop
+  - Backup Restore Failure
+  - DNS Change Not Propagating
+  - High Ping / Lag Complaint
+  - Mod Conflict
+
+- **Billing / Account** (Invoices, upgrades, refund requests, renewals):
+  - Billing Suspension
+  - Upgrade Request Without Data Loss
+  - Downgrade & Refund Question
+  - Domain Renewal Confusion
+  - Failed Autopay but Active Card
+
+- **Communication / Judgment** (Empathy, escalation, duplicate tickets):
+  - Angry Customer After Repeated Outages
+  - Unsupported Admin Action Request
+  - Vague Complaint
+  - Premium-plan Expecting Faster Turnaround
+  - Duplicate Tickets From Same Incident
+
+Each scenario object contains:
+
+1. `ticket`: the base ticket with `thread`, `internalNotes`, `scorecard`, and SLA targets.
+2. `customerProfile`: persona, plan, SLA entitlement, timezone, server region.
+3. `escalationRules`: tier path and notes that reinforce Zendesk-style routing.
+
+Open `data/scenario-catalog.json` to see the full payload, or load the JSON in the app to explore the seeded cases in the UI.

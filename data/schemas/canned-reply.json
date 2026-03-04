@@ -1,0 +1,13 @@
+{
+  "title": "Canned reply schema",
+  "summary": "Captures reusable replies that stay editable before sending.",
+  "fields": {
+    "id": "string",
+    "title": "string",
+    "tone": "string (Empathetic, Professional, Calm, etc.)",
+    "body": "string",
+    "editable": "boolean",
+    "keywords": "array of strings"
+  },
+  "notes": "Canned replies should be lightweight templates that agents personalize before hitting send."
+}

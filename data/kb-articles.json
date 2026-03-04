@@ -1,0 +1,121 @@
+[
+  {
+    "id": "kb-billing-hold-suspension",
+    "title": "Resolving Billing Holds & Suspensions",
+    "summary": "Steps to verify invoice state, release a suspension lock, and communicate the fix to the customer.",
+    "keywords": ["billing", "suspension", "invoice", "hold"],
+    "link": "https://hostdesk.example.com/kb/billing-hold"
+  },
+  {
+    "id": "kb-plugin-compatibility",
+    "title": "Plugin Compatibility Checklist",
+    "summary": "How to test new plugins against Harmony patches and modpacks without crashing the World.",
+    "keywords": ["plugin", "mod", "crash", "compatibility"],
+    "link": "https://hostdesk.example.com/kb/plugin-compatibility"
+  },
+  {
+    "id": "kb-mod-conflicts",
+    "title": "Handling Modpack File Conflicts",
+    "summary": "Detecting duplicate assets and mod conflicts that happen when multiple mods write to the same file.",
+    "keywords": ["mod", "conflict", "textures", "modpack"],
+    "link": "https://hostdesk.example.com/kb/mod-conflicts"
+  },
+  {
+    "id": "kb-discord-bot-restarter",
+    "title": "Discord Bot Recovery Steps",
+    "summary": "Best practices for restarting bot listeners, reissuing API tokens, and validating uptime.",
+    "keywords": ["bot", "discord", "outage", "restart"],
+    "link": "https://hostdesk.example.com/kb/discord-bot"
+  },
+  {
+    "id": "kb-panel-login-loop",
+    "title": "Fixing Panel Login Loops",
+    "summary": "How to clear cookies, reset SSO tokens, and get the customer back into cPanel.",
+    "keywords": ["panel", "login", "cpanel", "cookie"],
+    "link": "https://hostdesk.example.com/kb/panel-access"
+  },
+  {
+    "id": "kb-backup-restore-checks",
+    "title": "Backup Restore Checklist",
+    "summary": "Validated steps to restore a backup, flush caches, and verify timestamps.",
+    "keywords": ["backup", "restore", "cdn", "cache"],
+    "link": "https://hostdesk.example.com/kb/backup-restore"
+  },
+  {
+    "id": "kb-dns-propagation",
+    "title": "DNS Propagation Truths",
+    "summary": "How TTLs, NS updates, and CDN caching influence DNS propagation times.",
+    "keywords": ["dns", "propagation", "ns", "records"],
+    "link": "https://hostdesk.example.com/kb/dns-propagation"
+  },
+  {
+    "id": "kb-high-latency-troubleshooting",
+    "title": "High Latency Troubleshooting",
+    "summary": "Diagnose CPU spikes, cron job contention, and network hops causing ping spikes.",
+    "keywords": ["lag", "latency", "cpu", "performance"],
+    "link": "https://hostdesk.example.com/kb/performance"
+  },
+  {
+    "id": "kb-plan-upgrade-checklist",
+    "title": "Plan Upgrade Checklist",
+    "summary": "Checklist for migrating plans with minimal disruption and preserving configs.",
+    "keywords": ["upgrade", "plan", "migration", "downtime"],
+    "link": "https://hostdesk.example.com/kb/plan-upgrade"
+  },
+  {
+    "id": "kb-refunds-downgrade",
+    "title": "Downgrades & Refunds",
+    "summary": "How prorated refunds work and how to guide customers through schedule changes.",
+    "keywords": ["refund", "downgrade", "billing", "prorated"],
+    "link": "https://hostdesk.example.com/kb/downgrade-refund"
+  },
+  {
+    "id": "kb-domain-renewal",
+    "title": "Domain Renewal Workflow",
+    "summary": "Steps for verifying auto-renew, handling duplicate charges, and confirming registrar updates.",
+    "keywords": ["domain", "renewal", "registrar", "charge"],
+    "link": "https://hostdesk.example.com/kb/domain-renewal"
+  },
+  {
+    "id": "kb-autopay-retry",
+    "title": "Autopay Retry Strategy",
+    "summary": "How to handle AVS mismatches, ramp up retries, and keep service online despite failed autopay.",
+    "keywords": ["autopay", "payment", "avs", "gateway"],
+    "link": "https://hostdesk.example.com/kb/autopay"
+  },
+  {
+    "id": "kb-outage-communication",
+    "title": "Communicating High-Touch Outages",
+    "summary": "Templates for letting customers know about outages, steps being taken, and follow-up commitments.",
+    "keywords": ["outage", "communication", "escalation", "update"],
+    "link": "https://hostdesk.example.com/kb/outage-comms"
+  },
+  {
+    "id": "kb-policy-root-access",
+    "title": "Privileged Access Policy",
+    "summary": "Why we don't allow root shells and how to offer secure alternatives.",
+    "keywords": ["policy", "root", "shell", "access"],
+    "link": "https://hostdesk.example.com/kb/access-policy"
+  },
+  {
+    "id": "kb-clarify-issues",
+    "title": "Guided Diagnostic Questions",
+    "summary": "Prompt structure for drawing the right technical details out of vague reports.",
+    "keywords": ["clarify", "information", "triage", "diagnostics"],
+    "link": "https://hostdesk.example.com/kb/diagnostic-questions"
+  },
+  {
+    "id": "kb-premium-expectations",
+    "title": "Premium SLA Expectations",
+    "summary": "How our premium plans differentiate from competitors and what the SLA windows look like.",
+    "keywords": ["premium", "sla", "expectations", "turnaround"],
+    "link": "https://hostdesk.example.com/kb/premium-sla"
+  },
+  {
+    "id": "kb-duplicate-tickets",
+    "title": "Handling Duplicate Tickets",
+    "summary": "When to merge duplicates, how to reassure customers, and how to keep one source of truth.",
+    "keywords": ["duplicate", "ticket", "triage", "merge"],
+    "link": "https://hostdesk.example.com/kb/duplicate-tickets"
+  }
+]

@@ -1,0 +1,1977 @@
+[
+  {
+    "id": "scenario-billing-suspension",
+    "bucket": "Billing/Account",
+    "title": "Billing Suspension",
+    "description": "Invoice shows paid but the container host is still suspended; customer is frustrated and wants ownership.",
+    "tags": ["billing", "suspension", "invoice", "ownership"],
+    "ticket": {
+      "id": "ticket-billing-suspension",
+      "subject": "Invoice paid, but site still suspended",
+      "department": "Billing & Accounts",
+      "severity": "High",
+      "priority": "Urgent",
+      "status": "Escalated",
+      "plan": "Standard",
+      "slaTargetMinutes": 60,
+      "createdAt": "2026-03-01T09:30:00Z",
+      "assignedTo": "Lena Torres",
+      "escalationTier": "Tier 2 - Billing",
+      "invoiceState": "Paid - Service Suspended",
+      "recentIncidents": [
+        "Invoice #HB-4927 cleared 17 minutes ago but suspension flag persists",
+        "Customer reports the panel still shows 'Service Suspended'"
+      ],
+      "thread": [
+        {
+          "id": "thread-1",
+          "author": "Morgan (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-01T09:18:00Z",
+          "message": "I paid the invoice through Stripe. Why is the hosting still suspended?"
+        },
+        {
+          "id": "thread-2",
+          "author": "Lena Torres",
+          "audience": "customer",
+          "createdAt": "2026-03-01T09:22:00Z",
+          "message": "Thanks for the screenshot of the receipt. I'm checking with billing ops before unsuspending."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-1",
+          "author": "Ops Lead",
+          "audience": "internal",
+          "createdAt": "2026-03-01T09:24:00Z",
+          "message": "Billing clearing webhook is delayed; invoice is marked paid but suspension lock still on database."
+        }
+      ],
+      "kbMatches": ["kb-billing-hold-suspension"],
+      "postmortem": {
+        "rootCause": "Suspension flag not cleared after manual payment reconciliation.",
+        "fix": "Cleared the suspension flag and re-ran the notification job.",
+        "followUp": "Notify billing automation to recheck the webhook within 15 minutes.",
+        "prevention": "Add coverage to the reconciliation job to release suspensions when invoices hit paid state."
+      },
+      "scorecard": {
+        "total": 73,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 18,
+            "max": 25,
+            "note": "Escalated before SLA breached but still under 60-minute target."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 16,
+            "max": 20,
+            "note": "Customer-facing reply acknowledged pain but lacked next ETA."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 14,
+            "max": 20,
+            "note": "Internal note captured the automation delay."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 12,
+            "max": 15,
+            "note": "Shared billing hold article; could customize further."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "Escalated appropriately after webhook lag."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 7,
+            "max": 10,
+            "note": "Postmortem ready but still needs verification."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-001",
+      "name": "Four Rivers Productions",
+      "planTier": "Standard",
+      "persona": "Media agency, low-technical",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 90,
+      "timezone": "America/Los_Angeles",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 2 - Billing",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Billing",
+        "Tier 3 - Finance Ops"
+      ],
+      "notes": "Auto-escalation kicks in 45 minutes after first response; Finance gets CC when invoice states mismatch."
+    }
+  },
+  {
+    "id": "scenario-minecraft-plugin-crash",
+    "bucket": "Technical",
+    "title": "Minecraft Plugin Crash",
+    "description": "New modpack plugin causes the dedicated host to crash at startup, blocking the customer's community.",
+    "tags": ["technical", "plugin", "minecraft", "mod conflict"],
+    "ticket": {
+      "id": "ticket-minecraft-plugin",
+      "subject": "Server crashes when the new economy plugin loads",
+      "department": "Technical Operations",
+      "severity": "Critical",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Pro",
+      "slaTargetMinutes": 45,
+      "createdAt": "2026-03-02T18:05:00Z",
+      "assignedTo": "Ravi Dalal",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Crash logs reference ModEconomy v3.2 failing sanity check",
+        "Server reboots when plugin tries to bind to local database"
+      ],
+      "thread": [
+        {
+          "id": "thread-3",
+          "author": "Imani (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-02T18:00:00Z",
+          "message": "After I installed the new economy plugin, the server won't start."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-2",
+          "author": "Ravi",
+          "audience": "internal",
+          "createdAt": "2026-03-02T18:07:00Z",
+          "message": "Resembles ModEconomy conflict with the custom Harmony patch. Container logs show stack overflow after plugin init."
+        }
+      ],
+      "kbMatches": ["kb-plugin-compatibility", "kb-mod-conflicts"],
+      "postmortem": {
+        "rootCause": "Harmony patch conflicted with ModEconomy v3.2, leading to repeated stack overflows.",
+        "fix": "Rolled back to ModEconomy v3.0 and patched Harmony to respect new APIs.",
+        "followUp": "Recommend plugin compatibility check before deploying any new mod on this host.",
+        "prevention": "Add a mod compatibility checklist to the KB and rerun automated sanity tests."
+      },
+      "scorecard": {
+        "total": 78,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 22,
+            "max": 25,
+            "note": "SLA is tight but response time was 5 minutes."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 15,
+            "max": 20,
+            "note": "Acknowledged outage but can add step-by-step updates."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 18,
+            "max": 20,
+            "note": "Internal note documents stack trace details."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 12,
+            "max": 15,
+            "note": "Sharing compatibility article would calm the gaming guild."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 7,
+            "max": 10,
+            "note": "Ticket stays Tier 1 but has path to Tier 2."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 4,
+            "max": 10,
+            "note": "Postmortem draft needs follow-up."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-017",
+      "name": "Skyline Play",
+      "planTier": "Pro",
+      "persona": "Community builder, cooperative modpack admin",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 60,
+      "timezone": "America/Chicago",
+      "serverRegion": "us-central"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Technical",
+        "Tier 2 - Server Engineering",
+        "Tier 3 - Game Ops"
+      ],
+      "notes": "Tier 1 should collect crash dumps before involving engineering."
+    }
+  },
+  {
+    "id": "scenario-discord-bot-outage",
+    "bucket": "Technical",
+    "title": "Discord Bot Overnight Outage",
+    "description": "Discord moderation bot hosted on HostDesk went offline overnight; premium customer needs postmortem.",
+    "tags": ["bot", "incident", "premium", "sla"],
+    "ticket": {
+      "id": "ticket-discord-bot",
+      "subject": "Bot went offline between 03:00 and 05:00",
+      "department": "Customer Advocacy",
+      "severity": "High",
+      "priority": "High",
+      "status": "Waiting on Customer",
+      "plan": "Enterprise",
+      "slaTargetMinutes": 30,
+      "createdAt": "2026-03-02T07:15:00Z",
+      "assignedTo": "Noah Kim",
+      "escalationTier": "Tier 2 - Incident",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "External monitoring recorded 120 minutes of downtime",
+        "Bot restarted automatically but core listeners did not reconnect"
+      ],
+      "thread": [
+        {
+          "id": "thread-4",
+          "author": "Mira (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-02T07:10:00Z",
+          "message": "Discord moderators were unable to run commands while the bot was down."
+        },
+        {
+          "id": "thread-5",
+          "author": "Noah",
+          "audience": "customer",
+          "createdAt": "2026-03-02T07:20:00Z",
+          "message": "I'm digging into the approximate outage window; can you confirm if any manual restarts occurred?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-3",
+          "author": "Noah",
+          "audience": "internal",
+          "createdAt": "2026-03-02T07:18:00Z",
+          "message": "App server crashed when Discord API hits exceeded the user tier; listener thread failed to reregister."
+        }
+      ],
+      "kbMatches": ["kb-discord-bot-restarter"],
+      "postmortem": {
+        "rootCause": "Rate-limit spike triggered automatic restarts but the reconnection loop never finished.",
+        "fix": "Restarted the discord bot with throttled re-registration and force update on the API token.",
+        "followUp": "Revisit premium tier concurrency limits and note it in the incident report.",
+        "prevention": "Add jittered back-off to the listener and monitor the queue depth."
+      },
+      "scorecard": {
+        "total": 79,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 23,
+            "max": 25,
+            "note": "Responded within 5 minutes; SLA still open."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 17,
+            "max": 20,
+            "note": "Clear question asked, but needs follow-up summary."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 18,
+            "max": 20,
+            "note": "Internal note captured the failure window."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 14,
+            "max": 15,
+            "note": "Incident article ready to share once validated."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 7,
+            "max": 10,
+            "note": "Elevated due to premium plan SLA."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 0,
+            "max": 10,
+            "note": "Postmortem still in progress."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-023",
+      "name": "Northbound Gaming",
+      "planTier": "Enterprise",
+      "persona": "High-touch operations lead",
+      "billingCycle": "Quarterly",
+      "slaEntitlementMinutes": 30,
+      "timezone": "America/New_York",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 2 - Incident",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Incident Response",
+        "Tier 3 - Platform"
+      ],
+      "notes": "Escalate immediately if outages exceed 30 minutes rollout."
+    }
+  },
+  {
+    "id": "scenario-cpanel-login-loop",
+    "bucket": "Technical",
+    "title": "cPanel Login Loop",
+    "description": "Customer cannot break out of the cPanel login loop after repeated 2FA failures; they fear an attack.",
+    "tags": ["panel", "access", "security", "cPanel"],
+    "ticket": {
+      "id": "ticket-cpanel-loop",
+      "subject": "cPanel keeps kicking me back to the login screen",
+      "department": "Customer Advocacy",
+      "severity": "Medium",
+      "priority": "Medium",
+      "status": "Open",
+      "plan": "Standard",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-02-27T14:45:00Z",
+      "assignedTo": "Jules Becker",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Two-factor auth request attempted unsuccessfully four times",
+        "Browser shows login success but returns to the same form"
+      ],
+      "thread": [
+        {
+          "id": "thread-6",
+          "author": "Ava (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-27T14:40:00Z",
+          "message": "I keep entering the code and it refreshes me back to the login screen."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-4",
+          "author": "Jules",
+          "audience": "internal",
+          "createdAt": "2026-02-27T14:41:00Z",
+          "message": "Artifact from SSO session cookie; reissuing cookie should fix loop."
+        }
+      ],
+      "kbMatches": ["kb-panel-login-loop"],
+      "postmortem": {
+        "rootCause": "SSO cookie had expired token, causing redirect loop.",
+        "fix": "Cleared cPanel session and forced new SSO handshake.",
+        "followUp": "Document the cookie refresh steps for frontline staff.",
+        "prevention": "Add a KB snippet on cookie refresh to the login article."
+      },
+      "scorecard": {
+        "total": 62,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 14,
+            "max": 25,
+            "note": "Within SLA window but earlier response could reduce stress."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 14,
+            "max": 20,
+            "note": "Calm tone but can offer more assurance."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 13,
+            "max": 20,
+            "note": "Documented cookie reset."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "Shared KB article with instructions."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "Tier 1 is correct for now."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 4,
+            "max": 10,
+            "note": "Postmortem still needs final confirmation."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-043",
+      "name": "White Oak Design",
+      "planTier": "Standard",
+      "persona": "Boutique agency with single admin",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/New_York",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Security Ops"
+      ],
+      "notes": "Escalate if OTP requests exceed 4 in a 30-minute window."
+    }
+  },
+  {
+    "id": "scenario-backup-restore-failed",
+    "bucket": "Technical",
+    "title": "Backup Restore Failure",
+    "description": "Customer ran the restore button but their database stays at the pre-rollback state.",
+    "tags": ["backup", "restore", "confusion", "database"],
+    "ticket": {
+      "id": "ticket-backup-restore",
+      "subject": "Restored backup but site still old version",
+      "department": "Technical Operations",
+      "severity": "Medium",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Core",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-02-25T11:30:00Z",
+      "assignedTo": "Imani Stokes",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Flat-file backup flagged 7 minutes after restore",
+        "Database restore job completed but elapsed 2 hours ago"
+      ],
+      "thread": [
+        {
+          "id": "thread-7",
+          "author": "Emir (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-25T11:25:00Z",
+          "message": "I ran the restore for the Feb 10 backup but I still see the older homepage."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-5",
+          "author": "Imani",
+          "audience": "internal",
+          "createdAt": "2026-02-25T11:31:00Z",
+          "message": "Restore completed but caching layer still pointing to cached HTML. Need to flush CDN."
+        }
+      ],
+      "kbMatches": ["kb-backup-restore-checks"],
+      "postmortem": {
+        "rootCause": "CDN cache and database were not invalidated after restore.",
+        "fix": "Ran cache flush and validated file timestamps.",
+        "followUp": "Add note to run CDN purge automatically after restores for this tier.",
+        "prevention": "Document the CDN flush step in the restore KB article."
+      },
+      "scorecard": {
+        "total": 65,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 15,
+            "max": 25,
+            "note": "Still inside the longer SLA window."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 13,
+            "max": 20,
+            "note": "Needs more clarity on the next steps."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 14,
+            "max": 20,
+            "note": "Documented caching dependency."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "Article ready once flush completes."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "Tier 1 is acceptable."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 6,
+            "max": 10,
+            "note": "Postmortem nearly complete."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-052",
+      "name": "Crescent Outdoor",
+      "planTier": "Core",
+      "persona": "Solo founder",
+      "billingCycle": "Annual",
+      "slaEntitlementMinutes": 240,
+      "timezone": "America/Denver",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Storage"
+      ],
+      "notes": "Escalate if backup restore exceeds 3 hours or CDN flush fails twice."
+    }
+  },
+  {
+    "id": "scenario-dns-propagation",
+    "bucket": "Technical",
+    "title": "DNS Change Not Propagating",
+    "description": "DNS change landed in registrars but the domain still points to the old host across Europe.",
+    "tags": ["dns", "propagation", "network", "domain"],
+    "ticket": {
+      "id": "ticket-dns-propagation",
+      "subject": "DNS record update not propagating",
+      "department": "Infrastructure",
+      "severity": "High",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Pro",
+      "slaTargetMinutes": 60,
+      "createdAt": "2026-03-03T08:10:00Z",
+      "assignedTo": "Evelyn Park",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "TTL for A record is 900 seconds but 4 hours later old IP still resolves in EU",
+        "Registrar confirms the update completed, but the NS group still shows old entry"
+      ],
+      "thread": [
+        {
+          "id": "thread-8",
+          "author": "Sofia (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-03T08:07:00Z",
+          "message": "The site still loads the old server despite updating the DNS."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-6",
+          "author": "Evelyn",
+          "audience": "internal",
+          "createdAt": "2026-03-03T08:09:00Z",
+          "message": "Current NS set includes legacy overlay; plan to push new NS group and monitor."
+        }
+      ],
+      "kbMatches": ["kb-dns-propagation"],
+      "postmortem": {
+        "rootCause": "Legacy NS group slowed propagation across the European edge nodes.",
+        "fix": "Updated NS group, confirmed propagation in 10 minutes, and cleared CDN caches.",
+        "followUp": "Add stub to KB about checking registrar NS after hot changes.",
+        "prevention": "Prep DNS change checklist with propagation monitoring steps."
+      },
+      "scorecard": {
+        "total": 74,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 20,
+            "max": 25,
+            "note": "Response came before SLA window closed."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 17,
+            "max": 20,
+            "note": "Customer feels heard but needs propagation updates."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 18,
+            "max": 20,
+            "note": "Documented NS issue and fix."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 14,
+            "max": 15,
+            "note": "Article matched keywords well."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 5,
+            "max": 10,
+            "note": "Plan not yet to push to Tier 2."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 0,
+            "max": 10,
+            "note": "Postmortem not filled yet."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-068",
+      "name": "Atlas Artisan",
+      "planTier": "Pro",
+      "persona": "Creative marketer with limited DNS knowledge",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 60,
+      "timezone": "Europe/London",
+      "serverRegion": "eu-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - DNS",
+        "Tier 2 - Networking"
+      ],
+      "notes": "Escalate if propagation exceeds 6 hours or registrar denies changes."
+    }
+  },
+  {
+    "id": "scenario-high-lag",
+    "bucket": "Technical",
+    "title": "High Ping / Lag Complaint",
+    "description": "Customer sees constant 300+ ms ping spikes during peak night hours despite premium plan.",
+    "tags": ["performance", "lag", "ping", "monitoring"],
+    "ticket": {
+      "id": "ticket-high-lag",
+      "subject": "Players seeing 300ms latency spikes in the evening",
+      "department": "Technical Operations",
+      "severity": "Medium",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Enterprise",
+      "slaTargetMinutes": 90,
+      "createdAt": "2026-03-02T20:10:00Z",
+      "assignedTo": "Nia Laurent",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Peak load starts at 20:00 UTC, coinciding with player queue growth",
+        "Host CPU spikes to 95% when latency climbs"
+      ],
+      "thread": [
+        {
+          "id": "thread-9",
+          "author": "Irene (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-02T20:05:00Z",
+          "message": "Saw 300ms ping tonight, the community is noticing huge frame drops."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-7",
+          "author": "Nia",
+          "audience": "internal",
+          "createdAt": "2026-03-02T20:07:00Z",
+          "message": "Host metrics show CPU climb; suspect cron job spike affecting IO."
+        }
+      ],
+      "kbMatches": ["kb-high-latency-troubleshooting"],
+      "postmortem": {
+        "rootCause": "Nightly backup cron job contended with game server threads, spiking latency.",
+        "fix": "Rescheduled backups and added CPU guard rails.",
+        "followUp": "Add automation to pause non-critical jobs during peak concurrency.",
+        "prevention": "Document the CPU scheduling guidelines in the performance KB."
+      },
+      "scorecard": {
+        "total": 81,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 20,
+            "max": 25,
+            "note": "Responded quickly; ongoing updates expected."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 16,
+            "max": 20,
+            "note": "Took ownership but follow-up promises needed."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 18,
+            "max": 20,
+            "note": "Identified backup conflict."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 13,
+            "max": 15,
+            "note": "Ready to share performance article."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 8,
+            "max": 10,
+            "note": "Keep in Tier 1 but monitor."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 6,
+            "max": 10,
+            "note": "Postmortem drafted but not shared."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-090",
+      "name": "Northern Echoes eSports",
+      "planTier": "Enterprise",
+      "persona": "Event-driven ops director",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 45,
+      "timezone": "Europe/Amsterdam",
+      "serverRegion": "eu-central"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Performance",
+        "Tier 2 - Infrastructure"
+      ],
+      "notes": "Offer to escalate when lag persists for two business hours."
+    }
+  },
+  {
+    "id": "scenario-mod-conflict",
+    "bucket": "Technical",
+    "title": "Mod Conflict",
+    "description": "Two mods try to write to the same file, causing a startup failure and a crash dump for the server.",
+    "tags": ["mod conflict", "crash", "modpack"],
+    "ticket": {
+      "id": "ticket-mod-conflict",
+      "subject": "Modpack crashes with stack trace pointing to textures.json",
+      "department": "Technical Operations",
+      "severity": "High",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Pro",
+      "slaTargetMinutes": 60,
+      "createdAt": "2026-03-03T12:40:00Z",
+      "assignedTo": "Ravi Dalal",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Crash occurs shortly after the world loads",
+        "Textures module can't find textures.json when both mods install"
+      ],
+      "thread": [
+        {
+          "id": "thread-10",
+          "author": "Kara (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-03T12:35:00Z",
+          "message": "We hit a crash while loading the modpack after the latest update."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-8",
+          "author": "Ravi",
+          "audience": "internal",
+          "createdAt": "2026-03-03T12:37:00Z",
+          "message": "Mods A and B both write textures.json; need to modify the override order."
+        }
+      ],
+      "kbMatches": ["kb-plugin-compatibility"],
+      "postmortem": {
+        "rootCause": "Two textures mods fighting over the same file when the world loads.",
+        "fix": "Temporarily disabled the secondary mod and documented the override order.",
+        "followUp": "Recommend mod compatibility check before patching next update.",
+        "prevention": "Add mod conflict detection to automation."
+      },
+      "scorecard": {
+        "total": 72,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 21,
+            "max": 25,
+            "note": "Fast reply; still in SLA window."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 15,
+            "max": 20,
+            "note": "Needs more proactive updates."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 17,
+            "max": 20,
+            "note": "Documented conflicting mods."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "Caching article ready to share."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 5,
+            "max": 10,
+            "note": "Keep in Tier 1 for now."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 3,
+            "max": 10,
+            "note": "Needs postmortem detail."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-095",
+      "name": "NebulaMod Servers",
+      "planTier": "Pro",
+      "persona": "Modpack curator",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 45,
+      "timezone": "America/Los_Angeles",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Technical",
+        "Tier 2 - Mod Engineering",
+        "Tier 3 - Game Ops"
+      ],
+      "notes": "Escalate if a repeat mod conflict occurs after two reorders."
+    }
+  },
+  {
+    "id": "scenario-upgrade-request",
+    "bucket": "Billing/Account",
+    "title": "Upgrade Request Without Data Loss",
+    "description": "Customer wants to move from Standard to Pro without downtime and needs assurance on migration steps.",
+    "tags": ["upgrade", "workflow", "billing", "planning"],
+    "ticket": {
+      "id": "ticket-upgrade-request",
+      "subject": "Requesting upgrade to Pro tier without losing configs",
+      "department": "Billing & Accounts",
+      "severity": "Medium",
+      "priority": "Medium",
+      "status": "Open",
+      "plan": "Standard",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-02-28T10:40:00Z",
+      "assignedTo": "Lena Torres",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Pending Upgrade",
+      "recentIncidents": [
+        "Customer sees the Pro tier listed but upgrade button is disabled",
+        "No recent failures; just planning quote"
+      ],
+      "thread": [
+        {
+          "id": "thread-11",
+          "author": "Gaby (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-28T10:35:00Z",
+          "message": "Can we upgrade to Pro but keep the same IP and configs?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-9",
+          "author": "Lena",
+          "audience": "internal",
+          "createdAt": "2026-02-28T10:38:00Z",
+          "message": "Plan change requires a short downtime to scale storage. Need to coordinate with billing ops."
+        }
+      ],
+      "kbMatches": ["kb-plan-upgrade-checklist"],
+      "postmortem": {
+        "rootCause": "n/a",
+        "fix": "n/a",
+        "followUp": "Coordinate change window for upgrade.",
+        "prevention": "Document upgrade workflow in KB."
+      },
+      "scorecard": {
+        "total": 68,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 16,
+            "max": 25,
+            "note": "Still early in queue for planning request."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 16,
+            "max": 20,
+            "note": "Acknowledged concern but needs timeline."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 12,
+            "max": 20,
+            "note": "Need to confirm storage scaling steps."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 12,
+            "max": 15,
+            "note": "Upgrade checklist article referenced."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "Low severity, no escalation yet."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 6,
+            "max": 10,
+            "note": "Needs formal handoff."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-108",
+      "name": "Veridian Studios",
+      "planTier": "Standard",
+      "persona": "Growing digital agency",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/Chicago",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Billing",
+        "Tier 2 - Platform"
+      ],
+      "notes": "Escalate if upgrade requires manual provisioning longer than 4 hours."
+    }
+  },
+  {
+    "id": "scenario-downgrade-refund",
+    "bucket": "Billing/Account",
+    "title": "Downgrade & Refund Question",
+    "description": "Customer wants to downgrade due to budget pressure and asks about prorated refunds.",
+    "tags": ["billing", "refund", "billing cycle"],
+    "ticket": {
+      "id": "ticket-downgrade-refund",
+      "subject": "Need to downgrade and refund unused days",
+      "department": "Billing & Accounts",
+      "severity": "Medium",
+      "priority": "Medium",
+      "status": "Open",
+      "plan": "Pro",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-02-26T13:15:00Z",
+      "assignedTo": "Lena Torres",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Customer requests downgrade to Standard",
+        "Mentions budget hold until next quarter"
+      ],
+      "thread": [
+        {
+          "id": "thread-12",
+          "author": "Theo (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-26T13:10:00Z",
+          "message": "Can I downgrade to Standard and get a refund for the weeks left?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-10",
+          "author": "Lena",
+          "audience": "internal",
+          "createdAt": "2026-02-26T13:12:00Z",
+          "message": "Refund policy allows prorated credit; need finance approval for early downgrade."
+        }
+      ],
+      "kbMatches": ["kb-refunds-downgrade"],
+      "postmortem": {
+        "rootCause": "n/a",
+        "fix": "n/a",
+        "followUp": "Prepare downgrade instructions for future CFO inquiries.",
+        "prevention": "Add plan comparison to billing KB."
+      },
+      "scorecard": {
+        "total": 66,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 16,
+            "max": 25,
+            "note": "Standard SLA window for billing questions."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 17,
+            "max": 20,
+            "note": "Empathy shown but needs proactive guidance."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 11,
+            "max": 20,
+            "note": "More clarity on plan differences needed."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 12,
+            "max": 15,
+            "note": "Shared refund policy doc."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 5,
+            "max": 10,
+            "note": "No escalation required."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 5,
+            "max": 10,
+            "note": "Capture final refund once approved."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-118",
+      "name": "Blue Bridge Films",
+      "planTier": "Pro",
+      "persona": "Budget-conscious studio lead",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/Los_Angeles",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Billing",
+        "Tier 2 - Finance"
+      ],
+      "notes": "Escalate to finance for any refunds that exceed $1,000."
+    }
+  },
+  {
+    "id": "scenario-domain-renewal",
+    "bucket": "Billing/Account",
+    "title": "Domain Renewal Confusion",
+    "description": "Customer says domain expired despite auto-renew being on; they want clarity before renewal hits their card.",
+    "tags": ["domain", "renewal", "billing"],
+    "ticket": {
+      "id": "ticket-domain-renewal",
+      "subject": "Domain renewal charged twice",
+      "department": "Billing & Accounts",
+      "severity": "Medium",
+      "priority": "Medium",
+      "status": "Open",
+      "plan": "Standard",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-02-24T09:05:00Z",
+      "assignedTo": "Lena Torres",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Past Due",
+      "recentIncidents": [
+        "Wake up to charge from registrar despite auto-renew on",
+        "Registrar support assigned ticket #REG-908"
+      ],
+      "thread": [
+        {
+          "id": "thread-13",
+          "author": "Elise (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-24T09:00:00Z",
+          "message": "I was billed twice for the domain and now it's showing past due."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-11",
+          "author": "Lena",
+          "audience": "internal",
+          "createdAt": "2026-02-24T09:02:00Z",
+          "message": "Registrar report says auto-renew failed due to expired card; need to coordinate refund for duplicate charge."
+        }
+      ],
+      "kbMatches": ["kb-domain-renewal"],
+      "postmortem": {
+        "rootCause": "Failed card prevented auto-renew so registrar issued manual charge.",
+        "fix": "Processed refund for duplicate charge and updated card on file.",
+        "followUp": "Send confirmation of renewal status once registrar updates records.",
+        "prevention": "Refresh billing KB to call out manual renewal steps."
+      },
+      "scorecard": {
+        "total": 64,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 18,
+            "max": 25,
+            "note": "SLA still healthy."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 15,
+            "max": 20,
+            "note": "Needs more empathy on double charge."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 11,
+            "max": 20,
+            "note": "Working through registrar."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 10,
+            "max": 15,
+            "note": "Domain renewal KB shared."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "No further escalation yet."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 4,
+            "max": 10,
+            "note": "Final confirmation pending."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-132",
+      "name": "Eastward Labs",
+      "planTier": "Standard",
+      "persona": "Consulting firm",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 120,
+      "timezone": "America/New_York",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Billing",
+        "Tier 2 - Registrar Ops"
+      ],
+      "notes": "Escalate to registrar team if invoice shows past due for more than 24 hours."
+    }
+  },
+  {
+    "id": "scenario-failed-autopay",
+    "bucket": "Billing/Account",
+    "title": "Failed Autopay, Active Card",
+    "description": "Autopay bounced despite an active card; customer worries service may suspend even though payment is ready.",
+    "tags": ["billing", "autopay", "payment"],
+    "ticket": {
+      "id": "ticket-autopay",
+      "subject": "Autopay failed even though card is valid",
+      "department": "Billing & Accounts",
+      "severity": "Medium",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Standard",
+      "slaTargetMinutes": 90,
+      "createdAt": "2026-02-26T07:50:00Z",
+      "assignedTo": "Mara Quinn",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Pending Payment",
+      "recentIncidents": [
+        "Authorization error 402 returned from gateway",
+        "Card last used two days ago successfully"
+      ],
+      "thread": [
+        {
+          "id": "thread-14",
+          "author": "Elliot (customer)",
+          "audience": "customer",
+          "createdAt": "2026-02-26T07:45:00Z",
+          "message": "My autopay failed, but the card is still active. Will service get suspended?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-12",
+          "author": "Mara",
+          "audience": "internal",
+          "createdAt": "2026-02-26T07:47:00Z",
+          "message": "Gateway sent 402 but the card response indicates AVS mismatch; need to verify address."
+        }
+      ],
+      "kbMatches": ["kb-autopay-retry"],
+      "postmortem": {
+        "rootCause": "Autopay retried after AVS mismatch; system queued service hold.",
+        "fix": "Reauthorized card manually with updated billing address.",
+        "followUp": "Document the AVS issue in autopay KB.",
+        "prevention": "Add a 2-step verification before triggering suspension."
+      },
+      "scorecard": {
+        "total": 69,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 18,
+            "max": 25,
+            "note": "Still well inside SLA."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 16,
+            "max": 20,
+            "note": "Calm but could reassure more."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 12,
+            "max": 20,
+            "note": "Need to confirm gateway logs."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "KB article about autopay shared."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "No escalation required yet."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 6,
+            "max": 10,
+            "note": "Follow-up documentation pending."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-144",
+      "name": "Pioneer Archives",
+      "planTier": "Standard",
+      "persona": "Archivist and part-time engineer",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 120,
+      "timezone": "America/Montreal",
+      "serverRegion": "ca-central"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Billing",
+        "Tier 2 - Finance"
+      ],
+      "notes": "Escalate if autopay fails twice or service shows pending suspension."
+    }
+  },
+  {
+    "id": "scenario-angry-repeat-outage",
+    "bucket": "Communication/Judgment",
+    "title": "Angry Customer After Repeated Outages",
+    "description": "Customer is irate after multiple brief outages this week and expects ownership.",
+    "tags": ["communication", "empathy", "escalation"],
+    "ticket": {
+      "id": "ticket-angry-customer",
+      "subject": "Outages keep happening, this is unacceptable",
+      "department": "Customer Advocacy",
+      "severity": "High",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Enterprise",
+      "slaTargetMinutes": 30,
+      "createdAt": "2026-03-03T16:55:00Z",
+      "assignedTo": "Noah Kim",
+      "escalationTier": "Tier 2 - Incident",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Three short outages in past eight hours",
+        "Customer manual downtime reports trending up"
+      ],
+      "thread": [
+        {
+          "id": "thread-15",
+          "author": "Nora (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-03T16:50:00Z",
+          "message": "I've already opened four tickets and still no resolution."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-13",
+          "author": "Noah",
+          "audience": "internal",
+          "createdAt": "2026-03-03T16:53:00Z",
+          "message": "Outages align with nightly patch window; need better expectation-setting."
+        }
+      ],
+      "kbMatches": ["kb-outage-communication"],
+      "postmortem": {
+        "rootCause": "Patch window overlapped with peak usage, resulting in multiple restarts.",
+        "fix": "Shifted patch window and proactively notified the team.",
+        "followUp": "Offer loyalty gesture and proactive monitoring summary.",
+        "prevention": "Document the new maintenance calendar."
+      },
+      "scorecard": {
+        "total": 72,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 20,
+            "max": 25,
+            "note": "Immediate acknowledgment but requires faster updates."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 18,
+            "max": 20,
+            "note": "Strong empathy but needs root cause clarity."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 14,
+            "max": 20,
+            "note": "Captured maintenance window."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 10,
+            "max": 15,
+            "note": "Article about outage plans available."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 7,
+            "max": 10,
+            "note": "Already elevated to Tier 2."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 3,
+            "max": 10,
+            "note": "Awaiting closure summary."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-153",
+      "name": "Brightstone Studios",
+      "planTier": "Enterprise",
+      "persona": "C-level executive",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 30,
+      "timezone": "America/Los_Angeles",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 2 - Incident",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Incident",
+        "Tier 3 - Leadership"
+      ],
+      "notes": "Leadership notified if outages repeat three times in a day."
+    }
+  },
+  {
+    "id": "scenario-unsupported-action",
+    "bucket": "Communication/Judgment",
+    "title": "Unsupported Admin Action Request",
+    "description": "Customer asks for unsupported command permissions; the agent must say no while offering alternatives.",
+    "tags": ["communication", "judgment", "policy"],
+    "ticket": {
+      "id": "ticket-unsupported-action",
+      "subject": "Can you give me root shell access to install custom kernel?",
+      "department": "Customer Advocacy",
+      "severity": "Low",
+      "priority": "Medium",
+      "status": "Open",
+      "plan": "Pro",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-03-01T12:20:00Z",
+      "assignedTo": "Jules Becker",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Customer insists custom kernel is needed for legacy mod",
+        "Customer aware it's outside supported scope"
+      ],
+      "thread": [
+        {
+          "id": "thread-16",
+          "author": "Leo (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-01T12:17:00Z",
+          "message": "Can you enable root access so I can install my custom kernel?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-14",
+          "author": "Jules",
+          "audience": "internal",
+          "createdAt": "2026-03-01T12:19:00Z",
+          "message": "Policy forbids root shell; suggest container layering instead."
+        }
+      ],
+      "kbMatches": ["kb-policy-root-access"],
+      "postmortem": {
+        "rootCause": "n/a",
+        "fix": "n/a",
+        "followUp": "Provide KB guidance about container layering.",
+        "prevention": "Link policy KB to the request form."
+      },
+      "scorecard": {
+        "total": 63,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 15,
+            "max": 25,
+            "note": "Standard SLA window for policy questions."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 18,
+            "max": 20,
+            "note": "Empathetic refusal needed."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 12,
+            "max": 20,
+            "note": "Suggest layered approach."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "Policy KB referenced."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 4,
+            "max": 10,
+            "note": "Not escalated; policy is firm."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 3,
+            "max": 10,
+            "note": "Need to summarize rejection."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-172",
+      "name": "Retrocraft Labs",
+      "planTier": "Pro",
+      "persona": "Legacy mod operator",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/New_York",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Policy"
+      ],
+      "notes": "Policy team reviews any request for privileged access."
+    }
+  },
+  {
+    "id": "scenario-vague-complaint",
+    "bucket": "Communication/Judgment",
+    "title": "Vague Complaint",
+    "description": "Customer writes 'site is broken, fix now' without context; need to ask clarifying questions.",
+    "tags": ["communication", "clarification", "prioritization"],
+    "ticket": {
+      "id": "ticket-vague-complaint",
+      "subject": "Site is broken, fix now",
+      "department": "Customer Advocacy",
+      "severity": "Medium",
+      "priority": "High",
+      "status": "New",
+      "plan": "Standard",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-03-04T08:55:00Z",
+      "assignedTo": "Mara Quinn",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "No diagnostics provided",
+        "Customer calls urgent without details"
+      ],
+      "thread": [
+        {
+          "id": "thread-17",
+          "author": "Customer",
+          "audience": "customer",
+          "createdAt": "2026-03-04T08:52:00Z",
+          "message": "My site is broken, fix now!"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-15",
+          "author": "Mara",
+          "audience": "internal",
+          "createdAt": "2026-03-04T08:53:00Z",
+          "message": "Need clarifying diagnostics before triaging."
+        }
+      ],
+      "kbMatches": ["kb-clarify-issues"],
+      "postmortem": {
+        "rootCause": "Pending details.",
+        "fix": "Pending details.",
+        "followUp": "Guide customer through diagnostics form.",
+        "prevention": "Link diagnostics checklist in the reply."
+      },
+      "scorecard": {
+        "total": 55,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 12,
+            "max": 25,
+            "note": "New ticket just opened."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 12,
+            "max": 20,
+            "note": "Need to reason about tone."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 8,
+            "max": 20,
+            "note": "Waiting on details."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 10,
+            "max": 15,
+            "note": "Shared diagnostics KB."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 6,
+            "max": 10,
+            "note": "Hold until more info."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 7,
+            "max": 10,
+            "note": "Pre-close steps mapped."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-185",
+      "name": "Signal Field",
+      "planTier": "Standard",
+      "persona": "Startup founder",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/Chicago",
+      "serverRegion": "us-central"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Technical"
+      ],
+      "notes": "Escalate if no details arrive within 3 hours."
+    }
+  },
+  {
+    "id": "scenario-premium-expectation",
+    "bucket": "Communication/Judgment",
+    "title": "Premium Customer Expecting Faster Turnaround",
+    "description": "Premium-tier customer notes competitor SLA and demands immediate fix despite ongoing diagnostics.",
+    "tags": ["premium", "sla", "expectations"],
+    "ticket": {
+      "id": "ticket-premium-expectation",
+      "subject": "Competitor replied faster; please match it",
+      "department": "Customer Advocacy",
+      "severity": "Medium",
+      "priority": "High",
+      "status": "Open",
+      "plan": "Enterprise",
+      "slaTargetMinutes": 30,
+      "createdAt": "2026-03-03T10:00:00Z",
+      "assignedTo": "Noah Kim",
+      "escalationTier": "Tier 2",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Customer referencing faster responses from another provider",
+        "Ticket mentions upcoming launch in 12 hours"
+      ],
+      "thread": [
+        {
+          "id": "thread-18",
+          "author": "Evan (customer)",
+          "audience": "customer",
+          "createdAt": "2026-03-03T09:58:00Z",
+          "message": "Your competitor answered in 5 minutes; can you reply faster?"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-16",
+          "author": "Noah",
+          "audience": "internal",
+          "createdAt": "2026-03-03T09:59:00Z",
+          "message": "Need to reinforce SLA entitlement and focus on current diagnostics."
+        }
+      ],
+      "kbMatches": ["kb-premium-expectations"],
+      "postmortem": {
+        "rootCause": "n/a",
+        "fix": "n/a",
+        "followUp": "Document our SLA philosophy vs. competitor claims.",
+        "prevention": "Add doc that sets expectation windows for Enterprise plan."
+      },
+      "scorecard": {
+        "total": 70,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 21,
+            "max": 25,
+            "note": "On-time, but still needs updates."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 17,
+            "max": 20,
+            "note": "Empathy present but promises need cadence."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 14,
+            "max": 20,
+            "note": "Diagnostics underway."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 12,
+            "max": 15,
+            "note": "Expectation doc ready to share."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 5,
+            "max": 10,
+            "note": "Already in Tier 2; continue monitoring."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 1,
+            "max": 10,
+            "note": "Need to finish once resolved."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-192",
+      "name": "Summit Digital",
+      "planTier": "Enterprise",
+      "persona": "Product marketing lead",
+      "billingCycle": "Quarterly",
+      "slaEntitlementMinutes": 30,
+      "timezone": "America/New_York",
+      "serverRegion": "us-east"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 2",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Incident",
+        "Tier 3 - Leadership"
+      ],
+      "notes": "Escalate to leadership if SLA breaches 30 minutes."
+    }
+  },
+  {
+    "id": "scenario-duplicate-tickets",
+    "bucket": "Communication/Judgment",
+    "title": "Duplicate Tickets from Same Incident",
+    "description": "Multiple tickets opened for the same outage; triage must merge and de-escalate.",
+    "tags": ["duplicate", "judgment", "triage"],
+    "ticket": {
+      "id": "ticket-duplicate",
+      "subject": "Issue still happening (duplicate)",
+      "department": "Customer Advocacy",
+      "severity": "Medium",
+      "priority": "Medium",
+      "status": "New",
+      "plan": "Pro",
+      "slaTargetMinutes": 120,
+      "createdAt": "2026-03-02T11:00:00Z",
+      "assignedTo": "Mara Quinn",
+      "escalationTier": "Tier 1",
+      "invoiceState": "Active",
+      "recentIncidents": [
+        "Original outage ticket already in Tier 2",
+        "Customer opened duplicate with similar description"
+      ],
+      "thread": [
+        {
+          "id": "thread-19",
+          "author": "Customer",
+          "audience": "customer",
+          "createdAt": "2026-03-02T10:58:00Z",
+          "message": "Just checking back, issue still happening."
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-17",
+          "author": "Mara",
+          "audience": "internal",
+          "createdAt": "2026-03-02T11:00:00Z",
+          "message": "Link to ticket #5123 and merge updates in original thread."
+        }
+      ],
+      "kbMatches": ["kb-duplicate-tickets"],
+      "postmortem": {
+        "rootCause": "Customer not sure whether their first ticket dropped off.",
+        "fix": "Merged tickets and mirrored updates.",
+        "followUp": "Remind them to reference the ongoing incident moving forward.",
+        "prevention": "Add guidance on duplicate reporting to KB."
+      },
+      "scorecard": {
+        "total": 61,
+        "metrics": [
+          {
+            "id": "slaCompliance",
+            "label": "SLA compliance",
+            "value": 15,
+            "max": 25,
+            "note": "Response pending triage."
+          },
+          {
+            "id": "communication",
+            "label": "Communication & empathy",
+            "value": 15,
+            "max": 20,
+            "note": "Needs empathy about repeated tickets."
+          },
+          {
+            "id": "technicalOwnership",
+            "label": "Technical ownership",
+            "value": 10,
+            "max": 20,
+            "note": "Focus on merging tickets."
+          },
+          {
+            "id": "kbSelfService",
+            "label": "KB & self-service",
+            "value": 11,
+            "max": 15,
+            "note": "Shared duplicate-handling KB."
+          },
+          {
+            "id": "escalationJudgment",
+            "label": "Escalation judgment",
+            "value": 5,
+            "max": 10,
+            "note": "Should stay at Tier 1 and reference Tier 2 ticket."
+          },
+          {
+            "id": "closureCompleteness",
+            "label": "Closure completeness",
+            "value": 5,
+            "max": 10,
+            "note": "Need to consolidate resolution notes."
+          }
+        ]
+      }
+    },
+    "customerProfile": {
+      "accountId": "acct-205",
+      "name": "Bright Path Events",
+      "planTier": "Pro",
+      "persona": "Operations manager",
+      "billingCycle": "Monthly",
+      "slaEntitlementMinutes": 180,
+      "timezone": "America/Denver",
+      "serverRegion": "us-west"
+    },
+    "escalationRules": {
+      "currentTier": "Tier 1",
+      "path": [
+        "Tier 1 - Desk",
+        "Tier 2 - Incident"
+      ],
+      "notes": "Merge duplicates before escalating; only escalate if first ticket needs Tier 2."
+    }
+  }
+]

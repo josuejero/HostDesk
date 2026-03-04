@@ -1,0 +1,13 @@
+{
+  "title": "Scoring rubric schema",
+  "summary": "Aligns ticket actions with Balanced SLA + empathy scoring.",
+  "fields": {
+    "version": "string",
+    "focus": "string",
+    "metrics": "array of objects containing id, label, target weight, max, description, suggestion"
+  },
+  "allowedValues": {
+    "weights": "numbers that add up to 100",
+    "max": "score cap for each metric"
+  }
+}

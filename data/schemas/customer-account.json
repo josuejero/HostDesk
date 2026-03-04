@@ -1,0 +1,15 @@
+{
+  "title": "Customer/Account schema",
+  "summary": "Describes plan entitlements, persona, and SLA context that powers ticket routing.",
+  "fields": {
+    "accountId": "string",
+    "name": "string",
+    "planTier": "Core | Standard | Pro | Enterprise",
+    "persona": "string (e.g. 'Media agency', 'Game ops lead')",
+    "billingCycle": "string (Monthly, Quarterly, Annual)",
+    "slaEntitlementMinutes": "number",
+    "timezone": "string",
+    "serverRegion": "string"
+  },
+  "notes": "Plan tier links to SLA minutes; persona guides tone/resolution expectations."
+}

@@ -1,0 +1,13 @@
+{
+  "title": "KB article schema",
+  "summary": "Defines metadata used for keyword matching and article suggestions.",
+  "fields": {
+    "id": "string",
+    "title": "string",
+    "summary": "string",
+    "keywords": "array of strings",
+    "link": "URL",
+    "audience": "optional string (e.g. 'Billing', 'Technical Ops')"
+  },
+  "notes": "At least one keyword should map back to ticket subjects, threads, or tags for reliable suggestions."
+}
