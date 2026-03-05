@@ -31,7 +31,7 @@ export const useDeskState = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedViewId, setSelectedViewId] = useState(queueViews[0]?.id ?? 'open')
-  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null)
+  const [manualSelectedArticleId, setManualSelectedArticleId] = useState<string | null>(null)
 
   const scenarioMap = useMemo(() => {
     const map = new Map<string, ScenarioSeed>()
@@ -130,15 +130,16 @@ export const useDeskState = () => {
     return matches.slice(0, 3)
   }, [selectedTicket, kbText])
 
-  useEffect(() => {
-    if (!kbSuggestions.length) {
-      setSelectedArticleId(null)
-      return
+  const selectedArticleId = useMemo(() => {
+    if (!kbSuggestions.length) return null
+    if (
+      manualSelectedArticleId &&
+      kbSuggestions.some((article) => article.id === manualSelectedArticleId)
+    ) {
+      return manualSelectedArticleId
     }
-    setSelectedArticleId((prev) =>
-      prev && kbSuggestions.some((article) => article.id === prev) ? prev : kbSuggestions[0].id,
-    )
-  }, [kbSuggestions])
+    return kbSuggestions[0].id
+  }, [kbSuggestions, manualSelectedArticleId])
 
   const subjectText = selectedTicket?.subject.toLowerCase() ?? ''
 
@@ -377,7 +378,7 @@ export const useDeskState = () => {
     handleSendReply,
     handleUseCannedReply,
     selectedArticleId,
-    setSelectedArticleId,
+    setSelectedArticleId: setManualSelectedArticleId,
     kbSuggestions,
     handleShareSelectedArticle,
     handleShareKB,
