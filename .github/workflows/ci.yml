@@ -1,8 +1,9 @@
+# .github/workflows/ci.yml
 name: CI
 
 on:
   pull_request:
-    branches: ["master"]
+    branches: ["master"] # or ["master"], but match deploy + your actual branch
   push:
     branches: ["master"]
 

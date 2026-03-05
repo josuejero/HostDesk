@@ -1,9 +1,9 @@
-import { defineConfig } from 'vitest/config'
+// vite.config.ts
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vitest/config'
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  base: '/HostDesk/',
   plugins: [react()],
   test: {
     globals: true,
