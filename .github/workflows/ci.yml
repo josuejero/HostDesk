@@ -2,9 +2,11 @@
 name: CI
 
 on:
+  push:
+    branches: [master, main]
   pull_request:
-    branches: ["master"] # or ["master"], but match deploy + your actual branch
-  push: {}
+    branches: [master, main]
+  workflow_dispatch:
 
 jobs:
   build:
