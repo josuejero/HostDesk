@@ -36,7 +36,11 @@
   flex-direction: column;
   gap: 0.65rem;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
   width: 100%;
   text-align: left;
   text-decoration: none;
@@ -66,17 +70,24 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.75rem;
+  min-width: 0;
+}
+
+.ticket-card-top > div:first-child {
+  flex: 1;
+  min-width: 0;
 }
 
 .ticket-card-top h3 {
   margin: 0;
   font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .ticket-card-subtext {
   margin: 0.35rem 0 0;
   font-size: 0.85rem;
-  color: rgba(245, 246, 255, 0.65);
+  color: rgba(245, 246, 255, 0.72);
 }
 
 .ticket-card-timer,
@@ -85,6 +96,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .ticket-card-timer svg,
@@ -174,4 +186,14 @@
   padding: 0.25rem 0.75rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+  .ticket-card-top {
+    flex-direction: column;
+  }
+
+  .ticket-card-timer {
+    align-self: flex-start;
+  }
 }

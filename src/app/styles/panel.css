@@ -3,6 +3,8 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 15px 30px rgba(3, 6, 15, 0.5);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .panel-heading {
@@ -13,11 +15,16 @@
   gap: 0.6rem;
 }
 
+.panel-heading > * {
+  min-width: 0;
+}
+
 .panel-body {
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .panel--guided .panel-body {
@@ -38,6 +45,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  min-width: 0;
 }
 
 .guided-card__header strong {
@@ -45,10 +53,10 @@
 }
 
 .guided-keywords {
-  font-size: 0.65rem;
-  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(130, 199, 255, 0.7);
+  color: rgba(130, 199, 255, 0.9);
 }
 
 .guided-tips {
@@ -58,7 +66,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  color: rgba(245, 246, 255, 0.85);
+  color: rgba(245, 246, 255, 0.88);
   font-size: 0.85rem;
 }
 
@@ -71,8 +79,8 @@
 .guided-article {
   padding-top: 0.45rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: flex-start;
 }
@@ -84,9 +92,10 @@
 
 .guided-article p {
   margin: 0.2rem 0 0;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
-  max-width: 190px;
+  font-size: 0.8rem;
+  color: rgba(245, 246, 255, 0.78);
+  max-width: none;
+  overflow-wrap: anywhere;
 }
 
 .guided-article button {
@@ -105,9 +114,10 @@
   border-bottom: none;
 }
 
-.scorecard .score-metric div {
+.scorecard .score-metric > div:first-child {
   display: flex;
   justify-content: space-between;
+  gap: 0.75rem;
   font-size: 0.9rem;
 }
 
@@ -118,11 +128,11 @@
 }
 
 .scorecard .note {
-  color: rgba(245, 246, 255, 0.6);
+  color: rgba(245, 246, 255, 0.76);
 }
 
 .scorecard .suggestion {
-  color: rgba(130, 199, 255, 0.9);
+  color: rgba(130, 199, 255, 0.92);
   font-size: 0.8rem;
 }
 
@@ -155,6 +165,7 @@
   color: #f5f6ff;
   padding: 0.6rem;
   resize: vertical;
+  font: inherit;
 }
 
 .postmortem label {
@@ -188,15 +199,15 @@
 
 .postmortem-checklist .check-detail {
   font-size: 0.8rem;
-  color: rgba(245, 246, 255, 0.55);
+  color: rgba(245, 246, 255, 0.68);
 }
 
 .postmortem-checklist .check-status {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(245, 246, 255, 0.78);
 }
 
 .postmortem-checklist .check-status.complete {
@@ -210,6 +221,11 @@
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
+.thread-entry p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .thread-entry.internal {
   border-color: rgba(255, 101, 101, 0.4);
   background: rgba(255, 101, 101, 0.12);
@@ -220,12 +236,14 @@
 .thread-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: rgba(245, 246, 255, 0.6);
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: rgba(245, 246, 255, 0.78);
   margin-bottom: 0.3rem;
 }
 
 .muted {
-  color: rgba(245, 246, 255, 0.5);
+  color: rgba(245, 246, 255, 0.68);
   font-size: 0.9rem;
 }
