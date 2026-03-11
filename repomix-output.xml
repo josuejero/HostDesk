@@ -7141,67 +7141,6 @@ Deploy the Vite build via `npm run build` and `npm run deploy` (GitHub Actions a
 ]
 </file>
 
-<file path=".github/workflows/ci.yml">
-# .github/workflows/ci.yml
-name: CI
-
-on:
-  pull_request:
-    branches: ["master"] # or ["master"], but match deploy + your actual branch
-  push: {}
-
-jobs:
-  build:
-    name: Run lint, unit, integration, and e2e tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run test
-      - run: npx playwright install --with-deps
-      - run: npm run test:e2e
-</file>
-
-<file path=".github/workflows/deploy.yml">
-# .github/workflows/deploy.yml
-name: Deploy HostDesk
-
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - run: npm ci
-      - run: npm run build
-
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
-</file>
-
 <file path="src/types.ts">
 export type Audience = 'customer' | 'internal'
 
@@ -7339,6 +7278,68 @@ export interface DemoState {
   walkthroughActive: boolean
   showScenarioLibrary: boolean
 }
+</file>
+
+<file path=".github/workflows/ci.yml">
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Run lint, unit, integration, and e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npx playwright install --with-deps
+      - run: npm run test:e2e
+</file>
+
+<file path=".github/workflows/deploy.yml">
+# .github/workflows/deploy.yml
+name: Deploy HostDesk
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
 </file>
 
 <file path="vite.config.ts">
