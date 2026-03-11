@@ -3,7 +3,7 @@
 Hosting-support triage simulator built in React/TypeScript with Vite, JSON seeds, and localStorage. It models SLA timing, tiered routing, KB suggestions, canned replies, private notes, and balanced scoring so a recruiter can immediately appreciate ticket intake discipline.
 
 ## Live demo (GitHub Pages)
-`https://<your-username>.github.io/HostDesk/`
+`https://josuejero.github.io/HostDesk/`
 
 ## Screenshots
 | Overview | Ticket view |
