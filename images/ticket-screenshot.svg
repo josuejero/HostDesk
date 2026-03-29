@@ -1,5 +1,5 @@
 <svg width="400" height="240" xmlns="http://www.w3.org/2000/svg">
   <rect width="400" height="240" rx="18" fill="#0b1225" stroke="#67f6a0" stroke-width="3"/>
-  <text x="50%" y="40%" text-anchor="middle" fill="#67f6a0" font-size="20" font-family="Inter, sans-serif">Simulator view</text>
-  <text x="50%" y="60%" text-anchor="middle" fill="#9fb8ff" font-size="12">Thread, KB, canned replies</text>
+  <text x="50%" y="40%" text-anchor="middle" fill="#67f6a0" font-size="20" font-family="Inter, sans-serif">Workspace view</text>
+  <text x="50%" y="60%" text-anchor="middle" fill="#9fb8ff" font-size="12">Timeline, playbooks, stage gates</text>
 </svg>
