@@ -1,93 +1,93 @@
 [
   {
-    "id": "reply-acknowledgement-care",
-    "title": "Empathize and own it",
-    "tone": "Warm",
-    "category": "acknowledgement",
+    "id": "template-first-touch-avd",
+    "title": "AVD first-touch",
+    "tone": "Consultative",
+    "category": "first-touch",
     "segments": {
-      "acknowledgment": "I hear how disruptive this is for your team, and I appreciate you sharing the context so quickly.",
-      "ownership": "I'm taking point on getting the right specialists involved so you don't have to chase anyone down.",
-      "nextStep": "I’ll follow up in about 10 minutes with a clear next update once I confirm the plan."
+      "opener": "I saw your note about Azure Virtual Desktop operations and wanted to reach out with something specific rather than a generic VDI pitch.",
+      "valueProp": "Teams evaluating AVD usually need tighter control over cost, host-pool behavior, and operational visibility before scaling desktop estates.",
+      "nextStep": "If that is where your team is, I can send a short summary of the cost-control and governance angles that tend to matter first."
     },
     "editable": true,
-    "keywords": ["empathy", "acknowledge", "ownership"]
+    "keywords": ["avd", "cost", "vdi", "first touch"]
   },
   {
-    "id": "reply-billing-clarification",
-    "title": "Billing clarity commitment",
-    "tone": "Supportive",
-    "category": "billing-clarification",
+    "id": "template-first-touch-w365",
+    "title": "Windows 365 contractor opener",
+    "tone": "Direct",
+    "category": "first-touch",
     "segments": {
-      "acknowledgment": "Thanks for sending over the billing details and screenshot; that makes it easy to see what the ledger is saying.",
-      "ownership": "I'm reviewing the invoice timeline and manually matching what we see in the ledger so I can confidently explain the state.",
-      "nextStep": "Once I confirm the automation cycle, I’ll outline how we release the hold and share the exact ETA."
+      "opener": "Your BYOD and contractor note stood out because that usually means teams need secure desktop access fast without managing more shipped hardware.",
+      "valueProp": "Windows 365 conversations tend to go well when the workflow is framed around onboarding speed, device trust, and access consistency.",
+      "nextStep": "I can send a quick outline of how teams use Cloud PCs for contractor-heavy environments if that would be useful."
     },
     "editable": true,
-    "keywords": ["billing", "invoice", "clarification"]
+    "keywords": ["windows 365", "cloud pc", "contractor", "byod"]
   },
   {
-    "id": "reply-troubleshooting-step",
-    "title": "Step-by-step troubleshooting",
-    "tone": "Calm",
-    "category": "troubleshooting-step-request",
-    "segments": {
-      "acknowledgment": "Great detail in your log excerpt, that really helps us focus on the root cause.",
-      "ownership": "I’m coordinating with operations to parse the module output and keep the timeline short.",
-      "nextStep": "Can you temporarily disable the latest plugin and share the resulting crash log so we can compare the differences?"
-    },
-    "editable": true,
-    "keywords": ["troubleshooting", "log", "plugin"]
-  },
-  {
-    "id": "reply-outage-acknowledgment",
-    "title": "Outage acknowledgment",
-    "tone": "Urgent",
-    "category": "outage-acknowledgment",
-    "segments": {
-      "acknowledgment": "I can see the site is down, and I know that disruption is unacceptable for your users.",
-      "ownership": "I’m on the case with the technical operations crew and keeping the updates flowing to make this visible.",
-      "nextStep": "I’ll share either a deploy-ready fix or another status in 15 minutes, whichever happens first."
-    },
-    "editable": true,
-    "keywords": ["outage", "status", "visibility"]
-  },
-  {
-    "id": "reply-upgrade-reassurance",
-    "title": "Upgrade reassurance",
-    "tone": "Reassuring",
-    "category": "upgrade-reassurance",
-    "segments": {
-      "acknowledgment": "Thanks for checking in before proceeding with the upgrade; that keeps risk low for everyone.",
-      "ownership": "I’m coordinating with product and ops to make sure the rollback and monitoring plan are in place.",
-      "nextStep": "I’ll reconfirm the upgrade window once I verify the capacity and share the scheduled time with you."
-    },
-    "editable": true,
-    "keywords": ["upgrade", "reassurance", "coordination"]
-  },
-  {
-    "id": "reply-escalation-handoff",
-    "title": "Escalation handoff",
-    "tone": "Confident",
-    "category": "escalation-handoff",
-    "segments": {
-      "acknowledgment": "I understand why you want to level up this case, especially with the time pressure you’re under.",
-      "ownership": "I’m flagging it to Tier 3 Finance with the full summary of what we’ve parsed so far.",
-      "nextStep": "Expect a follow-up from the senior analyst within about five minutes, and I’ll stay looped in for alignment."
-    },
-    "editable": true,
-    "keywords": ["escalation", "handoff", "finance"]
-  },
-  {
-    "id": "reply-closure-follow-up",
-    "title": "Closure and follow-up",
+    "id": "template-follow-up-intune",
+    "title": "Intune follow-up",
     "tone": "Professional",
-    "category": "closure-follow-up",
+    "category": "follow-up",
     "segments": {
-      "acknowledgment": "Appreciate the confirmation that everything looks stable again.",
-      "ownership": "I’m wrapping this ticket up with a quick recap in our KB so the fix and follow-up are recorded.",
-      "nextStep": "If anything reoccurs just hit reply and we’ll reopen it; otherwise I’ll close this ticket by the end of the day."
+      "opener": "Following up on the compliance thread because your audit timing makes the reporting gap feel urgent.",
+      "valueProp": "The strongest conversations here usually connect policy visibility, app deployment confidence, and exception handling instead of treating them as separate projects.",
+      "nextStep": "If helpful, I can send a concise breakdown of the operations story we would use for that discussion."
     },
     "editable": true,
-    "keywords": ["closure", "follow-up", "documentation"]
+    "keywords": ["intune", "compliance", "follow-up", "audit"]
+  },
+  {
+    "id": "template-objection-budget",
+    "title": "Budget-timing objection",
+    "tone": "Measured",
+    "category": "objection-handling",
+    "segments": {
+      "opener": "Budget timing is a fair constraint, so I do not want to force an active motion if the window is not open yet.",
+      "valueProp": "What usually helps is capturing the operational pain and a dated re-entry point so the opportunity does not lose context when timing improves.",
+      "nextStep": "I can keep the follow-up light and reconnect when your budget cycle changes."
+    },
+    "editable": true,
+    "keywords": ["budget", "timing", "objection", "nurture"]
+  },
+  {
+    "id": "template-meeting-confirmation",
+    "title": "Meeting confirmation",
+    "tone": "Clear",
+    "category": "meeting-confirmation",
+    "segments": {
+      "opener": "Thanks for booking time.",
+      "valueProp": "To keep the discussion practical, I’d like to anchor it on your current desktop workflow, the Microsoft workload in scope, and the decision criteria your team cares about most.",
+      "nextStep": "I’ll send a short agenda and the questions we should answer together before the session."
+    },
+    "editable": true,
+    "keywords": ["meeting", "agenda", "confirmation"]
+  },
+  {
+    "id": "template-handoff-intro",
+    "title": "AE handoff intro",
+    "tone": "Confident",
+    "category": "handoff-intro",
+    "segments": {
+      "opener": "I’ve captured the qualification notes and want to make the handoff clean for your next conversation.",
+      "valueProp": "The strongest handoffs keep the buyer role, Microsoft workload, pain points, and dated next step in one brief so the opportunity does not reset.",
+      "nextStep": "I’ll package the summary and loop in the right account executive with the agreed follow-up date."
+    },
+    "editable": true,
+    "keywords": ["handoff", "ae", "summary"]
+  },
+  {
+    "id": "template-nurture-check-in",
+    "title": "Nurture re-entry note",
+    "tone": "Light",
+    "category": "nurture",
+    "segments": {
+      "opener": "Reaching back out at the timing you suggested.",
+      "valueProp": "I’ve kept the context around your desktop workflow and the Microsoft use case so you do not need to restate the problem from scratch.",
+      "nextStep": "If priorities have shifted, I can send a short restart summary and we can decide whether it belongs back in active work."
+    },
+    "editable": true,
+    "keywords": ["nurture", "re-entry", "follow-up"]
   }
 ]

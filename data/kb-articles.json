@@ -1,126 +1,74 @@
 [
   {
-    "id": "kb-billing-suspension-works",
-    "title": "How billing suspension works",
-    "summary": "Explain the invoice verification path, suspension lock release, and how to confirm the account is unblocked.",
-    "keywords": ["billing", "suspension", "invoice", "hold", "lock", "paid"],
-    "labels": ["billing-suspension"],
-    "link": "https://hostdesk.example.com/kb/billing-suspension"
+    "id": "playbook-avd-cost-control",
+    "title": "AVD cost-control playbook",
+    "summary": "Connect host-pool optimization, after-hours shutdown, and session density to a finance-friendly desktop cost narrative.",
+    "keywords": ["avd", "cost", "optimize", "azure spend", "host pool", "session host"],
+    "labels": ["avd-cost-control"],
+    "focusArea": "Azure Virtual Desktop",
+    "link": "https://hostdesk.example.com/playbooks/avd-cost-control"
   },
   {
-    "id": "kb-minecraft-server-plugin-start",
-    "title": "Minecraft server won't start after plugin install",
-    "summary": "Isolate plugin jar conflicts, missing dependencies, and mod order issues that stop the host from booting.",
-    "keywords": ["plugin", "mod", "jar", "minecraft", "startup", "crash"],
-    "labels": ["plugin-troubleshooting"],
-    "link": "https://hostdesk.example.com/kb/minecraft-plugin-start"
+    "id": "playbook-avd-migration",
+    "title": "Citrix to AVD migration playbook",
+    "summary": "Frame migration discovery around current Citrix pain, operational complexity, and phased Azure Virtual Desktop adoption.",
+    "keywords": ["citrix", "migration", "avd", "vdi", "session host"],
+    "labels": ["avd-migration"],
+    "focusArea": "Azure Virtual Desktop",
+    "link": "https://hostdesk.example.com/playbooks/citrix-to-avd"
   },
   {
-    "id": "kb-mod-conflicts",
-    "title": "Handling Modpack File Conflicts",
-    "summary": "Detecting duplicate assets and mod conflicts that happen when multiple mods write to the same file.",
-    "keywords": ["mod", "conflict", "textures", "modpack"],
-    "labels": ["plugin-troubleshooting"],
-    "link": "https://hostdesk.example.com/kb/mod-conflicts"
+    "id": "playbook-windows365-byod",
+    "title": "Windows 365 BYOD rollout playbook",
+    "summary": "Show how Cloud PCs help teams onboard contractors and personal-device users without shipping managed hardware.",
+    "keywords": ["windows 365", "cloud pc", "contractor", "byod", "personal devices"],
+    "labels": ["windows365-byod"],
+    "focusArea": "Windows 365",
+    "link": "https://hostdesk.example.com/playbooks/windows365-byod"
   },
   {
-    "id": "kb-bot-offline-overnight",
-    "title": "Why a bot may go offline overnight",
-    "summary": "Trace cron jobs, token refresh schedules, and idle timeouts that routinely bring bots offline between midnight and morning.",
-    "keywords": ["bot", "offline", "cron", "restart", "uptime"],
-    "link": "https://hostdesk.example.com/kb/bot-offline"
+    "id": "playbook-intune-compliance",
+    "title": "Intune compliance and app deployment playbook",
+    "summary": "Tie compliance reporting, endpoint policy visibility, and app deployment assurance into one operations story.",
+    "keywords": ["intune", "compliance", "policy", "endpoint", "app deployment", "reporting"],
+    "labels": ["intune-compliance"],
+    "focusArea": "Intune",
+    "link": "https://hostdesk.example.com/playbooks/intune-compliance"
   },
   {
-    "id": "kb-panel-login-loop",
-    "title": "Fixing Panel Login Loops",
-    "summary": "How to clear cookies, reset SSO tokens, and get the customer back into cPanel.",
-    "keywords": ["panel", "login", "cpanel", "cookie"],
-    "link": "https://hostdesk.example.com/kb/panel-access"
+    "id": "playbook-msp-multi-tenant",
+    "title": "MSP multi-tenant management playbook",
+    "summary": "Lead with cross-tenant control, repeatable desktop operations, and margin protection for service providers.",
+    "keywords": ["msp", "multi-tenant", "managed clients", "margin", "partner"],
+    "labels": ["msp-motion"],
+    "focusArea": "MSP",
+    "link": "https://hostdesk.example.com/playbooks/msp-multi-tenant"
   },
   {
-    "id": "kb-backup-restore-checks",
-    "title": "Backup Restore Checklist",
-    "summary": "Validated steps to restore a backup, flush caches, and verify timestamps.",
-    "keywords": ["backup", "restore", "cdn", "cache"],
-    "link": "https://hostdesk.example.com/kb/backup-restore"
+    "id": "playbook-healthcare-shared-devices",
+    "title": "Healthcare shared desktop playbook",
+    "summary": "Focus discovery on rotating clinical staff, shared device workflows, and compliance-safe access patterns.",
+    "keywords": ["healthcare", "shared desktop", "clinical", "shift work", "compliance"],
+    "labels": ["shared-desktop"],
+    "focusArea": "Azure Virtual Desktop",
+    "link": "https://hostdesk.example.com/playbooks/healthcare-shared-desktops"
   },
   {
-    "id": "kb-dns-propagation",
-    "title": "DNS Propagation Truths",
-    "summary": "How TTLs, NS updates, and CDN caching influence DNS propagation times.",
-    "keywords": ["dns", "propagation", "ns", "records"],
-    "link": "https://hostdesk.example.com/kb/dns-propagation"
+    "id": "playbook-education-labs",
+    "title": "Education remote lab access playbook",
+    "summary": "Compare short-lived faculty desktops and remote lab access patterns without defaulting to a single desktop model.",
+    "keywords": ["education", "lab", "faculty", "students", "remote access"],
+    "labels": ["education-labs"],
+    "focusArea": "Windows 365",
+    "link": "https://hostdesk.example.com/playbooks/education-labs"
   },
   {
-    "id": "kb-high-ping-triage-checklist",
-    "title": "High ping triage checklist",
-    "summary": "Checklist for capturing ping traces, ruling out burst traffic, and correlating latency with scheduled jobs.",
-    "keywords": ["lag", "high ping", "latency", "performance"],
-    "labels": ["latency-checklist"],
-    "link": "https://hostdesk.example.com/kb/high-ping"
-  },
-  {
-    "id": "kb-safe-upgrade-path",
-    "title": "Safe upgrade path with no data loss",
-    "summary": "Step-by-step upgrade path that snapshots configs, migrates data safely, and verifies checksums before cutover.",
-    "keywords": ["upgrade", "path", "data loss", "migration"],
-    "link": "https://hostdesk.example.com/kb/safe-upgrade"
-  },
-  {
-    "id": "kb-refunds-downgrade",
-    "title": "Downgrades & Refunds",
-    "summary": "How prorated refunds work and how to guide customers through schedule changes.",
-    "keywords": ["refund", "downgrade", "billing", "prorated"],
-    "link": "https://hostdesk.example.com/kb/downgrade-refund"
-  },
-  {
-    "id": "kb-domain-renewal",
-    "title": "Domain Renewal Workflow",
-    "summary": "Steps for verifying auto-renew, handling duplicate charges, and confirming registrar updates.",
-    "keywords": ["domain", "renewal", "registrar", "charge"],
-    "link": "https://hostdesk.example.com/kb/domain-renewal"
-  },
-  {
-    "id": "kb-verify-service-activation-after-payment",
-    "title": "How to verify service activation after payment",
-    "summary": "Confirm payment propagation, panel flags, and API status checks to make sure the service came back online.",
-    "keywords": ["payment", "activation", "propagation", "service", "invoice"],
-    "labels": ["payment-propagation"],
-    "link": "https://hostdesk.example.com/kb/service-activation"
-  },
-  {
-    "id": "kb-outage-communication",
-    "title": "Communicating High-Touch Outages",
-    "summary": "Templates for letting customers know about outages, steps being taken, and follow-up commitments.",
-    "keywords": ["outage", "communication", "escalation", "update"],
-    "link": "https://hostdesk.example.com/kb/outage-comms"
-  },
-  {
-    "id": "kb-policy-root-access",
-    "title": "Privileged Access Policy",
-    "summary": "Why we don't allow root shells and how to offer secure alternatives.",
-    "keywords": ["policy", "root", "shell", "access"],
-    "link": "https://hostdesk.example.com/kb/access-policy"
-  },
-  {
-    "id": "kb-clarify-issues",
-    "title": "Guided Diagnostic Questions",
-    "summary": "Prompt structure for drawing the right technical details out of vague reports.",
-    "keywords": ["clarify", "information", "triage", "diagnostics"],
-    "link": "https://hostdesk.example.com/kb/diagnostic-questions"
-  },
-  {
-    "id": "kb-premium-expectations",
-    "title": "Premium SLA Expectations",
-    "summary": "How our premium plans differentiate from competitors and what the SLA windows look like.",
-    "keywords": ["premium", "sla", "expectations", "turnaround"],
-    "link": "https://hostdesk.example.com/kb/premium-sla"
-  },
-  {
-    "id": "kb-duplicate-tickets",
-    "title": "Handling Duplicate Tickets",
-    "summary": "When to merge duplicates, how to reassure customers, and how to keep one source of truth.",
-    "keywords": ["duplicate", "ticket", "triage", "merge"],
-    "link": "https://hostdesk.example.com/kb/duplicate-tickets"
+    "id": "playbook-next-step-discipline",
+    "title": "Pipeline hygiene next-step checklist",
+    "summary": "Use this checklist when a record is active but the owner, dated next step, or stage evidence is weak.",
+    "keywords": ["next step", "dated", "owner", "pipeline hygiene", "stale"],
+    "labels": ["pipeline-hygiene"],
+    "focusArea": "Operations",
+    "link": "https://hostdesk.example.com/playbooks/pipeline-hygiene"
   }
 ]

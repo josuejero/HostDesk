@@ -1,14 +1,14 @@
 import type { KeyboardEvent } from 'react'
-import type { ScenarioSeed, Ticket } from '../../types'
+import type { ProspectRecord, ScenarioSeed } from '../../types'
 
 type Props = {
   scenario: ScenarioSeed
-  ticket?: Ticket
+  record?: ProspectRecord
   onClose: () => void
   onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void
 }
 
-const WalkthroughOverlay = ({ scenario, ticket, onClose, onKeyDown }: Props) => (
+const WalkthroughOverlay = ({ scenario, record, onClose, onKeyDown }: Props) => (
   <div
     className="walkthrough-overlay"
     role="dialog"
@@ -21,13 +21,23 @@ const WalkthroughOverlay = ({ scenario, ticket, onClose, onKeyDown }: Props) => 
       <p>{scenario.description}</p>
       <ul>
         <li>
-          Check SLA timer: {ticket?.slaTargetMinutes ?? 0} minutes from{' '}
-          {new Date(ticket?.createdAt || 0).toLocaleTimeString()}.
+          Start in the queue and check whether the dated next step is healthy, due today, or stale.
         </li>
-        <li>Refer to KB suggestions and canned replies before replying; keep tone human.</li>
-        <li>Notice how scorecard ties to SLA, empathy, and KB usage.</li>
-        <li>Postmortem fields ensure closure discipline (root cause, fix, follow-up, prevention).</li>
+        <li>Use the playbook suggestions and outreach templates before logging a touch; keep the motion specific.</li>
+        <li>Notice how the scorecard tracks CRM completeness, hygiene, ICP fit, and follow-up discipline.</li>
+        <li>
+          Try changing the record stage or fixing missing owner/next-step fields to see queue slices update live.
+        </li>
+        <li>
+          AI Assist is suggestion-only: apply a summary, next-best action, or draft only after reviewing it.
+        </li>
       </ul>
+      {record && (
+        <p className="muted">
+          Current focus: {record.company} • {record.stage} • next touch{' '}
+          {record.nextTouchDueAt ? new Date(record.nextTouchDueAt).toLocaleString() : 'missing'}
+        </p>
+      )}
       <button type="button" onClick={onClose}>
         Finish walkthrough
       </button>

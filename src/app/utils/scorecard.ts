@@ -1,241 +1,230 @@
-import type { ScenarioSeed, Scorecard, ScorecardMetric, Ticket } from '../../types'
-import { clamp, isCustomerMessage } from './helpers'
-import { isPostmortemComplete } from './postmortem'
-import { buildRoutingInsights } from './routing'
+import type { ProspectRecord, ScenarioSeed, Scorecard, ScorecardMetric } from '../../types'
+import {
+  canMoveToStage,
+  getDataHygieneRisk,
+  getIcpFit,
+  getMicrosoftMotion,
+  hasDatedNextStep,
+  hasOutboundActivity,
+  hasResponseOrMeetingActivity,
+  isFollowUpDueToday,
+  isRecordStale,
+} from './routing'
 
-export type DeEscalationMetricDefinition = {
+export type ExecutionMetricDefinition = {
   id: string
   label: string
   max: number
   baseNote: string
 }
 
-export const deEscalationMetricBlueprint: DeEscalationMetricDefinition[] = [
+export const executionMetricBlueprint: ExecutionMetricDefinition[] = [
   {
-    id: 'empathy',
-    label: 'Empathy',
+    id: 'research',
+    label: 'Account research',
     max: 10,
-    baseNote: 'Acknowledge the customer’s emotion before moving on.',
+    baseNote: 'Capture use case, pain points, and Microsoft workload context.',
   },
   {
-    id: 'clarity',
-    label: 'Clarity',
+    id: 'cadence',
+    label: 'Cadence discipline',
     max: 10,
-    baseNote: 'Lay out next steps or a timeline so expectations are clear.',
+    baseNote: 'Keep the record touched and tied to a dated next step.',
   },
   {
-    id: 'ownership',
-    label: 'Ownership',
+    id: 'personalization',
+    label: 'Personalization',
     max: 10,
-    baseNote: 'Use direct responsibility language like “I will” or “I’m taking point.”',
+    baseNote: 'Make outreach sound account-specific, not generic.',
   },
   {
-    id: 'routing',
-    label: 'Correct routing',
+    id: 'nextStep',
+    label: 'Next-step clarity',
     max: 10,
-    baseNote: 'Reference the right desk (billing, ops, etc.) when routing a case.',
+    baseNote: 'Every active record needs a concrete next move.',
   },
   {
-    id: 'escalation',
-    label: 'Correct escalation',
+    id: 'stageDiscipline',
+    label: 'Stage discipline',
     max: 10,
-    baseNote: 'Match escalation language to the scenario requirements.',
+    baseNote: 'Only move stages when the evidence exists.',
   },
   {
-    id: 'expectation',
-    label: 'Expectation setting',
+    id: 'handoff',
+    label: 'Handoff signal',
     max: 10,
-    baseNote: 'State when the customer can expect your next update.',
-  },
-  {
-    id: 'closure',
-    label: 'Closure quality',
-    max: 10,
-    baseNote: 'Capture postmortem notes and follow-up before solving.',
+    baseNote: 'Capture what the next team would need to keep momentum.',
   },
 ]
 
-export const deEscalationMaxTotal = deEscalationMetricBlueprint.reduce((sum, metric) => sum + metric.max, 0)
+export const executionMaxTotal = executionMetricBlueprint.reduce((sum, metric) => sum + metric.max, 0)
 
-export const applyScoreDelta = (
-  scorecard: Ticket['scorecard'],
-  metricId: string,
-  delta: number,
-): Ticket['scorecard'] => {
-  const metrics = scorecard.metrics.map((metric) =>
-    metric.id === metricId
-      ? {
-          ...metric,
-          value: clamp(metric.value + delta, 0, metric.max),
-        }
-      : metric,
-  )
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
-  const total = metrics.reduce((sum, metric) => sum + metric.value, 0)
+export const buildOperationalScorecard = (record: ProspectRecord, scenario?: ScenarioSeed): Scorecard => {
+  const motion = getMicrosoftMotion(record, scenario)
+  const icpFit = getIcpFit(record, scenario)
+  const stale = isRecordStale(record)
+  const hygieneRisk = getDataHygieneRisk(record)
+  const dueToday = isFollowUpDueToday(record)
+  const responseOrMeeting = hasResponseOrMeetingActivity(record)
+
+  const metrics: ScorecardMetric[] = [
+    {
+      id: 'crmCompleteness',
+      label: 'CRM completeness',
+      max: 15,
+      value: clamp(Math.round(record.crmCompleteness / 100 * 15), 0, 15),
+      note:
+        record.crmCompleteness >= 85
+          ? 'Core account, workload, and buyer data are documented.'
+          : 'Fill more core fields so the record is usable without extra context hunting.',
+    },
+    {
+      id: 'dataHygiene',
+      label: 'Data hygiene',
+      max: 15,
+      value: hygieneRisk === 'Low' ? 15 : hygieneRisk === 'Medium' ? 10 : 4,
+      note:
+        hygieneRisk === 'Low'
+          ? 'Owner, stage evidence, and dated next step are in good shape.'
+          : hygieneRisk === 'Medium'
+          ? 'The record is usable, but field quality still needs tightening.'
+          : 'Missing ownership, stale cadence, or no dated next step is dragging the record down.',
+    },
+    {
+      id: 'icpFitJudgment',
+      label: 'ICP fit judgment',
+      max: 15,
+      value: icpFit === 'Strong' ? 15 : icpFit === 'Moderate' ? 11 : 6,
+      note:
+        motion === 'Mixed motion'
+          ? 'The Microsoft workload story is still fuzzy.'
+          : `The record aligns most clearly to a ${motion} motion.`,
+    },
+    {
+      id: 'followUpTimeliness',
+      label: 'Follow-up timeliness',
+      max: 15,
+      value: stale ? 2 : dueToday ? 11 : hasDatedNextStep(record) ? 14 : 4,
+      note: stale
+        ? 'The record is stale and should not be treated as healthy active pipeline.'
+        : dueToday
+        ? 'The next touch is due today.'
+        : hasDatedNextStep(record)
+        ? 'The next touch is dated and currently on track.'
+        : 'There is no dated next step on the record.',
+    },
+    {
+      id: 'personalizationQuality',
+      label: 'Personalization quality',
+      max: 10,
+      value: responseOrMeeting ? 9 : hasOutboundActivity(record) ? 7 : 4,
+      note: responseOrMeeting
+        ? 'The activity history shows two-way engagement, which usually reflects better targeting.'
+        : hasOutboundActivity(record)
+        ? 'Outbound activity exists, but proof of resonance is still limited.'
+        : 'No external touch has been logged yet.',
+    },
+    {
+      id: 'nextStepClarity',
+      label: 'Next-step clarity',
+      max: 10,
+      value: hasDatedNextStep(record) ? 9 : 3,
+      note: hasDatedNextStep(record)
+        ? 'The record has a concrete, dated next step.'
+        : 'Add a dated next step before treating this as active work.',
+    },
+    {
+      id: 'handoffReadiness',
+      label: 'Handoff readiness',
+      max: 10,
+      value: canMoveToStage(record, 'Handoff ready', scenario).allowed ? 10 : record.stage === 'Meeting booked' ? 6 : 3,
+      note: canMoveToStage(record, 'Handoff ready', scenario).allowed
+        ? 'The record is complete enough for the next team to pick up without rediscovery.'
+        : 'Owner, buyer persona, Microsoft fit, and dated next step must all be present before handoff.',
+    },
+    {
+      id: 'reportingCompleteness',
+      label: 'Reporting completeness',
+      max: 10,
+      value: record.activities.length >= 3 ? 9 : record.activities.length >= 2 ? 7 : 5,
+      note:
+        record.activities.length >= 3
+          ? 'The timeline is detailed enough for weekly pipeline review.'
+          : 'Add richer activity history so the record tells a clearer reporting story.',
+    },
+  ]
+
   return {
-    ...scorecard,
-    metrics,
-    total,
-  }
-}
-
-export const refreshClosureScore = (scorecard: Ticket['scorecard'], postmortem: Ticket['postmortem']) => {
-  const metrics = scorecard.metrics.map((metric) => {
-    if (metric.id !== 'closureCompleteness') {
-      return metric
-    }
-
-    const filled = Object.values(postmortem).filter((value) => value.trim().length > 0).length
-    const computed = Math.round((filled / 4) * metric.max)
-    const newValue = clamp(Math.max(metric.value, computed), 0, metric.max)
-    return { ...metric, value: newValue }
-  })
-
-  return {
-    ...scorecard,
     metrics,
     total: metrics.reduce((sum, metric) => sum + metric.value, 0),
   }
 }
 
-export const evaluateDeEscalationScore = (ticket: Ticket, scenario?: ScenarioSeed): Scorecard => {
-  const latestAgentReply = [...ticket.thread]
-    .reverse()
-    .find((entry) => entry.audience === 'customer' && !isCustomerMessage(entry))
+export const evaluateExecutionScore = (record: ProspectRecord, scenario?: ScenarioSeed): Scorecard => {
+  const stageGate = canMoveToStage(record, record.stage, scenario)
+  const hasSignals = record.buyingSignals.length > 0
+  const hasPain = record.painPoints.length > 0
+  const activityText = record.activities.map((activity) => activity.summary.toLowerCase()).join(' ')
+  const personalization = /(cost|contractor|audit|multi-tenant|clinical|lab|budget|citrix)/.test(activityText)
 
-  const replyText = latestAgentReply?.message ?? ''
-  const normalizedText = replyText.toLowerCase()
-  const sanitizedText = normalizedText.replace(/[^a-z0-9\s]/g, ' ')
-  const hasReply = Boolean(latestAgentReply)
-
-  const clarityPattern = /\b(next steps?|after that|then|eta|timeline|within\s+\d+\s+(minute|hour|day)s?|by\s+\d+\s+(minute|hour|day)s?|later today|tomorrow|this afternoon)\b/
-  const ownershipPattern = /\b(i['’]?ll|i will|i am taking|i'm taking|i own this|i will take|i'll handle|i'm handling|i will follow|i'm following|i own it|i'm owning)\b/
-  const empathyPattern = /\b(sorry|apolog(y|ize)?|understand|frustrat|disappoint|thank you|appreciate)\b/
-  const expectationPattern = /\b(update you|keep you posted|expect|let you know|follow[- ]?up|touch base|next update|loop you in|plan to share|keep you in the loop|will share)\b/
-
-  const clarityMatch = clarityPattern.test(sanitizedText)
-  const ownershipMatch = ownershipPattern.test(sanitizedText)
-  const empathyMatch = empathyPattern.test(sanitizedText)
-  const expectationMatch = expectationPattern.test(sanitizedText)
-
-  const routingTerms = new Set<string>()
-  const addRoutingTerm = (value?: string) => {
-    if (!value) return
-    value
-      .split(/[^a-z0-9]+/i)
-      .map((term) => term.trim().toLowerCase())
-      .forEach((term) => {
-        if (term) {
-          routingTerms.add(term)
-        }
-      })
-  }
-
-  ;[
-    'billing',
-    'accounts',
-    'invoice',
-    'payment',
-    'finance',
-    'ops',
-    'operations',
-    'technical',
-    'engineering',
-    'support',
-    'platform',
-    'panel',
-    'hosting',
-  ].forEach(addRoutingTerm)
-  addRoutingTerm(ticket.department)
-  addRoutingTerm(scenario?.bucket)
-  scenario?.tags?.forEach(addRoutingTerm)
-
-  const hasRoutingMatch = Array.from(routingTerms).some((term) => sanitizedText.includes(term))
-
-  const routingInsights = buildRoutingInsights(ticket, scenario)
-  const statusNormalized = ticket.status.toLowerCase()
-  const escalateSignal =
-    routingInsights.escalationHeadline === 'Escalation triggered' || statusNormalized.includes('escalated')
-  const escalationKeywords = ['escalate', 'handoff', 'tier', 'finance ops', 'escalation', 'transfer', 'step up', 'route to']
-  const escalationMentioned = escalationKeywords.some((keyword) => sanitizedText.includes(keyword))
-
-  const closureStatuses = ['solved', 'resolved', 'closed']
-  const closureReady = isPostmortemComplete(ticket.postmortem)
-
-  const metrics: ScorecardMetric[] = deEscalationMetricBlueprint.map((definition) => {
+  const metrics: ScorecardMetric[] = executionMetricBlueprint.map((definition) => {
     let value = 0
     let note = definition.baseNote
+
     switch (definition.id) {
-      case 'empathy':
-        value = empathyMatch ? 10 : 0
-        note = empathyMatch
-          ? 'Acknowledged frustration or appreciation for their patience.'
-          : hasReply
-          ? 'Consider mirroring frustration or thanking them for the details.'
-          : 'Waiting on the first reply before we can score empathy.'
+      case 'research':
+        value = hasSignals && hasPain ? 10 : hasPain ? 7 : 4
+        note = hasSignals && hasPain
+          ? 'Pain points and buying signals are both documented.'
+          : 'Capture both pain points and buying signals so the record is grounded.'
         break
-      case 'clarity':
-        value = clarityMatch ? 10 : 0
-        note = clarityMatch
-          ? 'Outlined next steps, a specific timeline, or ETA.'
-          : 'Add clear next steps, a timeline, or ETA so the customer knows what happens next.'
+      case 'cadence':
+        value = isRecordStale(record) ? 1 : hasDatedNextStep(record) ? 9 : 3
+        note = isRecordStale(record)
+          ? 'The record is stale.'
+          : hasDatedNextStep(record)
+          ? 'A dated next step keeps the cadence healthy.'
+          : 'Add a dated next step to restore cadence discipline.'
         break
-      case 'ownership':
-        value = ownershipMatch ? 10 : 0
-        note = ownershipMatch
-          ? 'Used direct responsibility language (I will, I’m taking point, etc.).'
-          : 'Use “I will” or “I’m taking ownership” phrasing before handing off.'
+      case 'personalization':
+        value = personalization ? 9 : hasOutboundActivity(record) ? 6 : 3
+        note = personalization
+          ? 'Recent activity references account-specific context.'
+          : 'Make the motion sound specific to the account’s workload and timing.'
         break
-      case 'routing':
-        value = hasRoutingMatch ? 10 : 0
-        note = hasRoutingMatch
-          ? `Tied the reply back to ${scenario?.bucket ?? ticket.department} so routing stays clear.`
-          : `Mention Billing/Accounts or Technical Operations terms to justify routing.`
+      case 'nextStep':
+        value = hasDatedNextStep(record) ? 9 : 2
+        note = hasDatedNextStep(record)
+          ? 'The next move is visible and dated.'
+          : 'There is no dated next move yet.'
         break
-      case 'escalation':
-        if (escalateSignal) {
-          value = escalationMentioned ? 10 : 0
-          note = escalationMentioned
-            ? 'Matched the escalation signal with segue language.'
-            : 'Escalation triggered; mention the tier, handoff, or finance ops follow-up.'
-        } else {
-          value = escalationMentioned ? 0 : 10
-          note = escalationMentioned
-            ? 'No escalation signal; avoid unnecessary tier talk.'
-            : 'Correctly kept this reply at the current tier.'
-        }
+      case 'stageDiscipline':
+        value = stageGate.allowed ? 10 : 3
+        note = stageGate.allowed ? 'The current stage is defensible.' : stageGate.message
         break
-      case 'expectation':
-        value = expectationMatch ? 10 : 0
-        note = expectationMatch
-          ? 'Promised a follow-up, update, or checkpoint.'
-          : 'Set expectations for when the next update will arrive.'
-        break
-      case 'closure':
-        value = closureStatuses.includes(statusNormalized) && closureReady ? 10 : 0
-        if (closureStatuses.includes(statusNormalized)) {
-          note = closureReady
-            ? 'Full postmortem (root cause, fix, follow-up, prevention, KB capture) is documented before solving.'
-            : 'Penalty: finish the postmortem checklist, including the KB capture question, before closing.'
-        } else {
-          note = 'Ticket is still open; fill these fields when wrapping up.'
-        }
+      case 'handoff':
+        value = canMoveToStage(record, 'Handoff ready', scenario).allowed ? 9 : record.stage === 'Meeting booked' ? 6 : 3
+        note = canMoveToStage(record, 'Handoff ready', scenario).allowed
+          ? 'The next team would inherit a clean story.'
+          : 'The handoff package still needs more structure.'
         break
       default:
-        note = definition.baseNote
+        value = 0
     }
+
     return {
       id: definition.id,
       label: definition.label,
       max: definition.max,
-      value: clamp(value, 0, definition.max),
+      value,
       note,
     }
   })
 
-  const total = metrics.reduce((sum, metric) => sum + metric.value, 0)
   return {
     metrics,
-    total,
+    total: metrics.reduce((sum, metric) => sum + metric.value, 0),
   }
 }

@@ -1,13 +1,14 @@
 {
-  "title": "Canned reply schema",
-  "summary": "Captures reusable replies that stay editable before sending.",
+  "title": "Outreach template schema",
+  "summary": "Captures reusable outreach structures that remain editable before a user logs the activity.",
   "fields": {
     "id": "string",
     "title": "string",
-    "tone": "string (Empathetic, Professional, Calm, etc.)",
-    "body": "string",
+    "tone": "string",
+    "category": "string (first-touch, follow-up, objection-handling, meeting-confirmation, handoff-intro, nurture)",
+    "segments": "object containing opener, valueProp, nextStep",
     "editable": "boolean",
     "keywords": "array of strings"
   },
-  "notes": "Canned replies should be lightweight templates that agents personalize before hitting send."
+  "notes": "Templates should stay lightweight enough that the user can personalize the motion before logging the outreach."
 }

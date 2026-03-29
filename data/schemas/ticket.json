@@ -1,56 +1,55 @@
 {
-  "title": "Ticket schema",
-  "summary": "Defines the ticket attributes that HostDesk uses for SLAs, prioritization, and routing.",
+  "title": "Lead record schema",
+  "summary": "Defines the prospect record fields that HostDesk uses for queue routing, cadence, activity logging, and stage gating.",
   "fields": {
-    "id": "string (unique ticket identifier)",
-    "subject": "string (brief summary for routing/KB suggestions)",
-    "department": "string (target department for triage)",
-    "severity": "string (Critical, High, Medium, Low)",
-    "priority": "string (Urgent, High, Medium, Low)",
-    "status": "string (New, Open, Waiting on Customer, Escalated, Resolved, Closed)",
-    "plan": "string (Core, Standard, Pro, Enterprise)",
-    "slaTargetMinutes": "number (minutes to hit resolution/update per SLA)",
+    "id": "string (unique record identifier)",
+    "subject": "string (brief prospect context for routing and playbook suggestions)",
+    "company": "string",
+    "segment": "string (MSP, healthcare, education, etc.)",
+    "employeeRange": "string",
+    "microsoftFootprint": "array of strings describing current Microsoft tooling",
+    "useCase": "string (core workload or problem statement)",
+    "buyerPersona": "string",
+    "leadSource": "string",
+    "owner": "string (current SDR or account owner)",
+    "stage": "string (New lead, Active, Meeting booked, Handoff ready, Nurture, Disqualified)",
+    "stageEnteredAt": "ISO timestamp",
     "createdAt": "ISO timestamp",
-    "assignedTo": "string (agent or team)",
-    "escalationTier": "string (Tier 1, Tier 2, Tier 3, SOC)",
-    "invoiceState": "string (Paid - Suspended, Active, Past Due, Pending Upgrade, Pending Payment)",
-    "recentIncidents": "array of strings (contextual incident log)",
-    "thread": "array of ThreadEntry (public/customer messages)",
-    "internalNotes": "array of ThreadEntry (internal-only notes)",
-    "kbMatches": "array of KB article identifiers",
-    "postmortem": "object with rootCause, fix, followUp, prevention",
-    "scorecard": "object describing current scoring metrics and total"
+    "lastTouchAt": "ISO timestamp",
+    "nextTouchDueAt": "ISO timestamp or empty string",
+    "painPoints": "array of strings",
+    "objections": "array of strings",
+    "buyingSignals": "array of strings",
+    "activities": "array of typed activity entries",
+    "playbookMatches": "array of playbook identifiers",
+    "review": "object with deduplication, stageCriteria, nextStepPlan, handoffNotes, playbookStatus",
+    "scorecard": "object describing current scoring metrics and total",
+    "aiSummary": "string",
+    "recommendedNextAction": "string",
+    "crmCompleteness": "number (0-100)",
+    "disqualificationReason": "string"
   },
   "allowedValues": {
-    "departments": [
-      "Billing & Accounts",
-      "Technical Operations",
-      "Infrastructure",
-      "Customer Advocacy"
-    ],
-    "statuses": [
-      "New",
-      "Open",
-      "Waiting on Customer",
-      "Escalated",
-      "Resolved",
-      "Closed"
-    ],
-    "plans": ["Core", "Standard", "Pro", "Enterprise"],
-    "escalationTiers": [
-      "Tier 1",
-      "Tier 2",
-      "Tier 3",
-      "SOC"
-    ],
-    "invoiceStates": [
-      "Paid - Suspended",
+    "stages": [
+      "New lead",
       "Active",
-      "Past Due",
-      "Pending Upgrade",
-      "Pending Payment"
+      "Meeting booked",
+      "Handoff ready",
+      "Nurture",
+      "Disqualified"
     ],
-    "severities": ["Critical", "High", "Medium", "Low"],
-    "priorities": ["Urgent", "High", "Medium", "Low"]
+    "activityTypes": [
+      "outbound-email",
+      "call-attempt",
+      "linkedin-touch",
+      "reply-received",
+      "meeting-booked",
+      "enrichment-update",
+      "ownership-changed",
+      "stage-changed",
+      "ai-draft-used",
+      "note-added"
+    ],
+    "playbookStatus": ["updated", "not-needed", ""]
   }
 }

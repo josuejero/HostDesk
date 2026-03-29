@@ -13,7 +13,7 @@ const QueueNav = ({ views, activeViewId, viewCounts, matchingCount, onSelectView
   <nav className="views-nav">
     <div className="views-heading">
       <p className="eyebrow">Views</p>
-      <p className="hero-blurb">Statuses, departments, tags, and escalations modeled as queue slices.</p>
+      <p className="hero-blurb">Follow-up cadence, hygiene risk, meetings, and handoff readiness modeled as queue slices.</p>
     </div>
     <ul className="views-list">
       {views.map((view) => (
@@ -33,7 +33,7 @@ const QueueNav = ({ views, activeViewId, viewCounts, matchingCount, onSelectView
         </li>
       ))}
     </ul>
-    <p className="view-footnote">{matchingCount} tickets matching filters</p>
+    <p className="view-footnote">{matchingCount} records matching filters</p>
   </nav>
 )
 

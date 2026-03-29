@@ -1,17 +1,18 @@
 import clsx from 'clsx'
 import { AlertTriangle, Clock, Flag, ShieldAlert, Zap } from 'lucide-react'
-import type { ScenarioSeed, Ticket } from '../../types'
+import type { ProspectRecord, ScenarioSeed } from '../../types'
 import { getCountdownLabel, getTimerStatus, timerStatusDescriptions } from '../utils/timer'
+import { getMicrosoftMotion } from '../utils/routing'
 
 type Props = {
   activeView: { label: string; description: string } | null
-  filteredTickets: Ticket[]
+  filteredRecords: ProspectRecord[]
   scenarioMap: Map<string, ScenarioSeed>
-  selectedTicketId?: string
-  onSelectTicket: (ticketId: string) => void
+  selectedRecordId?: string
+  onSelectRecord: (recordId: string) => void
 }
 
-const TicketColumn = ({ activeView, filteredTickets, scenarioMap, selectedTicketId, onSelectTicket }: Props) => (
+const TicketColumn = ({ activeView, filteredRecords, scenarioMap, selectedRecordId, onSelectRecord }: Props) => (
   <section className="tickets-column">
     <div className="tickets-header">
       <div>
@@ -19,33 +20,34 @@ const TicketColumn = ({ activeView, filteredTickets, scenarioMap, selectedTicket
         <h2>{activeView?.description}</h2>
       </div>
       <p className="hero-blurb ticket-count-cta">
-        {filteredTickets.length
-          ? `Showing ${filteredTickets.length} ticket${filteredTickets.length > 1 ? 's' : ''}`
-          : 'No tickets match this view and search yet.'}
+        {filteredRecords.length
+          ? `Showing ${filteredRecords.length} record${filteredRecords.length > 1 ? 's' : ''}`
+          : 'No records match this view and search yet.'}
       </p>
     </div>
     <ul className="ticket-list">
-      {filteredTickets.length ? (
-        filteredTickets.map((ticket) => {
-          const scenario = scenarioMap.get(ticket.id)
-          const isActive = selectedTicketId === ticket.id
-          const countdownLabel = getCountdownLabel(ticket)
-          const cardTimerStatus = getTimerStatus(ticket)
+      {filteredRecords.length ? (
+        filteredRecords.map((record) => {
+          const scenario = scenarioMap.get(record.id)
+          const isActive = selectedRecordId === record.id
+          const countdownLabel = getCountdownLabel(record)
+          const cardTimerStatus = getTimerStatus(record)
           const timerAssistive = timerStatusDescriptions[cardTimerStatus]
+          const motion = getMicrosoftMotion(record, scenario)
           return (
-            <li key={ticket.id}>
+            <li key={record.id}>
               <button
                 type="button"
                 className={clsx('ticket-card', { active: isActive })}
-                onClick={() => onSelectTicket(ticket.id)}
+                onClick={() => onSelectRecord(record.id)}
                 aria-pressed={isActive}
-                aria-label={`Open case "${ticket.subject}", ${ticket.priority} priority, currently ${ticket.status}`}
+                aria-label={`Open account "${record.company}", currently ${record.stage}`}
               >
                 <div className="ticket-card-top">
                   <div>
-                    <h3>{ticket.subject}</h3>
+                    <h3>{record.company}</h3>
                     <p className="ticket-card-subtext">
-                      {ticket.department} • {ticket.priority} priority • {ticket.status}
+                      {record.subject}
                     </p>
                   </div>
                   <div
@@ -59,24 +61,24 @@ const TicketColumn = ({ activeView, filteredTickets, scenarioMap, selectedTicket
                   </div>
                 </div>
                 <div className="ticket-card-meta">
-                  <span className="badge department" aria-label={`Department: ${ticket.department}`}>
+                  <span className="badge department" aria-label={`Segment: ${record.segment}`}>
                     <Flag size={12} aria-hidden="true" />
-                    <span>{ticket.department}</span>
+                    <span>{record.segment}</span>
                   </span>
                   <span
-                    className={clsx('badge status', ticket.status.toLowerCase().replace(/\s+/g, '-'))}
-                    aria-label={`Status: ${ticket.status}`}
+                    className={clsx('badge status', record.stage.toLowerCase().replace(/\s+/g, '-'))}
+                    aria-label={`Stage: ${record.stage}`}
                   >
                     <ShieldAlert size={12} aria-hidden="true" />
-                    <span>{ticket.status}</span>
+                    <span>{record.stage}</span>
                   </span>
-                  <span className="badge priority" aria-label={`Priority: ${ticket.priority}`}>
+                  <span className="badge priority" aria-label={`Motion: ${motion}`}>
                     <Zap size={12} aria-hidden="true" />
-                    <span>{ticket.priority}</span>
+                    <span>{motion}</span>
                   </span>
-                  <span className="badge severity" aria-label={`Severity: ${ticket.severity}`}>
+                  <span className="badge severity" aria-label={`Owner: ${record.owner || 'Unassigned'}`}>
                     <AlertTriangle size={12} aria-hidden="true" />
-                    <span>{ticket.severity}</span>
+                    <span>{record.owner || 'Unassigned'}</span>
                   </span>
                 </div>
                 <div className="tag-row compact">
@@ -92,8 +94,8 @@ const TicketColumn = ({ activeView, filteredTickets, scenarioMap, selectedTicket
         })
       ) : (
         <li className="empty-state" role="status" aria-live="polite">
-          <p>No tickets match this view and search yet.</p>
-          <p>Try clearing the search, picking a different view, or using the reset control above.</p>
+          <p>No records match this view and search yet.</p>
+          <p>Try clearing the search, picking a different queue slice, or using the reset control above.</p>
         </li>
       )}
     </ul>

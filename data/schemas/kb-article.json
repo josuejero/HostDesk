@@ -1,14 +1,15 @@
 {
-  "title": "KB article schema",
-  "summary": "Defines metadata used for keyword matching and article suggestions.",
+  "title": "Playbook schema",
+  "summary": "Defines the metadata used for keyword matching and playbook suggestions inside the sales-ops workflow.",
   "fields": {
     "id": "string",
     "title": "string",
     "summary": "string",
     "keywords": "array of strings",
+    "focusArea": "string",
     "link": "URL",
-    "labels": "optional array of strings (e.g. 'plugin-troubleshooting')",
-    "audience": "optional string (e.g. 'Billing', 'Technical Ops')"
+    "labels": "optional array of strings (e.g. 'avd-migration', 'pipeline-hygiene')",
+    "audience": "optional string"
   },
-  "notes": "At least one keyword should map back to ticket subjects, threads, or tags for reliable suggestions."
+  "notes": "At least one keyword should map back to record subjects, use cases, pain points, or activity notes for reliable suggestions."
 }

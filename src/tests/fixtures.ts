@@ -1,52 +1,36 @@
-import { cloneTicket } from '../app/utils/helpers'
 import { scenarioCatalog } from '../data'
-import type { PostmortemSection, ScenarioSeed, Scorecard, Ticket } from '../types'
+import { cloneRecord } from '../app/utils/helpers'
+import type { CRMHygieneReview, ProspectRecord, ScenarioSeed, Scorecard } from '../types'
 
 const deepClone = <T>(value: T): T => JSON.parse(JSON.stringify(value))
 
-export const baseScorecard: Scorecard = {
-  total: 0,
-  metrics: [
-    { id: 'slaCompliance', label: 'SLA compliance', value: 0, max: 25, note: '' },
-    { id: 'communication', label: 'Communication & empathy', value: 0, max: 20, note: '' },
-    { id: 'technicalOwnership', label: 'Technical ownership', value: 0, max: 20, note: '' },
-    { id: 'kbSelfService', label: 'KB & self-service', value: 0, max: 15, note: '' },
-    { id: 'escalationJudgment', label: 'Escalation judgment', value: 0, max: 10, note: '' },
-    { id: 'closureCompleteness', label: 'Closure completeness', value: 0, max: 10, note: '' },
-  ],
-}
-
-export const basePostmortem: PostmortemSection = {
-  rootCause: '',
-  fix: '',
-  followUp: '',
-  prevention: '',
-  knowledgeArticleStatus: '',
-}
-
 export const baseScenario = scenarioCatalog[0]
 
-export const createTicket = (overrides: Partial<Ticket> = {}): Ticket => {
-  const defaultTicket = cloneTicket(baseScenario.ticket)
+export const baseScorecard: Scorecard = deepClone(baseScenario.record.scorecard)
+
+export const baseReview: CRMHygieneReview = deepClone(baseScenario.record.review)
+
+export const createRecord = (overrides: Partial<ProspectRecord> = {}): ProspectRecord => {
+  const defaultRecord = cloneRecord(baseScenario.record)
   return {
-    ...defaultTicket,
+    ...defaultRecord,
     ...overrides,
-    postmortem: {
-      ...basePostmortem,
-      ...(overrides.postmortem ?? {}),
-    },
-    scorecard: overrides.scorecard ? deepClone(overrides.scorecard) : deepClone(baseScorecard),
-    thread: overrides.thread ? deepClone(overrides.thread) : deepClone(defaultTicket.thread),
-    internalNotes: overrides.internalNotes ? deepClone(overrides.internalNotes) : deepClone(defaultTicket.internalNotes),
-    kbMatches: overrides.kbMatches ? [...overrides.kbMatches] : deepClone(defaultTicket.kbMatches),
+    microsoftFootprint: overrides.microsoftFootprint ? [...overrides.microsoftFootprint] : [...defaultRecord.microsoftFootprint],
+    painPoints: overrides.painPoints ? [...overrides.painPoints] : [...defaultRecord.painPoints],
+    objections: overrides.objections ? [...overrides.objections] : [...defaultRecord.objections],
+    buyingSignals: overrides.buyingSignals ? [...overrides.buyingSignals] : [...defaultRecord.buyingSignals],
+    activities: overrides.activities ? deepClone(overrides.activities) : deepClone(defaultRecord.activities),
+    playbookMatches: overrides.playbookMatches ? [...overrides.playbookMatches] : [...defaultRecord.playbookMatches],
+    review: overrides.review ? { ...baseReview, ...overrides.review } : deepClone(defaultRecord.review),
+    scorecard: overrides.scorecard ? deepClone(overrides.scorecard) : deepClone(defaultRecord.scorecard),
   }
 }
 
 export const createScenario = (overrides: Partial<ScenarioSeed> = {}): ScenarioSeed => {
-  const ticketOverrides = overrides.ticket ?? {}
+  const recordOverrides = overrides.record ?? {}
   return {
     ...baseScenario,
     ...overrides,
-    ticket: createTicket(ticketOverrides),
+    record: createRecord(recordOverrides),
   }
 }

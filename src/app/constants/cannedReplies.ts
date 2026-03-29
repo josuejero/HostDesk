@@ -1,24 +1,22 @@
-import type { CannedReply, CannedReplyCategory } from '../../types'
+import type { OutreachTemplate, OutreachTemplateCategory } from '../../types'
 
-export const cannedCategoryOrder: CannedReplyCategory[] = [
-  'acknowledgement',
-  'billing-clarification',
-  'troubleshooting-step-request',
-  'outage-acknowledgment',
-  'upgrade-reassurance',
-  'escalation-handoff',
-  'closure-follow-up',
+export const cannedCategoryOrder: OutreachTemplateCategory[] = [
+  'first-touch',
+  'follow-up',
+  'objection-handling',
+  'meeting-confirmation',
+  'handoff-intro',
+  'nurture',
 ]
 
-export const cannedCategoryLabels: Record<CannedReplyCategory, string> = {
-  acknowledgement: 'Acknowledgement',
-  'billing-clarification': 'Billing clarification',
-  'troubleshooting-step-request': 'Troubleshooting step request',
-  'outage-acknowledgment': 'Outage acknowledgment',
-  'upgrade-reassurance': 'Upgrade reassurance',
-  'escalation-handoff': 'Escalation handoff',
-  'closure-follow-up': 'Closure / follow-up',
+export const cannedCategoryLabels: Record<OutreachTemplateCategory, string> = {
+  'first-touch': 'First touch',
+  'follow-up': 'Follow-up',
+  'objection-handling': 'Objection handling',
+  'meeting-confirmation': 'Meeting confirmation',
+  'handoff-intro': 'Handoff intro',
+  nurture: 'Nurture',
 }
 
-export const formatCannedText = (reply: CannedReply) =>
-  [reply.segments.acknowledgment, reply.segments.ownership, reply.segments.nextStep].join('\n\n')
+export const formatCannedText = (reply: OutreachTemplate) =>
+  [reply.segments.opener, reply.segments.valueProp, reply.segments.nextStep].join('\n\n')

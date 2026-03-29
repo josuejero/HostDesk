@@ -4,13 +4,13 @@ import cannedRaw from '../../data/canned-replies.json' assert { type: 'json' }
 import rubricRaw from '../../data/scoring-rubric.json' assert { type: 'json' }
 
 import type {
-  CannedReply,
-  KBArticle,
+  OutreachTemplate,
+  PlaybookArticle,
   ScenarioSeed,
   ScoringRubric,
 } from '../types'
 
 export const scenarioCatalog: ScenarioSeed[] = scenarioRaw as ScenarioSeed[]
-export const kbArticles: KBArticle[] = kbRaw as KBArticle[]
-export const cannedReplies: CannedReply[] = cannedRaw as CannedReply[]
+export const kbArticles: PlaybookArticle[] = kbRaw as PlaybookArticle[]
+export const cannedReplies: OutreachTemplate[] = cannedRaw as OutreachTemplate[]
 export const scoringRubric: ScoringRubric = rubricRaw as ScoringRubric

@@ -1,34 +1,36 @@
 import { BookOpenCheck } from 'lucide-react'
-import type { KBArticle } from '../../types'
+import type { PlaybookArticle } from '../../types'
 
 type Props = {
-  kbSuggestions: KBArticle[]
-  handleShareKB: (article: KBArticle) => void
+  playbookSuggestions: PlaybookArticle[]
+  handleSharePlaybook: (article: PlaybookArticle) => void
 }
 
-const KBSuggestionsPanel = ({ kbSuggestions, handleShareKB }: Props) => (
+const KBSuggestionsPanel = ({ playbookSuggestions, handleSharePlaybook }: Props) => (
   <div className="panel">
     <div className="panel-heading">
       <BookOpenCheck size={18} />
-      <h3>KB suggestions</h3>
+      <h3>Playbook suggestions</h3>
     </div>
     <div className="panel-body kb-suggestions">
-      <p className="muted">Share directly from the composer above or with the buttons here.</p>
-      {kbSuggestions.length ? (
-        kbSuggestions.map((article) => (
+      <p className="muted">Matched playbooks surface from workload, pain-point, and activity keywords.</p>
+      {playbookSuggestions.length ? (
+        playbookSuggestions.map((article) => (
           <div key={article.id} className="kb-article">
             <div>
               <strong>{article.title}</strong>
               <p>{article.summary}</p>
-              <small>{article.keywords.join(', ')}</small>
+              <small>
+                {article.focusArea} · {article.keywords.join(', ')}
+              </small>
             </div>
-            <button type="button" onClick={() => handleShareKB(article)}>
-              Share KB
+            <button type="button" onClick={() => handleSharePlaybook(article)}>
+              Save note
             </button>
           </div>
         ))
       ) : (
-        <p className="muted">No keyword matches yet. Keep adding details to the thread.</p>
+        <p className="muted">No playbooks matched yet. Tighten the subject, use case, or activity notes.</p>
       )}
     </div>
   </div>

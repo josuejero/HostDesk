@@ -1,54 +1,70 @@
 {
-  "version": "1.0",
-  "focus": "Balanced SLA + empathy",
+  "version": "2.0",
+  "focus": "SDR operations discipline",
   "metrics": [
     {
-      "id": "slaCompliance",
-      "label": "SLA compliance",
-      "weight": 20,
-      "description": "Keeps customers informed without letting the SLA timer run out.",
-      "max": 25,
-      "suggestion": "Recheck the SLA countdown and acknowledge escalation paths early."
-    },
-    {
-      "id": "communication",
-      "label": "Communication & empathy",
-      "weight": 20,
-      "description": "Writes customer-facing replies that show ownership and calm the situation.",
-      "max": 20,
-      "suggestion": "Mirror the customer's tone, clarify next steps, and thank them for patience."
-    },
-    {
-      "id": "technicalOwnership",
-      "label": "Technical ownership",
-      "weight": 20,
-      "description": "Flags technical context, reproductions, and clear next actions.",
-      "max": 20,
-      "suggestion": "Document diagnostic steps before routing and share them internally if needed."
-    },
-    {
-      "id": "kbSelfService",
-      "label": "KB & self-service",
+      "id": "crmCompleteness",
+      "label": "CRM completeness",
       "weight": 15,
-      "description": "Shares relevant KB articles with personalization and context.",
+      "description": "Captures the required company, persona, source, workload, and owner fields that make the record usable.",
       "max": 15,
-      "suggestion": "Send the best-fitting KB article with a custom intro rather than pasting it raw."
+      "suggestion": "Fill the buyer role, workload context, and owner before moving the record deeper into the pipeline."
     },
     {
-      "id": "escalationJudgment",
-      "label": "Escalation judgment",
+      "id": "dataHygiene",
+      "label": "Data hygiene",
       "weight": 15,
-      "description": "Routes appropriately and documents when to push or hold an escalation.",
-      "max": 10,
-      "suggestion": "Note timing windows and similar incidents to justify escalation decisions."
+      "description": "Keeps the record deduplicated, owned, and tied to a dated next step.",
+      "max": 15,
+      "suggestion": "Any active record without an owner or dated next step should be cleaned up immediately."
     },
     {
-      "id": "closureCompleteness",
-      "label": "Closure completeness",
+      "id": "icpFitJudgment",
+      "label": "ICP fit judgment",
+      "weight": 15,
+      "description": "Shows that the Microsoft workload and business problem actually match the target motion.",
+      "max": 15,
+      "suggestion": "Connect the use case explicitly to AVD, Windows 365, Intune, or a multi-workload MSP motion."
+    },
+    {
+      "id": "followUpTimeliness",
+      "label": "Follow-up timeliness",
+      "weight": 15,
+      "description": "Measures whether the next step is current instead of overdue or forgotten.",
+      "max": 15,
+      "suggestion": "Keep active records inside a real cadence and do not let dated next steps age out."
+    },
+    {
+      "id": "personalizationQuality",
+      "label": "Personalization quality",
       "weight": 10,
-      "description": "Includes root cause, fix, follow-up, and prevention before resolving.",
+      "description": "Rewards outreach that sounds like it understands the account rather than generic desktop automation copy.",
       "max": 10,
-      "suggestion": "Finish the postmortem fields and summarize them for the customer."
+      "suggestion": "Reference the buyer’s actual workload, timing pressure, or operating model in every external touch."
+    },
+    {
+      "id": "nextStepClarity",
+      "label": "Next-step clarity",
+      "weight": 10,
+      "description": "Tracks whether the record has a concrete operational next step and owner.",
+      "max": 10,
+      "suggestion": "Spell out the next action, who owns it, and when it should happen."
+    },
+    {
+      "id": "handoffReadiness",
+      "label": "Handoff readiness",
+      "weight": 10,
+      "description": "Scores whether the SDR captured enough context to pass the opportunity cleanly to the next team.",
+      "max": 10,
+      "suggestion": "Do not hand off until the buyer persona, Microsoft fit, activity proof, and next step are all present."
+    },
+    {
+      "id": "reportingCompleteness",
+      "label": "Reporting completeness",
+      "weight": 10,
+      "description": "Ensures the record is usable in pipeline reviews and weekly summaries.",
+      "max": 10,
+      "suggestion": "Keep source, outcome history, and hygiene notes current so the record tells the full story."
     }
   ]
 }

@@ -1,33 +1,30 @@
-import { basePostmortem } from '../../tests/fixtures'
-import { hasKnowledgeArticleAnswer, isPostmortemComplete, isPostmortemNarrativeComplete } from './postmortem'
+import { hasPlaybookStatus, isReviewComplete, isReviewNarrativeComplete } from './postmortem'
 
-describe('postmortem utilities', () => {
+describe('crm hygiene review utilities', () => {
   it('knows when every narrative field is filled', () => {
     const filled = {
-      ...basePostmortem,
-      rootCause: 'Root cause',
-      fix: 'Fixed',
-      followUp: 'Followed up',
-      prevention: 'Prevented',
-      knowledgeArticleStatus: 'yes',
-    }
+      deduplication: 'Checked duplicates',
+      stageCriteria: 'Qualified',
+      nextStepPlan: 'Follow up tomorrow',
+      handoffNotes: 'Not ready yet',
+      playbookStatus: 'updated',
+    } as const
 
-    expect(isPostmortemNarrativeComplete(filled)).toBe(true)
-    expect(isPostmortemComplete(filled)).toBe(true)
+    expect(isReviewNarrativeComplete(filled)).toBe(true)
+    expect(isReviewComplete(filled)).toBe(true)
   })
 
-  it('detects missing narrative details and knowledge answers', () => {
+  it('detects missing narrative details and playbook answers', () => {
     const partial = {
-      ...basePostmortem,
-      rootCause: 'Root cause',
-      fix: '',
-      followUp: '',
-      prevention: '',
-      knowledgeArticleStatus: '',
-    }
+      deduplication: 'Checked duplicates',
+      stageCriteria: '',
+      nextStepPlan: '',
+      handoffNotes: 'Pending',
+      playbookStatus: '',
+    } as const
 
-    expect(isPostmortemNarrativeComplete(partial)).toBe(false)
-    expect(isPostmortemComplete(partial)).toBe(false)
-    expect(hasKnowledgeArticleAnswer(partial.knowledgeArticleStatus)).toBe(false)
+    expect(isReviewNarrativeComplete(partial)).toBe(false)
+    expect(isReviewComplete(partial)).toBe(false)
+    expect(hasPlaybookStatus(partial.playbookStatus)).toBe(false)
   })
 })

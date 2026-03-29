@@ -1,13 +1,12 @@
 import { scoringRubric } from '../data'
-import { useDeskState } from './hooks/useDeskState'
-import type { PostmortemSection } from '../types'
 import AppHeader from './components/AppHeader'
 import QueueNav from './components/QueueNav'
+import ScenarioLibrary from './components/ScenarioLibrary'
 import TicketColumn from './components/TicketColumn'
 import TicketDetailWorkspace, { type ComposerProps } from './components/TicketDetailWorkspace'
-import ScenarioLibrary from './components/ScenarioLibrary'
-import WalkthroughOverlay from './components/WalkthroughOverlay'
 import Toast from './components/Toast'
+import WalkthroughOverlay from './components/WalkthroughOverlay'
+import { useDeskState } from './hooks/useDeskState'
 import './styles/layout.css'
 import './styles/tickets.css'
 import './styles/detail.css'
@@ -23,97 +22,131 @@ const DeskApp = () => {
     activeView,
     selectedViewId,
     setSelectedViewId,
-    filteredTickets,
+    filteredRecords,
     jumpTargetId,
     searchTerm,
     setSearchTerm,
-    handleSelectTicket,
+    handleSelectRecord,
     handleReset,
     handleToggleScenarioLibrary,
     handleToggleWalkthrough,
     showScenarioLibrary,
     walkthroughActive,
-    selectedTicket,
+    selectedRecord,
     selectedScenario,
     routingInsights,
     selectedCountdownLabel,
     selectedTimerStatus,
     selectedTimerDescription,
-    deEscalationScorecard,
-    deEscalationMaxTotal,
+    executionScorecard,
+    executionMaxTotal,
     selectedReplyId,
     draftReply,
     setDraftReply,
-    draftAudience,
-    setDraftAudience,
+    draftActivityType,
+    setDraftActivityType,
+    draftOutcome,
+    setDraftOutcome,
+    draftNextStep,
+    setDraftNextStep,
+    draftNextTouchDueAt,
+    setDraftNextTouchDueAt,
+    draftCrmUpdated,
+    setDraftCrmUpdated,
     selectedCannedReply,
     cannedRepliesByCategory,
     cannedCategoryLabels,
     cannedCategoryOrder,
     requiresCannedEdit,
-    handleSendReply,
+    handleLogActivity,
     handleUseCannedReply,
     setSelectedReplyId,
     selectedArticleId,
     setSelectedArticleId,
-    kbSuggestions,
+    playbookSuggestions,
     handleShareSelectedArticle,
-    handleShareKB,
-    handleStatusAction,
-    postmortemNarrativeFields,
-    postmortemFieldLabels,
-    handlePostmortemChange,
-    postmortemChecklist,
-    guidedTroubleshooting,
-    caseCloseReady,
+    handleSharePlaybook,
+    reviewNarrativeFields,
+    reviewFieldLabels,
+    handleReviewChange,
+    guidedResearch,
+    researchActivities,
+    stageOptions,
+    selectedStage,
+    setSelectedStage,
+    handleApplyStageChange,
+    handleRecordFieldChange,
+    aiSuggestion,
+    handleGenerateAiSuggestion,
+    handleApplyAiSuggestion,
     toastMessage,
     handleWalkthroughKeyDown,
     scenarioMap,
+    nextTouchInputValue,
   } = useDeskState()
 
   const composerProps: ComposerProps = {
     selectedReplyId,
     draftReply,
     setDraftReply,
-    draftAudience,
-    setDraftAudience,
+    draftActivityType,
+    setDraftActivityType,
+    draftOutcome,
+    setDraftOutcome,
+    draftNextStep,
+    setDraftNextStep,
+    draftNextTouchDueAt,
+    setDraftNextTouchDueAt,
+    draftCrmUpdated,
+    setDraftCrmUpdated,
     selectedCannedReply,
     cannedRepliesByCategory,
     cannedCategoryLabels,
     cannedCategoryOrder,
     requiresCannedEdit,
-    handleSendReply,
+    handleLogActivity,
     handleUseCannedReply,
+    playbookSuggestions,
     selectedArticleId,
     setSelectedArticleId,
-    kbSuggestions,
     handleShareSelectedArticle,
     setSelectedReplyId,
   }
 
-  const postmortemLabels: Record<keyof PostmortemSection, string> = {
-    ...postmortemFieldLabels,
-    knowledgeArticleStatus: 'Article created or updated?',
-  }
+  const timelineProps = selectedRecord
+    ? {
+        activities: selectedRecord.activities,
+        aiSummary: selectedRecord.aiSummary,
+        recommendedNextAction: selectedRecord.recommendedNextAction,
+        stageOptions,
+        selectedStage,
+        setSelectedStage,
+        onApplyStageChange: handleApplyStageChange,
+      }
+    : undefined
 
-  const threadProps = {
-    thread: selectedTicket?.thread ?? [],
-    postmortemChecklist,
-    caseCloseReady,
-    onStatusAction: handleStatusAction,
-  }
-
-  const sidebarProps = selectedTicket
+  const sidebarProps = selectedRecord
     ? {
         rubric: scoringRubric,
-        scorecard: selectedTicket.scorecard,
-        postmortem: selectedTicket.postmortem,
-        narrativeFields: postmortemNarrativeFields,
-        fieldLabels: postmortemLabels,
-        handlePostmortemChange,
-        guidedTroubleshooting,
-        kbSuggestions,
-        handleShareKB,
+        scorecard: selectedRecord.scorecard,
+        review: selectedRecord.review,
+        owner: selectedRecord.owner,
+        buyerPersona: selectedRecord.buyerPersona,
+        nextTouchDueAt: nextTouchInputValue,
+        disqualificationReason: selectedRecord.disqualificationReason,
+        narrativeFields: reviewNarrativeFields,
+        fieldLabels: {
+          ...reviewFieldLabels,
+          playbookStatus: 'Playbook updated?',
+        },
+        handleReviewChange,
+        handleRecordFieldChange,
+        guidedResearch,
+        playbookSuggestions,
+        handleSharePlaybook,
+        aiSuggestion,
+        handleGenerateAiSuggestion,
+        handleApplyAiSuggestion,
       }
     : undefined
 
@@ -124,7 +157,7 @@ const DeskApp = () => {
         setSearchTerm={setSearchTerm}
         jumpTargetId={jumpTargetId}
         scenarioCatalog={scenarioCatalog}
-        onSelectTicket={handleSelectTicket}
+        onSelectRecord={handleSelectRecord}
         onReset={handleReset}
         onToggleScenarioLibrary={handleToggleScenarioLibrary}
         onToggleWalkthrough={handleToggleWalkthrough}
@@ -134,37 +167,38 @@ const DeskApp = () => {
           views={queueViews}
           activeViewId={selectedViewId}
           viewCounts={viewCounts}
-          matchingCount={filteredTickets.length}
+          matchingCount={filteredRecords.length}
           onSelectView={setSelectedViewId}
         />
         <TicketColumn
           activeView={activeView}
-          filteredTickets={filteredTickets}
+          filteredRecords={filteredRecords}
           scenarioMap={scenarioMap}
-          selectedTicketId={selectedTicket?.id}
-          onSelectTicket={handleSelectTicket}
+          selectedRecordId={selectedRecord?.id}
+          onSelectRecord={handleSelectRecord}
         />
         <TicketDetailWorkspace
-          selectedTicket={selectedTicket}
+          selectedRecord={selectedRecord}
           selectedScenario={selectedScenario}
           routingInsights={routingInsights}
           countdownLabel={selectedCountdownLabel}
           timerStatus={selectedTimerStatus}
           timerDescription={selectedTimerDescription}
-          deEscalationScorecard={deEscalationScorecard}
-          deEscalationMaxTotal={deEscalationMaxTotal}
+          executionScorecard={executionScorecard}
+          executionMaxTotal={executionMaxTotal}
           composer={composerProps}
-          thread={threadProps}
+          timeline={timelineProps!}
+          researchActivities={researchActivities}
           sidebar={sidebarProps}
         />
       </div>
       {showScenarioLibrary && (
-        <ScenarioLibrary scenarios={scenarioCatalog} onSelectScenario={handleSelectTicket} />
+        <ScenarioLibrary scenarios={scenarioCatalog} onSelectScenario={handleSelectRecord} />
       )}
       {walkthroughActive && selectedScenario && (
         <WalkthroughOverlay
           scenario={selectedScenario}
-          ticket={selectedTicket}
+          record={selectedRecord}
           onClose={handleToggleWalkthrough}
           onKeyDown={handleWalkthroughKeyDown}
         />

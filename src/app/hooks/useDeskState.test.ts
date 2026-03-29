@@ -5,118 +5,123 @@ describe('useDeskState hook interactions', () => {
   beforeEach(() => {
     window.localStorage.clear()
     vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-03-05T12:00:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
   })
 
   afterEach(() => {
     vi.useRealTimers()
   })
 
-  it('selects a ticket and hides the scenario library', () => {
+  it('selects a record and hides the scenario library', () => {
     const { result } = renderHook(() => useDeskState())
-    const secondTicketId = result.current.scenarioCatalog[1].ticket.id
+    const secondRecordId = result.current.scenarioCatalog[1].record.id
 
     act(() => {
       result.current.handleToggleScenarioLibrary()
-      result.current.handleSelectTicket(secondTicketId)
+      result.current.handleSelectRecord(secondRecordId)
     })
 
-    expect(result.current.selectedTicket?.id).toBe(secondTicketId)
+    expect(result.current.selectedRecord?.id).toBe(secondRecordId)
     expect(result.current.showScenarioLibrary).toBe(false)
   })
 
-  it('requires canned replies to be personalized before sending', () => {
+  it('requires outreach templates to be personalized before logging activity', () => {
     const { result } = renderHook(() => useDeskState())
     const firstCategory = result.current.cannedCategoryOrder[0]
-    const cannedReply = result.current.cannedRepliesByCategory[firstCategory][0]
-    const initialThreadLength = result.current.selectedTicket?.thread.length ?? 0
+    const template = result.current.cannedRepliesByCategory[firstCategory][0]
+    const initialActivities = result.current.selectedRecord?.activities.length ?? 0
 
     act(() => {
-      result.current.handleUseCannedReply(cannedReply.id)
+      result.current.handleUseCannedReply(template.id)
     })
 
     expect(result.current.requiresCannedEdit).toBe(true)
 
     act(() => {
-      result.current.handleSendReply()
+      result.current.handleLogActivity()
     })
 
-    expect(result.current.toastMessage).toMatch(/Please personalize/)
-    expect(result.current.selectedTicket?.thread.length).toBe(initialThreadLength)
+    expect(result.current.toastMessage).toMatch(/Edit the outreach template/)
+    expect(result.current.selectedRecord?.activities.length).toBe(initialActivities)
 
     act(() => {
-      result.current.setDraftReply('Customized text')
+      result.current.setDraftReply('Personalized follow-up tied to this account.')
     })
-
-    expect(result.current.requiresCannedEdit).toBe(false)
 
     act(() => {
-      result.current.handleSendReply()
+      result.current.handleLogActivity()
     })
 
-    expect(result.current.selectedTicket?.thread.length).toBe(initialThreadLength + 1)
+    expect(result.current.selectedRecord?.activities.length).toBe(initialActivities + 1)
     expect(result.current.draftReply).toBe('')
     expect(result.current.selectedReplyId).toBeNull()
   })
 
-  it('shares KB articles and records the match with a toast', () => {
+  it('saves matched playbooks onto the record and logs a note', () => {
     const { result } = renderHook(() => useDeskState())
-    if (!result.current.kbSuggestions.length) {
-      throw new Error('Expected KB suggestions for the default ticket')
+    if (!result.current.playbookSuggestions.length) {
+      throw new Error('Expected playbook suggestions for the default record')
     }
-    const articleId = result.current.kbSuggestions[0].id
-    const threadLength = result.current.selectedTicket?.thread.length ?? 0
+
+    const articleId = result.current.playbookSuggestions[0].id
+    const activityLength = result.current.selectedRecord?.activities.length ?? 0
 
     act(() => {
       result.current.setSelectedArticleId(articleId)
       result.current.handleShareSelectedArticle()
     })
 
-    expect(result.current.selectedTicket?.kbMatches).toContain(articleId)
-    expect(result.current.selectedTicket?.thread.length).toBe(threadLength + 1)
-    expect(result.current.toastMessage).toContain('Shared KB article')
+    expect(result.current.selectedRecord?.playbookMatches).toContain(articleId)
+    expect(result.current.selectedRecord?.activities.length).toBe(activityLength + 1)
+    expect(result.current.toastMessage).toContain('Added')
   })
 
-  it('blocks solved status until the postmortem checklist is complete', () => {
+  it('blocks handoff-ready until required fields are filled', () => {
     const { result } = renderHook(() => useDeskState())
-    const initialStatus = result.current.selectedTicket?.status
 
     act(() => {
-      result.current.handleStatusAction('solved')
+      result.current.handleSelectRecord('lead-citrix-research')
     })
-
-    expect(result.current.toastMessage).toMatch(/Finish the postmortem/)
-    expect(result.current.selectedTicket?.status).toBe(initialStatus)
 
     act(() => {
-      result.current.postmortemNarrativeFields.forEach((field) => {
-        result.current.handlePostmortemChange(field, 'Documented info')
-      })
-      result.current.handlePostmortemChange('knowledgeArticleStatus', 'yes')
+      result.current.setSelectedStage('Handoff ready')
     })
-
-    expect(result.current.caseCloseReady).toBe(true)
 
     act(() => {
-      result.current.handleStatusAction('solved')
+      result.current.handleApplyStageChange()
     })
 
-    expect(result.current.selectedTicket?.status).toBe('Solved')
-    expect(result.current.toastMessage).toBe('Solved action queued.')
+    expect(result.current.toastMessage).toMatch(/Handoff ready requires owner/)
+
+    act(() => {
+      result.current.handleRecordFieldChange('owner', 'Jordan Ellis')
+      result.current.handleRecordFieldChange('buyerPersona', 'Infrastructure Director')
+      result.current.handleRecordFieldChange('nextTouchDueAt', '2026-03-30T14:00')
+    })
+
+    act(() => {
+      result.current.setSelectedStage('Handoff ready')
+    })
+
+    act(() => {
+      result.current.handleApplyStageChange()
+    })
+
+    expect(result.current.selectedRecord?.stage).toBe('Handoff ready')
   })
 
   it('resets filters, queue view, and toast state', () => {
     const { result } = renderHook(() => useDeskState())
 
     act(() => {
-      result.current.setSearchTerm('invoice')
-      result.current.setSelectedViewId('resolved')
+      result.current.setSearchTerm('citrix')
+      result.current.setSelectedViewId('stale')
       result.current.handleReset()
     })
 
     expect(result.current.searchTerm).toBe('')
     expect(result.current.selectedViewId).toBe(result.current.queueViews[0].id)
-    expect(result.current.toastMessage).toBe('Demo data reset. Welcome back to square one!')
+    expect(result.current.toastMessage).toBe('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')
 
     act(() => {
       vi.advanceTimersByTime(3800)

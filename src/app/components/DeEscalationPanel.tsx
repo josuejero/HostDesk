@@ -10,7 +10,7 @@ const DeEscalationPanel = ({ scorecard, maxTotal }: Props) => (
   <div className="panel">
     <div className="panel-heading">
       <ShieldAlert size={18} />
-      <h3>De-escalation scorecard</h3>
+      <h3>Execution quality</h3>
     </div>
     <div className="panel-body scorecard">
       {scorecard.metrics.map((metric) => (

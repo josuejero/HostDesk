@@ -1,92 +1,130 @@
-import type { Audience, CannedReply, CannedReplyCategory, KBArticle, PostmortemSection, ScenarioSeed, Scorecard, ScoringRubric, Ticket } from '../../types'
+import type {
+  AiSuggestion,
+  AiSuggestionKind,
+  CRMHygieneReview,
+  LeadStage,
+  OutreachTemplate,
+  OutreachTemplateCategory,
+  PlaybookArticle,
+  ProspectRecord,
+  ScenarioSeed,
+  Scorecard,
+  ScoringRubric,
+  ActivityType,
+} from '../../types'
+import type { GuidedEntry } from '../constants/subjectTriggers'
 import type { RoutingInsights } from '../utils/routing'
 import type { TimerStatus } from '../utils/timer'
-import TicketHeaderPanel from './TicketHeaderPanel'
-import ThreadPanel from './ThreadPanel'
+import AIAssistPanel from './AIAssistPanel'
 import ComposerPanel from './ComposerPanel'
 import DeEscalationPanel from './DeEscalationPanel'
-import InternalNotesPanel from './InternalNotesPanel'
-import ScorecardPanel from './ScorecardPanel'
-import PostmortemPanel from './PostmortemPanel'
 import GuidedTroubleshootingPanel from './GuidedTroubleshootingPanel'
+import InternalNotesPanel from './InternalNotesPanel'
 import KBSuggestionsPanel from './KBSuggestionsPanel'
-import type { GuidedEntry } from '../constants/subjectTriggers'
+import PostmortemPanel from './PostmortemPanel'
+import ScorecardPanel from './ScorecardPanel'
+import ThreadPanel from './ThreadPanel'
+import TicketHeaderPanel from './TicketHeaderPanel'
 
 export type ComposerProps = {
   selectedReplyId: string | null
   draftReply: string
   setDraftReply: (value: string) => void
-  draftAudience: Audience
-  setDraftAudience: (value: Audience) => void
-  selectedCannedReply: CannedReply | null
-  cannedRepliesByCategory: Record<CannedReplyCategory, CannedReply[]>
-  cannedCategoryLabels: Record<CannedReplyCategory, string>
-  cannedCategoryOrder: CannedReplyCategory[]
+  draftActivityType: ActivityType
+  setDraftActivityType: (value: ActivityType) => void
+  draftOutcome: string
+  setDraftOutcome: (value: string) => void
+  draftNextStep: string
+  setDraftNextStep: (value: string) => void
+  draftNextTouchDueAt: string
+  setDraftNextTouchDueAt: (value: string) => void
+  draftCrmUpdated: boolean
+  setDraftCrmUpdated: (value: boolean) => void
+  selectedCannedReply: OutreachTemplate | null
+  cannedRepliesByCategory: Record<OutreachTemplateCategory, OutreachTemplate[]>
+  cannedCategoryLabels: Record<OutreachTemplateCategory, string>
+  cannedCategoryOrder: OutreachTemplateCategory[]
   requiresCannedEdit: boolean
-  handleSendReply: () => void
+  handleLogActivity: () => void
   handleUseCannedReply: (id: string) => void
+  playbookSuggestions: PlaybookArticle[]
   selectedArticleId: string | null
   setSelectedArticleId: (value: string | null) => void
-  kbSuggestions: KBArticle[]
   handleShareSelectedArticle: () => void
   setSelectedReplyId: (value: string | null) => void
 }
 
-type ThreadProps = {
-  thread: Ticket['thread']
-  postmortemChecklist: { id: string; label: string; detail: string; complete: boolean }[]
-  caseCloseReady: boolean
-  onStatusAction: (action: 'waiting' | 'solved') => void
+type TimelineProps = {
+  activities: ProspectRecord['activities']
+  aiSummary: string
+  recommendedNextAction: string
+  stageOptions: LeadStage[]
+  selectedStage: LeadStage
+  setSelectedStage: (value: LeadStage) => void
+  onApplyStageChange: () => void
 }
 
 type SidebarProps = {
   rubric: ScoringRubric
   scorecard: Scorecard
-  postmortem: PostmortemSection
-  narrativeFields: readonly (keyof PostmortemSection)[]
-  fieldLabels: Record<keyof PostmortemSection, string>
-  handlePostmortemChange: (field: keyof Ticket['postmortem'], value: string) => void
-  guidedTroubleshooting: GuidedEntry[]
-  kbSuggestions: KBArticle[]
-  handleShareKB: (article: KBArticle) => void
+  review: CRMHygieneReview
+  owner: string
+  buyerPersona: string
+  nextTouchDueAt: string
+  disqualificationReason: string
+  narrativeFields: readonly (keyof CRMHygieneReview)[]
+  fieldLabels: Record<keyof CRMHygieneReview, string>
+  handleReviewChange: (field: keyof CRMHygieneReview, value: string) => void
+  handleRecordFieldChange: (
+    field: 'owner' | 'buyerPersona' | 'nextTouchDueAt' | 'disqualificationReason',
+    value: string,
+  ) => void
+  guidedResearch: GuidedEntry[]
+  playbookSuggestions: PlaybookArticle[]
+  handleSharePlaybook: (article: PlaybookArticle) => void
+  aiSuggestion: AiSuggestion | null
+  handleGenerateAiSuggestion: (kind: AiSuggestionKind) => void
+  handleApplyAiSuggestion: () => void
 }
 
 type Props = {
-  selectedTicket: Ticket | undefined
+  selectedRecord: ProspectRecord | undefined
   selectedScenario?: ScenarioSeed
   routingInsights: RoutingInsights | null
   countdownLabel: string
   timerStatus: TimerStatus
   timerDescription: string
-  deEscalationScorecard: Scorecard | null
-  deEscalationMaxTotal: number
+  executionScorecard: Scorecard | null
+  executionMaxTotal: number
   composer: ComposerProps
-  thread: ThreadProps
+  timeline: TimelineProps
+  researchActivities: ProspectRecord['activities']
   sidebar?: SidebarProps
 }
 
 const TicketDetailWorkspace = ({
-  selectedTicket,
+  selectedRecord,
   selectedScenario,
   routingInsights,
   countdownLabel,
   timerStatus,
   timerDescription,
-  deEscalationScorecard,
-  deEscalationMaxTotal,
+  executionScorecard,
+  executionMaxTotal,
   composer,
-  thread,
+  timeline,
+  researchActivities,
   sidebar,
 }: Props) => (
   <section className="detail-column">
     <div className="detail-headline">
-      <p className="eyebrow">Case workspace</p>
-      <p className="hero-blurb">Open any ticket to reveal threads, scorecard, KB, and postmortem tools.</p>
+      <p className="eyebrow">Account workspace</p>
+      <p className="hero-blurb">Open any record to reveal the timeline, AI assist, playbooks, and CRM hygiene tools.</p>
     </div>
-    {selectedTicket ? (
+    {selectedRecord ? (
       <section className="ticket-shell">
         <TicketHeaderPanel
-          ticket={selectedTicket}
+          record={selectedRecord}
           scenario={selectedScenario}
           routingInsights={routingInsights}
           countdownLabel={countdownLabel}
@@ -95,28 +133,41 @@ const TicketDetailWorkspace = ({
         />
         <div className="ticket-grid">
           <section className="thread-column">
-            <ThreadPanel {...thread} />
+            <ThreadPanel {...timeline} />
             <ComposerPanel {...composer} />
-            {deEscalationScorecard && (
-              <DeEscalationPanel scorecard={deEscalationScorecard} maxTotal={deEscalationMaxTotal} />
+            {executionScorecard && (
+              <DeEscalationPanel scorecard={executionScorecard} maxTotal={executionMaxTotal} />
             )}
-            <InternalNotesPanel internalNotes={selectedTicket.internalNotes} />
+            <InternalNotesPanel researchActivities={researchActivities} />
           </section>
           <aside className="sidebar">
             {sidebar && (
               <>
-                <ScorecardPanel scorecard={selectedTicket.scorecard} rubric={sidebar.rubric} />
+                <ScorecardPanel scorecard={selectedRecord.scorecard} rubric={sidebar.rubric} />
+                <AIAssistPanel
+                  aiSuggestion={sidebar.aiSuggestion}
+                  onGenerate={sidebar.handleGenerateAiSuggestion}
+                  onApply={sidebar.handleApplyAiSuggestion}
+                />
                 <PostmortemPanel
-                  postmortem={sidebar.postmortem}
+                  review={sidebar.review}
+                  owner={sidebar.owner}
+                  buyerPersona={sidebar.buyerPersona}
+                  nextTouchDueAt={sidebar.nextTouchDueAt}
+                  disqualificationReason={sidebar.disqualificationReason}
                   narrativeFields={sidebar.narrativeFields}
                   fieldLabels={sidebar.fieldLabels}
-                  onChange={sidebar.handlePostmortemChange}
+                  onChange={sidebar.handleReviewChange}
+                  onRecordFieldChange={sidebar.handleRecordFieldChange}
                 />
                 <GuidedTroubleshootingPanel
-                  guidedTroubleshooting={sidebar.guidedTroubleshooting}
-                  handleShareKB={sidebar.handleShareKB}
+                  guidedResearch={sidebar.guidedResearch}
+                  handleSharePlaybook={sidebar.handleSharePlaybook}
                 />
-                <KBSuggestionsPanel kbSuggestions={sidebar.kbSuggestions} handleShareKB={sidebar.handleShareKB} />
+                <KBSuggestionsPanel
+                  playbookSuggestions={sidebar.playbookSuggestions}
+                  handleSharePlaybook={sidebar.handleSharePlaybook}
+                />
               </>
             )}
           </aside>
@@ -124,8 +175,8 @@ const TicketDetailWorkspace = ({
       </section>
     ) : (
       <div className="detail-empty" role="status" aria-live="polite">
-        <p>Select a ticket from the queue to load the workspace.</p>
-        <p>Need a ticket? Use the reset button or clear your filters to repopulate the queue.</p>
+        <p>Select a record from the queue to load the workspace.</p>
+        <p>Need a record? Use the reset button or clear your filters to repopulate the queue.</p>
       </div>
     )}
   </section>

@@ -1749,1103 +1749,6 @@ describe('useDeskState hook interactions', () => {
 })
 </file>
 
-<file path="src/app/styles/conversation.css">
-.conversation-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.conversation-stream {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-}
-
-.conversation-bubble {
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.85rem;
-  max-width: 70%;
-  box-shadow: 0 10px 20px rgba(3, 6, 15, 0.3);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.conversation-bubble--customer {
-  align-self: flex-start;
-  border-color: rgba(130, 199, 255, 0.5);
-  background: rgba(130, 199, 255, 0.12);
-}
-
-.conversation-bubble--agent {
-  align-self: flex-end;
-  border-color: rgba(103, 246, 160, 0.5);
-  background: rgba(103, 246, 160, 0.16);
-}
-
-.conversation-bubble__meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: rgba(245, 246, 255, 0.6);
-  margin-bottom: 0.35rem;
-}
-
-.attachments-placeholder {
-  border: 1px dashed rgba(255, 255, 255, 0.35);
-  border-radius: 12px;
-  padding: 0.8rem;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.02);
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.attachments-placeholder small {
-  display: block;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.55);
-  margin-top: 0.35rem;
-}
-
-.status-actions {
-  display: flex;
-  gap: 0.7rem;
-  flex-wrap: wrap;
-}
-
-.status-actions button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.composer-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.canned-preview {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 0.9rem;
-  background: rgba(2, 6, 18, 0.55);
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.canned-preview div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.canned-preview strong {
-  font-size: 0.8rem;
-  color: rgba(130, 199, 255, 0.9);
-}
-
-.canned-preview p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: rgba(245, 246, 255, 0.8);
-}
-
-.composer-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.kb-share-row {
-  display: flex;
-  gap: 0.55rem;
-  flex: 1;
-}
-
-.kb-share-row select {
-  flex: 1;
-  min-width: 0;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(2, 6, 18, 0.85);
-  color: #f5f6ff;
-  padding: 0.6rem 0.9rem;
-}
-
-.kb-share-row button {
-  flex: 0 0 auto;
-}
-
-.composer-controls .primary {
-  margin-left: auto;
-}
-
-.composer-reminder {
-  margin: 0;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.75);
-}
-</file>
-
-<file path="src/app/styles/detail.css">
-.detail-column {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1.25rem;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.detail-headline {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.detail-empty {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 16px;
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  padding: 2rem;
-  text-align: center;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.detail-empty p {
-  margin: 0.4rem 0;
-  font-size: 0.9rem;
-}
-
-.ticket-shell {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  min-height: 0;
-}
-
-.ticket-header {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  box-shadow: 0 20px 40px rgba(4, 9, 22, 0.6);
-}
-
-.ticket-chip {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.triage-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.6rem;
-  border: 1px solid rgba(130, 199, 255, 0.25);
-  border-radius: 14px;
-  padding: 0.9rem;
-  background: rgba(7, 14, 30, 0.85);
-}
-
-.triage-pill {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.triage-pill strong {
-  font-size: 0.95rem;
-  color: #f5f6ff;
-  font-weight: 600;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.timer-value {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: #82c7ff;
-}
-
-.timer-value svg {
-  stroke: currentColor;
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.metadata {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-  color: rgba(245, 246, 255, 0.7);
-}
-
-.escalation-path,
-.customer-profile {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.routing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.8rem;
-}
-
-.routing-card {
-  border: 1px solid rgba(130, 199, 255, 0.2);
-  border-radius: 14px;
-  padding: 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.routing-card span {
-  font-size: 0.7rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.routing-card strong {
-  font-size: 0.95rem;
-  color: #f5f6ff;
-}
-
-.routing-card p {
-  margin: 0;
-  font-size: 0.82rem;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.ticket-grid {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 1.25rem;
-  min-height: 0;
-}
-
-.thread-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-</file>
-
-<file path="src/app/styles/layout.css">
-.app-shell {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.75rem clamp(1rem, 3vw, 2.5rem);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid rgba(130, 199, 255, 0.9);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 2px rgba(130, 199, 255, 0.35);
-}
-
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: 0 20px 40px rgba(4, 9, 22, 0.65);
-  flex-wrap: wrap;
-}
-
-.brand-copy h1 {
-  font-size: 2.1rem;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.brand-copy h1 span {
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: rgba(245, 246, 255, 0.8);
-}
-
-.hero-blurb {
-  margin: 0;
-  color: rgba(245, 246, 255, 0.75);
-  font-size: 0.95rem;
-}
-
-.eyebrow {
-  font-size: 0.85rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #82c7ff;
-  margin: 0;
-}
-
-.utility-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: flex-end;
-}
-
-.utility-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.utility-field input,
-.utility-field select,
-.utility-field textarea {
-  min-width: 200px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(2, 6, 18, 0.8);
-  color: #f5f6ff;
-  padding: 0.65rem 0.9rem;
-}
-
-.utility-field select {
-  appearance: none;
-}
-
-.ghost-btn {
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: transparent;
-  color: #f5f6ff;
-  font-weight: 600;
-  padding: 0.65rem 1.1rem;
-  cursor: pointer;
-  transition: border 0.2s ease, transform 0.2s ease;
-}
-
-.ghost-btn:hover {
-  border-color: #82c7ff;
-  transform: translateY(-1px);
-}
-
-.workspace-grid {
-  display: grid;
-  grid-template-columns: 220px minmax(320px, 1fr) minmax(360px, 1fr);
-  gap: 1rem;
-  min-height: 0;
-}
-
-.views-nav {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-height: 0;
-}
-
-.views-heading {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.views-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.view-link {
-  width: 100%;
-  text-align: left;
-  border-radius: 14px;
-  border: 1px solid transparent;
-  padding: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.02);
-  cursor: pointer;
-  color: #f5f6ff;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.view-link small {
-  font-size: 0.75rem;
-  color: rgba(245, 246, 255, 0.65);
-}
-
-.view-link.active {
-  border-color: rgba(130, 199, 255, 0.6);
-  background: rgba(130, 199, 255, 0.08);
-}
-
-.count {
-  font-weight: 700;
-  color: #67f6a0;
-}
-
-.view-footnote {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-}
-
-.tickets-column {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  min-height: 0;
-}
-
-.tickets-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.ticket-count-cta {
-  margin: 0;
-  font-size: 0.9rem;
-  color: rgba(245, 246, 255, 0.7);
-}
-</file>
-
-<file path="src/app/styles/panel.css">
-.panel {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 15px 30px rgba(3, 6, 15, 0.5);
-}
-
-.panel-heading {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.panel-body {
-  padding: 1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.panel--guided .panel-body {
-  gap: 1rem;
-}
-
-.guided-card {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 0.85rem;
-  background: rgba(255, 255, 255, 0.02);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.guided-card__header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.guided-card__header strong {
-  font-size: 0.95rem;
-}
-
-.guided-keywords {
-  font-size: 0.65rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(130, 199, 255, 0.7);
-}
-
-.guided-tips {
-  list-style: disc;
-  margin: 0;
-  padding-left: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  color: rgba(245, 246, 255, 0.85);
-  font-size: 0.85rem;
-}
-
-.guided-articles {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
-.guided-article {
-  padding-top: 0.45rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  align-items: flex-start;
-}
-
-.guided-article strong {
-  font-size: 0.85rem;
-  display: block;
-}
-
-.guided-article p {
-  margin: 0.2rem 0 0;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
-  max-width: 190px;
-}
-
-.guided-article button {
-  align-self: flex-start;
-}
-
-.scorecard .score-metric {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.scorecard .score-metric:last-child {
-  border-bottom: none;
-}
-
-.scorecard .score-metric div {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-}
-
-.scorecard .note,
-.scorecard .suggestion {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-.scorecard .note {
-  color: rgba(245, 246, 255, 0.6);
-}
-
-.scorecard .suggestion {
-  color: rgba(130, 199, 255, 0.9);
-  font-size: 0.8rem;
-}
-
-.meter {
-  height: 4px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-}
-
-.meter div {
-  height: 100%;
-  background: linear-gradient(135deg, #82c7ff, #67f6a0);
-}
-
-.total {
-  text-align: right;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.postmortem textarea,
-.postmortem select,
-.postmortem label,
-.postmortem-checklist textarea {
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.25);
-  color: #f5f6ff;
-  padding: 0.6rem;
-  resize: vertical;
-}
-
-.postmortem label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.postmortem-checklist {
-  margin-top: 0.9rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.2);
-  padding-top: 0.8rem;
-}
-
-.postmortem-checklist ul {
-  list-style: none;
-  margin: 0.6rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.postmortem-checklist li {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.8rem;
-  align-items: flex-start;
-  font-size: 0.9rem;
-}
-
-.postmortem-checklist .check-detail {
-  font-size: 0.8rem;
-  color: rgba(245, 246, 255, 0.55);
-}
-
-.postmortem-checklist .check-status {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.postmortem-checklist .check-status.complete {
-  color: #67f6a0;
-}
-
-.thread-entry {
-  background: rgba(255, 255, 255, 0.02);
-  padding: 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.thread-entry.internal {
-  border-color: rgba(255, 101, 101, 0.4);
-  background: rgba(255, 101, 101, 0.12);
-  color: #ffe7e7;
-  font-style: italic;
-}
-
-.thread-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: rgba(245, 246, 255, 0.6);
-  margin-bottom: 0.3rem;
-}
-
-.muted {
-  color: rgba(245, 246, 255, 0.5);
-  font-size: 0.9rem;
-}
-</file>
-
-<file path="src/app/styles/sidebar.css">
-.primary {
-  border-radius: 999px;
-  border: none;
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #020617;
-  background: linear-gradient(135deg, #82c7ff, #5b21d6);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(92, 33, 214, 0.25);
-}
-
-.kb-suggestions .kb-article {
-  border-radius: 14px;
-  background: rgba(13, 17, 35, 0.9);
-  padding: 0.9rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.kb-article button {
-  align-self: flex-start;
-  border: none;
-  background: rgba(98, 255, 187, 0.1);
-  color: #67f6a0;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.kb-article p {
-  margin: 0;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.kb-article small {
-  color: rgba(245, 246, 255, 0.4);
-}
-
-.scenario-library .panel {
-  padding: 1.5rem;
-}
-
-.scenario-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-}
-
-.scenario-card {
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.scenario-card h4 {
-  margin: 0;
-}
-
-.scenario-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.85rem;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.scenario-card button {
-  margin-top: 0.6rem;
-  border: none;
-  background: rgba(130, 199, 255, 0.1);
-  color: #82c7ff;
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.scenario-card .badge.bucket {
-  margin-bottom: 0.4rem;
-  display: inline-flex;
-  background: rgba(130, 199, 255, 0.15);
-  border: 1px solid rgba(130, 199, 255, 0.3);
-}
-
-.walkthrough-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(1, 3, 10, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.walkthrough-card {
-  background: #081028;
-  border-radius: 16px;
-  border: 1px solid rgba(130, 199, 255, 0.35);
-  padding: 1.75rem;
-  max-width: 420px;
-}
-
-.walkthrough-card ul {
-  padding-left: 1rem;
-  margin-top: 0.5rem;
-  color: rgba(245, 246, 255, 0.75);
-}
-
-.toast {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  background: rgba(5, 150, 105, 0.9);
-  padding: 0.85rem 1.5rem;
-  border-radius: 999px;
-  color: #f5f6ff;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45);
-}
-
-@media (max-width: 1200px) {
-  .workspace-grid {
-    grid-template-columns: minmax(220px, 1fr) minmax(320px, 1fr);
-  }
-
-  .detail-column {
-    order: 3;
-  }
-}
-
-@media (max-width: 900px) {
-  .workspace-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .app-header {
-    flex-direction: column;
-  }
-
-  .tickets-column,
-  .detail-column,
-  .views-nav {
-    width: 100%;
-  }
-
-  .ticket-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</file>
-
-<file path="src/app/styles/tickets.css">
-.ticket-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-.empty-state {
-  border: 1px dashed rgba(255, 255, 255, 0.4);
-  border-radius: 14px;
-  padding: 1.5rem;
-  text-align: center;
-  background: rgba(2, 6, 18, 0.75);
-  color: rgba(255, 255, 255, 0.85);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.95rem;
-}
-
-.empty-state p {
-  margin: 0;
-}
-
-.ticket-card {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-  width: 100%;
-  text-align: left;
-  text-decoration: none;
-  font: inherit;
-  color: inherit;
-  appearance: none;
-}
-
-.ticket-card:hover {
-  border-color: rgba(130, 199, 255, 0.4);
-}
-
-.ticket-card.active {
-  border-color: #67f6a0;
-  background: rgba(103, 246, 160, 0.08);
-  transform: translateY(-1px);
-  box-shadow: 0 15px 30px rgba(3, 6, 15, 0.6);
-}
-
-.ticket-card:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(130, 199, 255, 0.45), 0 15px 30px rgba(3, 6, 15, 0.35);
-}
-
-.ticket-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.ticket-card-top h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.ticket-card-subtext {
-  margin: 0.35rem 0 0;
-  font-size: 0.85rem;
-  color: rgba(245, 246, 255, 0.65);
-}
-
-.ticket-card-timer,
-.sla {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.85rem;
-}
-
-.ticket-card-timer svg,
-.sla svg {
-  stroke: currentColor;
-}
-
-.timer-normal {
-  color: #67f6a0;
-}
-
-.timer-warning {
-  color: #facc15;
-}
-
-.timer-overdue {
-  color: #ff6b6b;
-  font-weight: 600;
-}
-
-.ticket-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.badge {
-  font-size: 0.75rem;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(7, 9, 24, 0.75);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-weight: 600;
-  color: #f5f6ff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-.badge span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.15rem;
-}
-
-.badge svg {
-  width: 1rem;
-  height: 1rem;
-  stroke-width: 1.5;
-  stroke: currentColor;
-}
-
-.badge.department {
-  background: rgba(103, 246, 160, 0.12);
-  border-color: rgba(103, 246, 160, 0.5);
-  color: #c7ffe9;
-}
-
-.badge.status {
-  background: rgba(130, 199, 255, 0.15);
-  border-color: rgba(130, 199, 255, 0.45);
-  color: #9ad8ff;
-}
-
-.badge.priority {
-  background: rgba(255, 179, 71, 0.15);
-  border-color: rgba(255, 179, 71, 0.35);
-  color: #ffd35a;
-}
-
-.badge.severity {
-  background: rgba(255, 107, 107, 0.18);
-  border-color: rgba(255, 107, 107, 0.45);
-  color: #ffb0b0;
-}
-
-.tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.tag {
-  font-size: 0.75rem;
-  border-radius: 8px;
-  padding: 0.25rem 0.75rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-</file>
-
 <file path="src/app/utils/helpers.ts">
 import { scenarioCatalog } from '../../data'
 import type { DemoState, Ticket, ThreadEntry } from '../../types'
@@ -4893,6 +3796,1252 @@ export const useDeskState = () => {
 }
 </file>
 
+<file path="src/app/styles/conversation.css">
+.conversation-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.conversation-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  min-width: 0;
+}
+
+.conversation-bubble {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem;
+  max-width: min(46rem, 85%);
+  min-width: 0;
+  box-shadow: 0 10px 20px rgba(3, 6, 15, 0.3);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.conversation-bubble p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.conversation-bubble--customer {
+  align-self: flex-start;
+  border-color: rgba(130, 199, 255, 0.5);
+  background: rgba(130, 199, 255, 0.12);
+}
+
+.conversation-bubble--agent {
+  align-self: flex-end;
+  border-color: rgba(103, 246, 160, 0.5);
+  background: rgba(103, 246, 160, 0.16);
+}
+
+.conversation-bubble__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: rgba(245, 246, 255, 0.78);
+  margin-bottom: 0.35rem;
+}
+
+.attachments-placeholder {
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  padding: 0.8rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.attachments-placeholder small {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.62);
+  margin-top: 0.35rem;
+}
+
+.status-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.status-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.composer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.canned-preview {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: rgba(2, 6, 18, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.canned-preview div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.canned-preview strong {
+  font-size: 0.8rem;
+  color: rgba(130, 199, 255, 0.94);
+}
+
+.canned-preview p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(245, 246, 255, 0.84);
+}
+
+.composer-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.kb-share-row {
+  display: flex;
+  gap: 0.55rem;
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.kb-share-row select {
+  flex: 1;
+  min-width: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(2, 6, 18, 0.85);
+  color: #f5f6ff;
+  padding: 0.6rem 0.9rem;
+}
+
+.kb-share-row button {
+  flex: 0 0 auto;
+}
+
+.composer-controls .primary {
+  margin-left: auto;
+}
+
+.composer-reminder {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 1500px) {
+  .conversation-bubble {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .composer-controls .primary {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+</file>
+
+<file path="src/app/styles/detail.css">
+.detail-column {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1.25rem;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.detail-empty {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  padding: 2rem;
+  text-align: center;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.detail-empty p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.ticket-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-height: 0;
+  min-width: 0;
+}
+
+.ticket-header {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  box-shadow: 0 20px 40px rgba(4, 9, 22, 0.6);
+  min-width: 0;
+}
+
+.ticket-chip {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.triage-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
+  border: 1px solid rgba(130, 199, 255, 0.25);
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: rgba(7, 14, 30, 0.85);
+  min-width: 0;
+}
+
+.triage-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.78rem;
+  color: rgba(245, 246, 255, 0.78);
+  min-width: 0;
+}
+
+.triage-pill strong {
+  font-size: 0.95rem;
+  color: #f5f6ff;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.timer-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #82c7ff;
+}
+
+.timer-value svg {
+  stroke: currentColor;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.header-row h2 {
+  margin: 0;
+  flex: 1 1 24rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.metadata span {
+  overflow-wrap: anywhere;
+}
+
+.escalation-path,
+.customer-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.routing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.routing-card {
+  border: 1px solid rgba(130, 199, 255, 0.2);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.routing-card span {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.routing-card strong {
+  font-size: 0.95rem;
+  color: #f5f6ff;
+  overflow-wrap: anywhere;
+}
+
+.routing-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: rgba(245, 246, 255, 0.82);
+  overflow-wrap: anywhere;
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
+  gap: 1.25rem;
+  min-height: 0;
+  align-items: start;
+}
+
+.ticket-grid > *,
+.thread-column,
+.sidebar {
+  min-width: 0;
+}
+
+.thread-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 1500px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</file>
+
+<file path="src/app/styles/layout.css">
+.app-shell {
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 1.75rem clamp(1rem, 3vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(130, 199, 255, 0.9);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px rgba(130, 199, 255, 0.35);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 20px 40px rgba(4, 9, 22, 0.65);
+  flex-wrap: wrap;
+}
+
+.brand-copy h1 {
+  font-size: 2.1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.brand-copy h1 span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(245, 246, 255, 0.82);
+}
+
+.hero-blurb {
+  margin: 0;
+  color: rgba(245, 246, 255, 0.78);
+  font-size: 0.95rem;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #82c7ff;
+  margin: 0;
+}
+
+.utility-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.utility-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.utility-field input,
+.utility-field select,
+.utility-field textarea {
+  min-width: 200px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(2, 6, 18, 0.8);
+  color: #f5f6ff;
+  padding: 0.65rem 0.9rem;
+}
+
+.utility-field select {
+  appearance: none;
+}
+
+.ghost-btn {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: #f5f6ff;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+.ghost-btn:hover {
+  border-color: #82c7ff;
+  transform: translateY(-1px);
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 240px minmax(360px, 0.95fr) minmax(0, 1.35fr);
+  gap: 1.25rem;
+  min-height: 0;
+  align-items: start;
+}
+
+.workspace-grid > * {
+  min-width: 0;
+}
+
+.views-nav {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+}
+
+.views-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.views-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.view-link {
+  width: 100%;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  color: #f5f6ff;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.view-link > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.view-link small {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(245, 246, 255, 0.78);
+  overflow-wrap: anywhere;
+}
+
+.view-link.active {
+  border-color: rgba(130, 199, 255, 0.6);
+  background: rgba(130, 199, 255, 0.08);
+}
+
+.count {
+  font-weight: 700;
+  color: #67f6a0;
+  flex-shrink: 0;
+}
+
+.view-footnote {
+  font-size: 0.82rem;
+  color: rgba(245, 246, 255, 0.72);
+  margin: 0;
+}
+
+.tickets-column {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  min-width: 0;
+}
+
+.tickets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ticket-count-cta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(245, 246, 255, 0.76);
+}
+
+@media (max-width: 1280px) {
+  .workspace-grid {
+    grid-template-columns: 220px minmax(320px, 1fr);
+  }
+
+  .detail-column {
+    order: 3;
+    grid-column: 1 / -1;
+  }
+
+  .views-nav {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    flex-direction: column;
+  }
+
+  .tickets-column,
+  .detail-column,
+  .views-nav {
+    width: 100%;
+  }
+
+  .detail-column {
+    grid-column: auto;
+  }
+}
+</file>
+
+<file path="src/app/styles/panel.css">
+.panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 30px rgba(3, 6, 15, 0.5);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.panel-heading {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.panel-heading > * {
+  min-width: 0;
+}
+
+.panel-body {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.panel--guided .panel-body {
+  gap: 1rem;
+}
+
+.guided-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guided-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.guided-card__header strong {
+  font-size: 0.95rem;
+}
+
+.guided-keywords {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(130, 199, 255, 0.9);
+}
+
+.guided-tips {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: rgba(245, 246, 255, 0.88);
+  font-size: 0.85rem;
+}
+
+.guided-articles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.guided-article {
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.guided-article strong {
+  font-size: 0.85rem;
+  display: block;
+}
+
+.guided-article p {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: rgba(245, 246, 255, 0.78);
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+
+.guided-article button {
+  align-self: flex-start;
+}
+
+.scorecard .score-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.scorecard .score-metric:last-child {
+  border-bottom: none;
+}
+
+.scorecard .score-metric > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.scorecard .note,
+.scorecard .suggestion {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.scorecard .note {
+  color: rgba(245, 246, 255, 0.76);
+}
+
+.scorecard .suggestion {
+  color: rgba(130, 199, 255, 0.92);
+  font-size: 0.8rem;
+}
+
+.meter {
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.meter div {
+  height: 100%;
+  background: linear-gradient(135deg, #82c7ff, #67f6a0);
+}
+
+.total {
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.postmortem textarea,
+.postmortem select,
+.postmortem label,
+.postmortem-checklist textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5f6ff;
+  padding: 0.6rem;
+  resize: vertical;
+  font: inherit;
+}
+
+.postmortem label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.postmortem-checklist {
+  margin-top: 0.9rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  padding-top: 0.8rem;
+}
+
+.postmortem-checklist ul {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.postmortem-checklist li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+
+.postmortem-checklist .check-detail {
+  font-size: 0.8rem;
+  color: rgba(245, 246, 255, 0.68);
+}
+
+.postmortem-checklist .check-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 246, 255, 0.78);
+}
+
+.postmortem-checklist .check-status.complete {
+  color: #67f6a0;
+}
+
+.thread-entry {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.thread-entry p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.thread-entry.internal {
+  border-color: rgba(255, 101, 101, 0.4);
+  background: rgba(255, 101, 101, 0.12);
+  color: #ffe7e7;
+  font-style: italic;
+}
+
+.thread-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: rgba(245, 246, 255, 0.78);
+  margin-bottom: 0.3rem;
+}
+
+.muted {
+  color: rgba(245, 246, 255, 0.68);
+  font-size: 0.9rem;
+}
+</file>
+
+<file path="src/app/styles/sidebar.css">
+.primary {
+  border-radius: 999px;
+  border: none;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #020617;
+  background: linear-gradient(135deg, #82c7ff, #5b21d6);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(92, 33, 214, 0.25);
+}
+
+.kb-suggestions .kb-article {
+  border-radius: 14px;
+  background: rgba(13, 17, 35, 0.9);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  min-width: 0;
+}
+
+.kb-article button {
+  align-self: flex-start;
+  border: none;
+  background: rgba(98, 255, 187, 0.1);
+  color: #67f6a0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.kb-article p {
+  margin: 0;
+  color: rgba(245, 246, 255, 0.8);
+  overflow-wrap: anywhere;
+}
+
+.kb-article small {
+  color: rgba(245, 246, 255, 0.56);
+  overflow-wrap: anywhere;
+}
+
+.scenario-library .panel {
+  padding: 1.5rem;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.scenario-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scenario-card h4 {
+  margin: 0;
+}
+
+.scenario-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: rgba(245, 246, 255, 0.8);
+}
+
+.scenario-card button {
+  margin-top: 0.6rem;
+  border: none;
+  background: rgba(130, 199, 255, 0.1);
+  color: #82c7ff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.scenario-card .badge.bucket {
+  margin-bottom: 0.4rem;
+  display: inline-flex;
+  background: rgba(130, 199, 255, 0.15);
+  border: 1px solid rgba(130, 199, 255, 0.3);
+}
+
+.walkthrough-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(1, 3, 10, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.walkthrough-card {
+  background: #081028;
+  border-radius: 16px;
+  border: 1px solid rgba(130, 199, 255, 0.35);
+  padding: 1.75rem;
+  max-width: 420px;
+  max-height: min(85vh, 44rem);
+  overflow: auto;
+}
+
+.walkthrough-card ul {
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+  color: rgba(245, 246, 255, 0.8);
+}
+
+.toast {
+  position: fixed;
+  z-index: 60;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(5, 150, 105, 0.9);
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  color: #f5f6ff;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 700px) {
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .walkthrough-card {
+    width: min(100%, 420px);
+  }
+}
+</file>
+
+<file path="src/app/styles/tickets.css">
+.ticket-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.empty-state {
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(2, 6, 18, 0.75);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.ticket-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+}
+
+.ticket-card:hover {
+  border-color: rgba(130, 199, 255, 0.4);
+}
+
+.ticket-card.active {
+  border-color: #67f6a0;
+  background: rgba(103, 246, 160, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 15px 30px rgba(3, 6, 15, 0.6);
+}
+
+.ticket-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(130, 199, 255, 0.45), 0 15px 30px rgba(3, 6, 15, 0.35);
+}
+
+.ticket-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.ticket-card-top > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.ticket-card-top h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.ticket-card-subtext {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(245, 246, 255, 0.72);
+}
+
+.ticket-card-timer,
+.sla {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.ticket-card-timer svg,
+.sla svg {
+  stroke: currentColor;
+}
+
+.timer-normal {
+  color: #67f6a0;
+}
+
+.timer-warning {
+  color: #facc15;
+}
+
+.timer-overdue {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.ticket-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(7, 9, 24, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #f5f6ff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.badge span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.badge svg {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 1.5;
+  stroke: currentColor;
+}
+
+.badge.department {
+  background: rgba(103, 246, 160, 0.12);
+  border-color: rgba(103, 246, 160, 0.5);
+  color: #c7ffe9;
+}
+
+.badge.status {
+  background: rgba(130, 199, 255, 0.15);
+  border-color: rgba(130, 199, 255, 0.45);
+  color: #9ad8ff;
+}
+
+.badge.priority {
+  background: rgba(255, 179, 71, 0.15);
+  border-color: rgba(255, 179, 71, 0.35);
+  color: #ffd35a;
+}
+
+.badge.severity {
+  background: rgba(255, 107, 107, 0.18);
+  border-color: rgba(255, 107, 107, 0.45);
+  color: #ffb0b0;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  border-radius: 8px;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+  .ticket-card-top {
+    flex-direction: column;
+  }
+
+  .ticket-card-timer {
+    align-self: flex-start;
+  }
+}
+</file>
+
 <file path="package.json">
 {
   "name": "hostdesk",
@@ -4938,55 +5087,6 @@ export const useDeskState = () => {
     "jsdom": "28.1.0"
   }
 }
-</file>
-
-<file path="README.md">
-# HostDesk
-
-Hosting-support triage simulator built in React/TypeScript with Vite, JSON seeds, and localStorage. It models SLA timing, tiered routing, KB suggestions, canned replies, private notes, and balanced scoring so a recruiter can immediately appreciate ticket intake discipline.
-
-## Live demo (GitHub Pages)
-`https://<your-username>.github.io/HostDesk/`
-
-## Screenshots
-| Overview | Ticket view |
-| --- | --- |
-| ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![Thread + KB + scorecard](public/images/ticket-screenshot.svg) |
-
-## Feature list
-- **Triage-first experience:** hero CTAs, scenario catalog, SLA-aware header, and escalation path make intent immediately obvious.
-- **Threaded communication:** public replies and private notes are separated; canned replies can be edited before sending.
-- **KB + canned replies:** keyword-driven article suggestions, share buttons, and editable templates keep replies human while staying fast.
-- **Scorecard + closure discipline:** Balanced SLA + empathy rubric tracked alongside scorecard metrics, plus a de-escalation scorecard that rates empathy, clarity, ownership, routing, escalation, expectation setting, and closure quality with rule-based guidance; a postmortem form captures root cause, fix, follow-up, and prevention.
-- **Demo controls:** three “Jump into a case” starters (Billing Suspension, Minecraft crash, Discord bot outage), recruiter walkthrough overlay, scenario library, and reset demo button.
-
-## Architecture overview
-- `data/scenario-catalog.json`, `data/kb-articles.json`, `data/canned-replies.json`, and `data/scoring-rubric.json` provide the synthetic catalog, KB, canned replies, and rubric.
-- `useLocalStorageState` seeds React state from the catalog, tracks mutations, and persists every agent action under `hostdesk-demo-state`.
-- React components surface the SLA timer, metadata, scorecard, KB suggestions, canned replies, and postmortem form; updates call `applyScoreDelta` to keep the scoring rubric aligned with actions.
-- Vite/TypeScript handles bundling, and GitHub Actions builds + deploys `dist/` to `gh-pages` (free via GitHub Pages).
-
-## Scenario catalog
-All 17 synthetic cases live in `data/scenario-catalog.json`. They span **Technical**, **Billing/Account**, and **Communication/Judgment** buckets, covering plugin crashes, bot outages, billing holds, domain renewals, and empathy-paced escalations. See `docs/scenario-catalog.mdx` for a narrative breakdown.
-
-## Scoring rubric
-Balanced SLA + empathy focus (`data/scoring-rubric.json`) scores six metrics: SLA compliance, communication, technical ownership, KB/self-service, escalation judgment, and closure completeness. Each metric includes weights, max values, and suggestions that show how to move the needle with every reply.
-
-## What this proves
-This repo demonstrates not just React UI, but operational awareness: threaded tickets, SLA countdowns, tiered escalation, KB/canned assistance, private notes, post-incident closure, and recruiter-worthy scoring. It proves you can design a static app that feels like a real support shift simulator with zero backend dependencies.
-
-## Optional extras
-- Reset button lets recruiters replay scenarios anytime.
-- Recruiter walkthrough overlay explains what to notice in each case.
-- Optional 60–90 second screen recording available on request (add the link in the README when you record it).
-
-## Getting started
-```bash
-npm install
-npm run dev
-```
-
-Deploy the Vite build via `npm run build` and `npm run deploy` (GitHub Actions automatically runs on `main` pushes and publishes to `gh-pages`).
 </file>
 
 <file path="tsconfig.app.json">
@@ -7139,6 +7239,55 @@ Deploy the Vite build via `npm run build` and `npm run deploy` (GitHub Actions a
     }
   }
 ]
+</file>
+
+<file path="README.md">
+# HostDesk
+
+Hosting-support triage simulator built in React/TypeScript with Vite, JSON seeds, and localStorage. It models SLA timing, tiered routing, KB suggestions, canned replies, private notes, and balanced scoring so a recruiter can immediately appreciate ticket intake discipline.
+
+## Live demo (GitHub Pages)
+`https://josuejero.github.io/HostDesk/`
+
+## Screenshots
+| Overview | Ticket view |
+| --- | --- |
+| ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![Thread + KB + scorecard](public/images/ticket-screenshot.svg) |
+
+## Feature list
+- **Triage-first experience:** hero CTAs, scenario catalog, SLA-aware header, and escalation path make intent immediately obvious.
+- **Threaded communication:** public replies and private notes are separated; canned replies can be edited before sending.
+- **KB + canned replies:** keyword-driven article suggestions, share buttons, and editable templates keep replies human while staying fast.
+- **Scorecard + closure discipline:** Balanced SLA + empathy rubric tracked alongside scorecard metrics, plus a de-escalation scorecard that rates empathy, clarity, ownership, routing, escalation, expectation setting, and closure quality with rule-based guidance; a postmortem form captures root cause, fix, follow-up, and prevention.
+- **Demo controls:** three “Jump into a case” starters (Billing Suspension, Minecraft crash, Discord bot outage), recruiter walkthrough overlay, scenario library, and reset demo button.
+
+## Architecture overview
+- `data/scenario-catalog.json`, `data/kb-articles.json`, `data/canned-replies.json`, and `data/scoring-rubric.json` provide the synthetic catalog, KB, canned replies, and rubric.
+- `useLocalStorageState` seeds React state from the catalog, tracks mutations, and persists every agent action under `hostdesk-demo-state`.
+- React components surface the SLA timer, metadata, scorecard, KB suggestions, canned replies, and postmortem form; updates call `applyScoreDelta` to keep the scoring rubric aligned with actions.
+- Vite/TypeScript handles bundling, and GitHub Actions builds + deploys `dist/` to `gh-pages` (free via GitHub Pages).
+
+## Scenario catalog
+All 17 synthetic cases live in `data/scenario-catalog.json`. They span **Technical**, **Billing/Account**, and **Communication/Judgment** buckets, covering plugin crashes, bot outages, billing holds, domain renewals, and empathy-paced escalations. See `docs/scenario-catalog.mdx` for a narrative breakdown.
+
+## Scoring rubric
+Balanced SLA + empathy focus (`data/scoring-rubric.json`) scores six metrics: SLA compliance, communication, technical ownership, KB/self-service, escalation judgment, and closure completeness. Each metric includes weights, max values, and suggestions that show how to move the needle with every reply.
+
+## What this proves
+This repo demonstrates not just React UI, but operational awareness: threaded tickets, SLA countdowns, tiered escalation, KB/canned assistance, private notes, post-incident closure, and recruiter-worthy scoring. It proves you can design a static app that feels like a real support shift simulator with zero backend dependencies.
+
+## Optional extras
+- Reset button lets recruiters replay scenarios anytime.
+- Recruiter walkthrough overlay explains what to notice in each case.
+- Optional 60–90 second screen recording available on request (add the link in the README when you record it).
+
+## Getting started
+```bash
+npm install
+npm run dev
+```
+
+Deploy the Vite build via `npm run build` and `npm run deploy` (GitHub Actions automatically runs on `main` pushes and publishes to `gh-pages`).
 </file>
 
 <file path="src/types.ts">

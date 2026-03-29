@@ -1,4 +1,4 @@
-import type { KBArticle } from '../../types'
+import type { PlaybookArticle } from '../../types'
 
 export type SubjectTrigger = {
   id: string
@@ -10,44 +10,68 @@ export type SubjectTrigger = {
 }
 
 export type GuidedEntry = SubjectTrigger & {
-  articles: KBArticle[]
+  articles: PlaybookArticle[]
 }
 
 export const subjectTriggers: SubjectTrigger[] = [
   {
-    id: 'plugin-troubleshooting',
-    headline: 'Plugin troubleshooting',
-    description: 'Subject shows plugin/mod/jar hints — pair with the plugin catalog before replying.',
-    keywords: ['plugin', 'mod', 'jar'],
-    articleLabels: ['plugin-troubleshooting'],
+    id: 'avd-migration',
+    headline: 'AVD migration angle',
+    description: 'Citrix, VDI, or session-host language points to an AVD migration story.',
+    keywords: ['citrix', 'vdi', 'session host', 'avd'],
+    articleLabels: ['avd-migration', 'avd-cost-control'],
     tips: [
-      'Review jar versions and plugin dependencies that load during the crash.',
-      'Boot without the new plugin to confirm if it is the culprit.',
-      'Inspect the modpack order and server logs for stack overflows.',
+      'Clarify whether the pain is cost, operational complexity, or user experience.',
+      'Find out which desktop workloads are candidates for a phased migration first.',
+      'Use cost and governance language, not just generic migration language.',
     ],
   },
   {
-    id: 'billing-suspension',
-    headline: 'Billing suspension & payment propagation',
-    description: 'Billing keywords suggest invoice or suspension holds — surface the suspension + activation KB.',
-    keywords: ['paid', 'invoice', 'suspended'],
-    articleLabels: ['billing-suspension', 'payment-propagation'],
+    id: 'windows365-byod',
+    headline: 'Windows 365 contractor angle',
+    description: 'Cloud PC, contractor, and BYOD wording signals a Windows 365 motion.',
+    keywords: ['cloud pc', 'windows 365', 'contractor', 'byod'],
+    articleLabels: ['windows365-byod'],
     tips: [
-      'Reconfirm the invoice state in accounting and clear the suspension flag.',
-      'Watch for propagation delays before the panel truly reflects the payment.',
-      'Double-check the control panel or API to prove the service is active.',
+      'Tie the motion to onboarding speed and device trust, not just desktop convenience.',
+      'Capture whether the team needs persistent or short-lived worker desktops.',
+      'Ask who owns contractor security policy so the conversation stays practical.',
     ],
   },
   {
-    id: 'latency-checklist',
-    headline: 'Latency triage checklist',
-    description: '“Lag” or “high ping” signals trigger a latency-focused checklist.',
-    keywords: ['lag', 'high ping'],
-    articleLabels: ['latency-checklist'],
+    id: 'intune-compliance',
+    headline: 'Intune compliance angle',
+    description: 'Compliance, policy, and endpoint language should trigger the Intune playbook.',
+    keywords: ['intune', 'compliance', 'policy', 'endpoint', 'app deployment'],
+    articleLabels: ['intune-compliance', 'pipeline-hygiene'],
     tips: [
-      'Capture ping traces and compare them to historical baselines.',
-      'Look for cron jobs or backups that might align with the spikes.',
-      'Glean whether remote hops or edge routers are contributing to the lag.',
+      'Confirm whether the main pain is reporting, enforcement, or app deployment confidence.',
+      'Look for audit timing or policy exceptions that raise urgency.',
+      'Document how the team measures success today so the story is operational, not abstract.',
+    ],
+  },
+  {
+    id: 'cost-optimization',
+    headline: 'Cost optimization angle',
+    description: 'Spend and optimization language usually means the cost-control playbook should surface immediately.',
+    keywords: ['cost', 'optimize', 'azure spend', 'margin'],
+    articleLabels: ['avd-cost-control', 'msp-motion'],
+    tips: [
+      'Translate the desktop problem into spend, margin, or efficiency language.',
+      'Look for after-hours or scaling behavior that could support a stronger follow-up.',
+      'Keep the story measurable so finance and operations both care.',
+    ],
+  },
+  {
+    id: 'msp-motion',
+    headline: 'MSP multi-tenant angle',
+    description: 'Managed client and multi-tenant language should pull MSP-specific discovery guidance into view.',
+    keywords: ['msp', 'managed clients', 'multi-tenant', 'partner'],
+    articleLabels: ['msp-motion'],
+    tips: [
+      'Ask how many customer environments the team has to operate today.',
+      'Look for repeatability or governance pain across tenants.',
+      'Keep the next step tied to partner economics or engineer time savings.',
     ],
   },
 ]

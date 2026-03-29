@@ -1,10 +1,10 @@
 {
-  "title": "Scoring rubric schema",
-  "summary": "Aligns ticket actions with Balanced SLA + empathy scoring.",
+  "title": "SDR operations scoring rubric schema",
+  "summary": "Aligns record quality with CRM completeness, hygiene, ICP fit, follow-up discipline, handoff readiness, and reporting coverage.",
   "fields": {
     "version": "string",
     "focus": "string",
-    "metrics": "array of objects containing id, label, target weight, max, description, suggestion"
+    "metrics": "array of objects containing id, label, weight, max, description, suggestion"
   },
   "allowedValues": {
     "weights": "numbers that add up to 100",

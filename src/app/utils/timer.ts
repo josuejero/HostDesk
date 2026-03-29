@@ -1,38 +1,53 @@
-import { addMinutes, differenceInSeconds, formatDuration, intervalToDuration } from 'date-fns'
-import type { Ticket } from '../../types'
+import { differenceInSeconds, formatDuration, intervalToDuration } from 'date-fns'
+import type { ProspectRecord } from '../../types'
 
-export type TimerStatus = 'normal' | 'warning' | 'overdue'
+export type TimerStatus = 'normal' | 'warning' | 'overdue' | 'missing'
 
-const timerStateThresholdSeconds = 5 * 60
+const warningThresholdSeconds = 24 * 60 * 60
 
 export const timerStatusDescriptions: Record<TimerStatus, string> = {
-  normal: 'Within SLA expectations',
-  warning: 'Approaching the SLA window',
-  overdue: 'SLA missed and ticket is overdue',
+  normal: 'Next step is on track',
+  warning: 'Follow-up due soon',
+  overdue: 'Follow-up overdue',
+  missing: 'Next step missing',
 }
 
-export const getCountdownLabel = (ticket: Ticket) => {
-  const created = new Date(ticket.createdAt)
-  const target = addMinutes(created, ticket.slaTargetMinutes)
+const formatRelativeDuration = (start: Date, end: Date) => {
+  const duration = intervalToDuration({ start, end })
+  const formatted = formatDuration(duration, { format: ['days', 'hours', 'minutes'] })
+  return formatted || 'less than a minute'
+}
+
+export const getCountdownLabel = (record: ProspectRecord) => {
+  if (!record.nextTouchDueAt.trim()) {
+    return 'Next step missing'
+  }
+
+  const target = new Date(record.nextTouchDueAt)
   const secondsRemaining = differenceInSeconds(target, new Date())
 
   if (secondsRemaining <= 0) {
-    const duration = intervalToDuration({ start: target, end: new Date() })
-    return `Overdue by ${formatDuration(duration, { format: ['hours', 'minutes'] })}`
+    return `Overdue by ${formatRelativeDuration(target, new Date())}`
   }
 
-  const duration = intervalToDuration({ start: new Date(), end: target })
-  return `${formatDuration(duration, { format: ['hours', 'minutes'] })} remaining`
+  return `${formatRelativeDuration(new Date(), target)} remaining`
 }
 
-export const getTimerStatus = (ticket: Ticket): TimerStatus => {
-  const target = addMinutes(new Date(ticket.createdAt), ticket.slaTargetMinutes)
+export const getTimerStatus = (record: ProspectRecord): TimerStatus => {
+  if (!record.nextTouchDueAt.trim()) {
+    return 'missing'
+  }
+
+  const target = new Date(record.nextTouchDueAt)
   const secondsRemaining = differenceInSeconds(target, new Date())
+
   if (secondsRemaining <= 0) {
     return 'overdue'
   }
-  if (secondsRemaining <= timerStateThresholdSeconds) {
+
+  if (secondsRemaining <= warningThresholdSeconds) {
     return 'warning'
   }
+
   return 'normal'
 }

@@ -1,66 +1,66 @@
-import type { ScenarioSeed, Ticket } from '../../types'
+import type { ProspectRecord, ScenarioSeed } from '../../types'
+import {
+  hasDatedNextStep,
+  hasOutboundActivity,
+  isFollowUpDueToday,
+  isRecordStale,
+} from '../utils/routing'
 
 export type ViewDefinition = {
   id: string
   label: string
   description: string
-  filter: (ticket: Ticket, scenario?: ScenarioSeed) => boolean
+  filter: (record: ProspectRecord, scenario?: ScenarioSeed) => boolean
 }
 
 export const queueViews: ViewDefinition[] = [
   {
-    id: 'open',
-    label: 'Open',
-    description: 'Fresh incidents that still need a proactive response.',
-    filter: (ticket) => ['Open', 'New'].includes(ticket.status),
+    id: 'new-leads',
+    label: 'New leads',
+    description: 'Fresh records that still need intake and qualification context.',
+    filter: (record) => record.stage === 'New lead',
   },
   {
-    id: 'high-priority',
-    label: 'High Priority',
-    description: 'Critical and urgent work that needs extra focus.',
-    filter: (ticket) =>
-      ['High', 'Urgent', 'Critical'].includes(ticket.priority) || ticket.severity === 'Critical',
+    id: 'needs-first-touch',
+    label: 'Needs first touch',
+    description: 'Records with no outbound email, call, or LinkedIn motion yet.',
+    filter: (record) =>
+      !hasOutboundActivity(record) && !['Nurture', 'Disqualified', 'Handoff ready'].includes(record.stage),
   },
   {
-    id: 'billing',
-    label: 'Billing',
-    description: 'Account, invoice, and suspension cases.',
-    filter: (ticket, scenario) => {
-      const departmentMatch =
-        ticket.department.toLowerCase().includes('billing') || ticket.department.toLowerCase().includes('accounts')
-      const bucketMatch = scenario?.bucket.toLowerCase().includes('billing')
-      const tagMatch = scenario?.tags?.some((tag) => tag.toLowerCase().includes('billing'))
-      return departmentMatch || bucketMatch || Boolean(tagMatch)
-    },
+    id: 'follow-up-due',
+    label: 'Follow-up due today',
+    description: 'Active records whose next step is due today.',
+    filter: (record) => isFollowUpDueToday(record) && !isRecordStale(record),
   },
   {
-    id: 'technical',
-    label: 'Technical',
-    description: 'Operations, plugins, and infrastructure incidents.',
-    filter: (ticket, scenario) => {
-      const departmentMatch =
-        ticket.department.toLowerCase().includes('technical') || ticket.department.toLowerCase().includes('operations')
-      const bucketMatch = scenario?.bucket.toLowerCase().includes('technical')
-      const tagMatch = scenario?.tags?.some((tag) => /technical|ops|plugin|outage/.test(tag.toLowerCase()))
-      return departmentMatch || bucketMatch || Boolean(tagMatch)
-    },
+    id: 'stale',
+    label: 'Stale',
+    description: 'No meaningful touch in 14+ days.',
+    filter: (record) => isRecordStale(record),
   },
   {
-    id: 'waiting',
-    label: 'Waiting on Customer',
-    description: 'Awaiting customer confirmation or follow-up.',
-    filter: (ticket) => ticket.status === 'Waiting on Customer',
+    id: 'research-needed',
+    label: 'Research needed',
+    description: 'Missing owner, missing next step, or otherwise not pipeline-safe.',
+    filter: (record) => !record.owner.trim() || !hasDatedNextStep(record),
   },
   {
-    id: 'escalated',
-    label: 'Escalated',
-    description: 'Cases already pushed to higher tiers.',
-    filter: (ticket) => ticket.status === 'Escalated',
+    id: 'meeting-booked',
+    label: 'Meeting booked',
+    description: 'Records with a confirmed meeting on the board.',
+    filter: (record) => record.stage === 'Meeting booked',
   },
   {
-    id: 'resolved',
-    label: 'Resolved',
-    description: 'Closed or resolved work ready for documentation.',
-    filter: (ticket) => ticket.status.toLowerCase().includes('resolve'),
+    id: 'handoff-ready',
+    label: 'Handoff ready',
+    description: 'Ready for a cleaner AE or specialist handoff.',
+    filter: (record) => record.stage === 'Handoff ready',
+  },
+  {
+    id: 'nurture-disqualified',
+    label: 'Nurture / disqualified',
+    description: 'Records intentionally parked or removed from active work.',
+    filter: (record) => ['Nurture', 'Disqualified'].includes(record.stage),
   },
 ]

@@ -6,7 +6,7 @@ type Props = {
   setSearchTerm: Dispatch<SetStateAction<string>>
   jumpTargetId: string
   scenarioCatalog: ScenarioSeed[]
-  onSelectTicket: (ticketId: string) => void
+  onSelectRecord: (recordId: string) => void
   onReset: () => void
   onToggleScenarioLibrary: () => void
   onToggleWalkthrough: () => void
@@ -17,20 +17,20 @@ const AppHeader = ({
   setSearchTerm,
   jumpTargetId,
   scenarioCatalog,
-  onSelectTicket,
+  onSelectRecord,
   onReset,
   onToggleScenarioLibrary,
   onToggleWalkthrough,
 }: Props) => (
   <header className="app-header">
     <div className="brand-copy">
-      <p className="eyebrow">HostDesk • hosting + support desk simulator</p>
+      <p className="eyebrow">HostDesk • Microsoft cloud sales-ops console</p>
       <h1>
         Queue operations
-        <span>Work like a Zendesk queue built for recruiters.</span>
+        <span>Pipeline discipline for AVD, Windows 365, and Intune motions.</span>
       </h1>
       <p className="hero-blurb">
-        A recruiter-facing console that highlights statuses, departments, tags, and SLA visibility at a glance.
+        A recruiter-facing console for researching, qualifying, routing, and following up with Microsoft cloud prospects.
       </p>
     </div>
     <div className="utility-row">
@@ -40,14 +40,14 @@ const AppHeader = ({
           type="search"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder="Subject, department, tag, or assignee"
+          placeholder="Company, workload, stage, tag, or owner"
         />
       </label>
       <label className="utility-field">
         <span>Jump to demo case</span>
-        <select value={jumpTargetId} onChange={(event) => onSelectTicket(event.target.value)}>
+        <select value={jumpTargetId} onChange={(event) => onSelectRecord(event.target.value)}>
           {scenarioCatalog.map((scenario) => (
-            <option key={scenario.ticket.id} value={scenario.ticket.id}>
+            <option key={scenario.record.id} value={scenario.record.id}>
               {scenario.title} ({scenario.bucket})
             </option>
           ))}

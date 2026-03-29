@@ -10,7 +10,7 @@ const ScorecardPanel = ({ scorecard, rubric }: Props) => (
   <div className="panel">
     <div className="panel-heading">
       <BookOpenCheck size={18} />
-      <h3>Scorecard ({rubric.focus})</h3>
+      <h3>Operational scorecard ({rubric.focus})</h3>
     </div>
     <div className="panel-body scorecard">
       {scorecard.metrics.map((metric) => {

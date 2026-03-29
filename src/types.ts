@@ -1,21 +1,37 @@
-export type Audience = 'customer' | 'internal'
+export type ActivityType =
+  | 'outbound-email'
+  | 'call-attempt'
+  | 'linkedin-touch'
+  | 'reply-received'
+  | 'meeting-booked'
+  | 'enrichment-update'
+  | 'ownership-changed'
+  | 'stage-changed'
+  | 'ai-draft-used'
+  | 'note-added'
 
-export interface ThreadEntry {
+export type ActivityChannel = 'email' | 'call' | 'linkedin' | 'meeting' | 'crm' | 'internal'
+
+export interface ActivityEntry {
   id: string
-  author: string
-  audience: Audience
-  createdAt: string
-  message: string
+  type: ActivityType
+  owner: string
+  timestamp: string
+  channel: ActivityChannel
+  outcome: string
+  summary: string
+  nextStep: string
+  crmUpdated: boolean
 }
 
-export type KnowledgeArticleStatus = 'yes' | 'no' | ''
+export type PlaybookStatus = 'updated' | 'not-needed' | ''
 
-export interface PostmortemSection {
-  rootCause: string
-  fix: string
-  followUp: string
-  prevention: string
-  knowledgeArticleStatus: KnowledgeArticleStatus
+export interface CRMHygieneReview {
+  deduplication: string
+  stageCriteria: string
+  nextStepPlan: string
+  handoffNotes: string
+  playbookStatus: PlaybookStatus
 }
 
 export interface ScorecardMetric {
@@ -31,40 +47,55 @@ export interface Scorecard {
   metrics: ScorecardMetric[]
 }
 
-export interface Ticket {
+export type LeadStage =
+  | 'New lead'
+  | 'Active'
+  | 'Meeting booked'
+  | 'Handoff ready'
+  | 'Nurture'
+  | 'Disqualified'
+
+export interface ProspectRecord {
   id: string
   subject: string
-  department: string
-  severity: string
-  priority: string
-  status: string
-  plan: string
-  slaTargetMinutes: number
+  company: string
+  segment: string
+  employeeRange: string
+  microsoftFootprint: string[]
+  useCase: string
+  buyerPersona: string
+  leadSource: string
+  owner: string
+  stage: LeadStage
+  stageEnteredAt: string
   createdAt: string
-  assignedTo: string
-  escalationTier: string
-  invoiceState: string
-  recentIncidents: string[]
-  thread: ThreadEntry[]
-  internalNotes: ThreadEntry[]
-  kbMatches: string[]
-  postmortem: PostmortemSection
+  lastTouchAt: string
+  nextTouchDueAt: string
+  painPoints: string[]
+  objections: string[]
+  buyingSignals: string[]
+  activities: ActivityEntry[]
+  playbookMatches: string[]
+  review: CRMHygieneReview
   scorecard: Scorecard
+  aiSummary: string
+  recommendedNextAction: string
+  crmCompleteness: number
+  disqualificationReason: string
 }
 
-export interface CustomerProfile {
+export interface AccountProfile {
   accountId: string
   name: string
-  planTier: string
-  persona: string
-  billingCycle: string
-  slaEntitlementMinutes: number
   timezone: string
-  serverRegion: string
+  region: string
+  existingStack: string
+  microsoftPriority: string
+  motion: string
 }
 
-export interface EscalationRules {
-  currentTier: string
+export interface HandoffPlan {
+  currentPath: string
   path: string[]
   notes: string
 }
@@ -75,38 +106,38 @@ export interface ScenarioSeed {
   title: string
   description: string
   tags: string[]
-  ticket: Ticket
-  customerProfile: CustomerProfile
-  escalationRules: EscalationRules
+  record: ProspectRecord
+  accountProfile: AccountProfile
+  handoffPlan: HandoffPlan
 }
 
-export interface KBArticle {
+export interface PlaybookArticle {
   id: string
   title: string
   summary: string
   keywords: string[]
   labels?: string[]
+  focusArea: string
   link: string
   audience?: string
 }
 
-export type CannedReplyCategory =
-  | 'acknowledgement'
-  | 'billing-clarification'
-  | 'troubleshooting-step-request'
-  | 'outage-acknowledgment'
-  | 'upgrade-reassurance'
-  | 'escalation-handoff'
-  | 'closure-follow-up'
+export type OutreachTemplateCategory =
+  | 'first-touch'
+  | 'follow-up'
+  | 'objection-handling'
+  | 'meeting-confirmation'
+  | 'handoff-intro'
+  | 'nurture'
 
-export interface CannedReply {
+export interface OutreachTemplate {
   id: string
   title: string
   tone: string
-  category: CannedReplyCategory
+  category: OutreachTemplateCategory
   segments: {
-    acknowledgment: string
-    ownership: string
+    opener: string
+    valueProp: string
     nextStep: string
   }
   editable: boolean
@@ -128,9 +159,18 @@ export interface ScoringRubric {
   metrics: ScoringMetric[]
 }
 
+export type AiSuggestionKind = 'summary' | 'next-step' | 'draft'
+
+export interface AiSuggestion {
+  kind: AiSuggestionKind
+  headline: string
+  body: string
+  applied: boolean
+}
+
 export interface DemoState {
-  tickets: Ticket[]
-  selectedTicketId: string
+  records: ProspectRecord[]
+  selectedRecordId: string
   walkthroughActive: boolean
   showScenarioLibrary: boolean
 }

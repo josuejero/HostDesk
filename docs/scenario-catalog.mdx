@@ -2,37 +2,38 @@ import scenarioCatalog from '../data/scenario-catalog.json';
 
 # Scenario Catalog
 
-HostDesk ships with a catalog of 17 synthetic scenarios that span Technical, Billing/Account, and Communication/Judgment buckets. Each entry is defined in `data/scenario-catalog.json` and models a realistic support shift moment with full SLA, routing, KB, and scoring context.
+HostDesk ships with 9 synthetic Microsoft cloud sales-ops scenarios. Each record is defined in `data/scenario-catalog.json` and combines account context, activity history, playbook matches, scoring, and CRM hygiene review state.
 
-## Category breakdown
+## Hero demos
 
-- **Technical** (Mod/plugin failures, DNS, access and performance incidents):
-  - Minecraft Plugin Crash
-  - Discord Bot Overnight Outage
-  - cPanel Login Loop
-  - Backup Restore Failure
-  - DNS Change Not Propagating
-  - High Ping / Lag Complaint
-  - Mod Conflict
+- **MSP evaluating AVD cost control**
+  - Multi-tenant MSP motion focused on Azure Virtual Desktop cost visibility and margin protection.
+- **Contractor fleet for Windows 365**
+  - New inbound lead for secure contractor onboarding and BYOD-safe Cloud PC access.
+- **Intune compliance rollout**
+  - Active compliance and app-deployment motion driven by audit pressure.
 
-- **Billing / Account** (Invoices, upgrades, refund requests, renewals):
-  - Billing Suspension
-  - Upgrade Request Without Data Loss
-  - Downgrade & Refund Question
-  - Domain Renewal Confusion
-  - Failed Autopay but Active Card
+## Additional states covered
 
-- **Communication / Judgment** (Empathy, escalation, duplicate tickets):
-  - Angry Customer After Repeated Outages
-  - Unsupported Admin Action Request
-  - Vague Complaint
-  - Premium-plan Expecting Faster Turnaround
-  - Duplicate Tickets From Same Incident
+- **Research needed**
+  - Citrix migration record missing owner and dated next step.
+- **Stale**
+  - Healthcare shared-desktop account with overdue cadence.
+- **Meeting booked**
+  - Education lab-access motion that progressed from outreach to a confirmed session.
+- **Handoff ready**
+  - MSP multi-workload record ready for AE packaging.
+- **Nurture**
+  - Budget-blocked desktop refresh motion with a future re-entry date.
+- **Disqualified**
+  - Non-Microsoft account intentionally removed from active work with a reason code.
 
-Each scenario object contains:
+## Object structure
 
-1. `ticket`: the base ticket with `thread`, `internalNotes`, `scorecard`, and SLA targets.
-2. `customerProfile`: persona, plan, SLA entitlement, timezone, server region.
-3. `escalationRules`: tier path and notes that reinforce Zendesk-style routing.
+Each scenario contains:
 
-Open `data/scenario-catalog.json` to see the full payload, or load the JSON in the app to explore the seeded cases in the UI.
+1. `record`: the core prospect record with stage, cadence fields, activities, review notes, AI summary, and scorecard.
+2. `accountProfile`: regional context, current stack, Microsoft workload priority, and sales motion.
+3. `handoffPlan`: the intended path from SDR work to later technical or AE ownership.
+
+The catalog is designed to demonstrate queue slicing, stage gates, AI-assist UX, and sales-ops hygiene, not to mirror any real customer data.

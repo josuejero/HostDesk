@@ -1,18 +1,18 @@
-import type { KnowledgeArticleStatus, PostmortemSection } from '../../types'
+import type { CRMHygieneReview, PlaybookStatus } from '../../types'
 
-export const postmortemNarrativeFields = ['rootCause', 'fix', 'followUp', 'prevention'] as const
+export const reviewNarrativeFields = ['deduplication', 'stageCriteria', 'nextStepPlan', 'handoffNotes'] as const
 
-export const postmortemFieldLabels: Record<typeof postmortemNarrativeFields[number], string> = {
-  rootCause: 'Root cause documented',
-  fix: 'Fix applied',
-  followUp: 'Follow-up message sent',
-  prevention: 'Prevention action captured',
+export const reviewFieldLabels: Record<typeof reviewNarrativeFields[number], string> = {
+  deduplication: 'Deduplication check',
+  stageCriteria: 'Stage criteria',
+  nextStepPlan: 'Next-step plan',
+  handoffNotes: 'Handoff notes',
 }
 
-export const isPostmortemNarrativeComplete = (postmortem: PostmortemSection) =>
-  postmortemNarrativeFields.every((field) => postmortem[field].trim().length > 0)
+export const isReviewNarrativeComplete = (review: CRMHygieneReview) =>
+  reviewNarrativeFields.every((field) => review[field].trim().length > 0)
 
-export const hasKnowledgeArticleAnswer = (status: KnowledgeArticleStatus) => status.trim().length > 0
+export const hasPlaybookStatus = (status: PlaybookStatus) => status.trim().length > 0
 
-export const isPostmortemComplete = (postmortem: PostmortemSection) =>
-  isPostmortemNarrativeComplete(postmortem) && hasKnowledgeArticleAnswer(postmortem.knowledgeArticleStatus)
+export const isReviewComplete = (review: CRMHygieneReview) =>
+  isReviewNarrativeComplete(review) && hasPlaybookStatus(review.playbookStatus)

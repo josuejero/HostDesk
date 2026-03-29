@@ -1,2105 +1,921 @@
 [
   {
-    "id": "scenario-billing-suspension",
-    "bucket": "Billing/Account",
-    "title": "Billing Suspension",
-    "description": "Invoice shows paid but the container host is still suspended; customer is frustrated and wants ownership.",
-    "tags": [
-      "billing",
-      "suspension",
-      "invoice",
-      "ownership"
-    ],
-    "ticket": {
-      "id": "ticket-billing-suspension",
-      "subject": "Invoice paid, but site still suspended",
-      "department": "Billing & Accounts",
-      "severity": "High",
-      "priority": "Urgent",
-      "status": "Escalated",
-      "plan": "Standard",
-      "slaTargetMinutes": 60,
-      "createdAt": "2026-03-01T09:30:00Z",
-      "assignedTo": "Lena Torres",
-      "escalationTier": "Tier 2 - Billing",
-      "invoiceState": "Paid - Service Suspended",
-      "recentIncidents": [
-        "Invoice #HB-4927 cleared 17 minutes ago but suspension flag persists",
-        "Customer reports the panel still shows 'Service Suspended'"
+    "id": "scenario-avd-cost-control",
+    "bucket": "Cost Optimization",
+    "title": "MSP evaluating AVD cost control",
+    "description": "A multi-tenant MSP wants sharper Azure Virtual Desktop cost visibility before expanding hosted desktops for two new clients.",
+    "tags": ["avd", "cost optimization", "msp", "multi-tenant"],
+    "record": {
+      "id": "lead-avd-cost-control",
+      "subject": "Need a cleaner AVD cost control story for new managed desktop clients",
+      "company": "Northline MSP Group",
+      "segment": "MSP",
+      "employeeRange": "201-500",
+      "microsoftFootprint": ["Azure", "Azure Virtual Desktop", "Microsoft 365"],
+      "useCase": "AVD cost optimization for multi-tenant managed desktop environments",
+      "buyerPersona": "Director of Cloud Services",
+      "leadSource": "Partner webinar",
+      "owner": "Avery Chen",
+      "stage": "Active",
+      "stageEnteredAt": "2026-03-27T14:15:00Z",
+      "createdAt": "2026-03-25T13:00:00Z",
+      "lastTouchAt": "2026-03-28T15:45:00Z",
+      "nextTouchDueAt": "2026-03-29T16:00:00Z",
+      "painPoints": [
+        "Azure spend spikes after hours",
+        "Manual host-pool right-sizing across tenants",
+        "Need a sharper finance-ready cost narrative"
       ],
-      "thread": [
+      "objections": [
+        "Already built some internal Power BI reporting",
+        "Wants proof the operational layer will save engineer time"
+      ],
+      "buyingSignals": [
+        "Asked for a side-by-side MSP workflow walkthrough",
+        "Shared active margin targets for desktop services"
+      ],
+      "activities": [
         {
-          "id": "thread-1",
-          "author": "Morgan (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-01T09:18:00Z",
-          "message": "I paid the invoice through Stripe. Why is the hosting still suspended?"
+          "id": "activity-avd-1",
+          "type": "outbound-email",
+          "owner": "Avery Chen",
+          "timestamp": "2026-03-26T14:00:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Sent first-touch note tying AVD host-pool savings to managed service margins.",
+          "nextStep": "Share a follow-up with cost-control proof points.",
+          "crmUpdated": true
         },
         {
-          "id": "thread-2",
-          "author": "Lena Torres",
-          "audience": "customer",
-          "createdAt": "2026-03-01T09:22:00Z",
-          "message": "Thanks for the screenshot of the receipt. I'm checking with billing ops before unsuspending."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-1",
-          "author": "Ops Lead",
-          "audience": "internal",
-          "createdAt": "2026-03-01T09:24:00Z",
-          "message": "Billing clearing webhook is delayed; invoice is marked paid but suspension lock still on database."
-        }
-      ],
-      "kbMatches": [
-        "kb-billing-suspension-works"
-      ],
-      "postmortem": {
-        "rootCause": "Suspension flag not cleared after manual payment reconciliation.",
-        "fix": "Cleared the suspension flag and re-ran the notification job.",
-        "followUp": "Notify billing automation to recheck the webhook within 15 minutes.",
-        "prevention": "Add coverage to the reconciliation job to release suspensions when invoices hit paid state.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 73,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 18,
-            "max": 25,
-            "note": "Escalated before SLA breached but still under 60-minute target."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 16,
-            "max": 20,
-            "note": "Customer-facing reply acknowledged pain but lacked next ETA."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 14,
-            "max": 20,
-            "note": "Internal note captured the automation delay."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 12,
-            "max": 15,
-            "note": "Shared billing hold article; could customize further."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "Escalated appropriately after webhook lag."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 7,
-            "max": 10,
-            "note": "Postmortem ready but still needs verification."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-001",
-      "name": "Four Rivers Productions",
-      "planTier": "Standard",
-      "persona": "Media agency, low-technical",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 90,
-      "timezone": "America/Los_Angeles",
-      "serverRegion": "us-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 2 - Billing",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Billing",
-        "Tier 3 - Finance Ops"
-      ],
-      "notes": "Auto-escalation kicks in 45 minutes after first response; Finance gets CC when invoice states mismatch."
-    }
-  },
-  {
-    "id": "scenario-minecraft-plugin-crash",
-    "bucket": "Technical",
-    "title": "Minecraft Plugin Crash",
-    "description": "New modpack plugin causes the dedicated host to crash at startup, blocking the customer's community.",
-    "tags": [
-      "technical",
-      "plugin",
-      "minecraft",
-      "mod conflict"
-    ],
-    "ticket": {
-      "id": "ticket-minecraft-plugin",
-      "subject": "Server crashes when the new economy plugin loads",
-      "department": "Technical Operations",
-      "severity": "Critical",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Pro",
-      "slaTargetMinutes": 45,
-      "createdAt": "2026-03-02T18:05:00Z",
-      "assignedTo": "Ravi Dalal",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Crash logs reference ModEconomy v3.2 failing sanity check",
-        "Server reboots when plugin tries to bind to local database"
-      ],
-      "thread": [
-        {
-          "id": "thread-3",
-          "author": "Imani (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-02T18:00:00Z",
-          "message": "After I installed the new economy plugin, the server won't start."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-2",
-          "author": "Ravi",
-          "audience": "internal",
-          "createdAt": "2026-03-02T18:07:00Z",
-          "message": "Resembles ModEconomy conflict with the custom Harmony patch. Container logs show stack overflow after plugin init."
-        }
-      ],
-      "kbMatches": [
-        "kb-minecraft-server-plugin-start",
-        "kb-mod-conflicts"
-      ],
-      "postmortem": {
-        "rootCause": "Harmony patch conflicted with ModEconomy v3.2, leading to repeated stack overflows.",
-        "fix": "Rolled back to ModEconomy v3.0 and patched Harmony to respect new APIs.",
-        "followUp": "Recommend plugin compatibility check before deploying any new mod on this host.",
-        "prevention": "Add a mod compatibility checklist to the KB and rerun automated sanity tests.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 78,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 22,
-            "max": 25,
-            "note": "SLA is tight but response time was 5 minutes."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 15,
-            "max": 20,
-            "note": "Acknowledged outage but can add step-by-step updates."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 18,
-            "max": 20,
-            "note": "Internal note documents stack trace details."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 12,
-            "max": 15,
-            "note": "Sharing compatibility article would calm the gaming guild."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 7,
-            "max": 10,
-            "note": "Ticket stays Tier 1 but has path to Tier 2."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 4,
-            "max": 10,
-            "note": "Postmortem draft needs follow-up."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-017",
-      "name": "Skyline Play",
-      "planTier": "Pro",
-      "persona": "Community builder, cooperative modpack admin",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 60,
-      "timezone": "America/Chicago",
-      "serverRegion": "us-central"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Technical",
-        "Tier 2 - Server Engineering",
-        "Tier 3 - Game Ops"
-      ],
-      "notes": "Tier 1 should collect crash dumps before involving engineering."
-    }
-  },
-  {
-    "id": "scenario-discord-bot-outage",
-    "bucket": "Technical",
-    "title": "Discord Bot Overnight Outage",
-    "description": "Discord moderation bot hosted on HostDesk went offline overnight; premium customer needs postmortem.",
-    "tags": [
-      "bot",
-      "incident",
-      "premium",
-      "sla"
-    ],
-    "ticket": {
-      "id": "ticket-discord-bot",
-      "subject": "Bot went offline between 03:00 and 05:00",
-      "department": "Customer Advocacy",
-      "severity": "High",
-      "priority": "High",
-      "status": "Waiting on Customer",
-      "plan": "Enterprise",
-      "slaTargetMinutes": 30,
-      "createdAt": "2026-03-02T07:15:00Z",
-      "assignedTo": "Noah Kim",
-      "escalationTier": "Tier 2 - Incident",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "External monitoring recorded 120 minutes of downtime",
-        "Bot restarted automatically but core listeners did not reconnect"
-      ],
-      "thread": [
-        {
-          "id": "thread-4",
-          "author": "Mira (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-02T07:10:00Z",
-          "message": "Discord moderators were unable to run commands while the bot was down."
+          "id": "activity-avd-2",
+          "type": "reply-received",
+          "owner": "Avery Chen",
+          "timestamp": "2026-03-27T13:30:00Z",
+          "channel": "email",
+          "outcome": "Positive reply",
+          "summary": "Prospect asked how the team would compare AVD scaling versus current scripts.",
+          "nextStep": "Send MSP cost-control angle and propose a working session.",
+          "crmUpdated": true
         },
         {
-          "id": "thread-5",
-          "author": "Noah",
-          "audience": "customer",
-          "createdAt": "2026-03-02T07:20:00Z",
-          "message": "I'm digging into the approximate outage window; can you confirm if any manual restarts occurred?"
+          "id": "activity-avd-3",
+          "type": "linkedin-touch",
+          "owner": "Avery Chen",
+          "timestamp": "2026-03-28T15:45:00Z",
+          "channel": "linkedin",
+          "outcome": "Accepted",
+          "summary": "Connected with the cloud services director after the reply thread slowed down.",
+          "nextStep": "Follow up with a concise cost-optimization summary today.",
+          "crmUpdated": false
         }
       ],
-      "internalNotes": [
-        {
-          "id": "note-3",
-          "author": "Noah",
-          "audience": "internal",
-          "createdAt": "2026-03-02T07:18:00Z",
-          "message": "App server crashed when Discord API hits exceeded the user tier; listener thread failed to reregister."
-        }
-      ],
-      "kbMatches": [
-        "kb-bot-offline-overnight"
-      ],
-      "postmortem": {
-        "rootCause": "Rate-limit spike triggered automatic restarts but the reconnection loop never finished.",
-        "fix": "Restarted the discord bot with throttled re-registration and force update on the API token.",
-        "followUp": "Revisit premium tier concurrency limits and note it in the incident report.",
-        "prevention": "Add jittered back-off to the listener and monitor the queue depth.",
-        "knowledgeArticleStatus": ""
+      "playbookMatches": ["playbook-avd-cost-control", "playbook-msp-multi-tenant"],
+      "review": {
+        "deduplication": "Single active account owner confirmed; no duplicate account records found.",
+        "stageCriteria": "Discovery criteria met because pain points, workload scope, and buyer role are documented.",
+        "nextStepPlan": "Deliver cost narrative and propose 30-minute technical discovery.",
+        "handoffNotes": "Hold handoff until a multi-tenant reporting requirement is validated.",
+        "playbookStatus": "updated"
       },
       "scorecard": {
-        "total": 79,
+        "total": 82,
         "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 23,
-            "max": 25,
-            "note": "Responded within 5 minutes; SLA still open."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 17,
-            "max": 20,
-            "note": "Clear question asked, but needs follow-up summary."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 18,
-            "max": 20,
-            "note": "Internal note captured the failure window."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 14,
-            "max": 15,
-            "note": "Incident article ready to share once validated."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 7,
-            "max": 10,
-            "note": "Elevated due to premium plan SLA."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 0,
-            "max": 10,
-            "note": "Postmortem still in progress."
-          }
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 13, "max": 15, "note": "Core account and workload fields are populated." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 13, "max": 15, "note": "Owner and dated next step are present; no duplicate warning." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 14, "max": 15, "note": "Strong MSP + Azure desktop motion with direct cost pressure." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 11, "max": 15, "note": "Next step is due today, so execution pressure is rising." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 8, "max": 10, "note": "Touches reference the MSP margin angle instead of generic VDI messaging." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 8, "max": 10, "note": "Follow-up is dated and tied to a concrete proof point." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 7, "max": 10, "note": "Needs one more technical validation before AE handoff." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 8, "max": 10, "note": "Activity history and source are ready for weekly review." }
         ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-023",
-      "name": "Northbound Gaming",
-      "planTier": "Enterprise",
-      "persona": "High-touch operations lead",
-      "billingCycle": "Quarterly",
-      "slaEntitlementMinutes": 30,
-      "timezone": "America/New_York",
-      "serverRegion": "us-east"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 2 - Incident",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Incident Response",
-        "Tier 3 - Platform"
-      ],
-      "notes": "Escalate immediately if outages exceed 30 minutes rollout."
-    }
-  },
-  {
-    "id": "scenario-cpanel-login-loop",
-    "bucket": "Technical",
-    "title": "cPanel Login Loop",
-    "description": "Customer cannot break out of the cPanel login loop after repeated 2FA failures; they fear an attack.",
-    "tags": [
-      "panel",
-      "access",
-      "security",
-      "cPanel"
-    ],
-    "ticket": {
-      "id": "ticket-cpanel-loop",
-      "subject": "cPanel keeps kicking me back to the login screen",
-      "department": "Customer Advocacy",
-      "severity": "Medium",
-      "priority": "Medium",
-      "status": "Open",
-      "plan": "Standard",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-02-27T14:45:00Z",
-      "assignedTo": "Jules Becker",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Two-factor auth request attempted unsuccessfully four times",
-        "Browser shows login success but returns to the same form"
-      ],
-      "thread": [
-        {
-          "id": "thread-6",
-          "author": "Ava (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-27T14:40:00Z",
-          "message": "I keep entering the code and it refreshes me back to the login screen."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-4",
-          "author": "Jules",
-          "audience": "internal",
-          "createdAt": "2026-02-27T14:41:00Z",
-          "message": "Artifact from SSO session cookie; reissuing cookie should fix loop."
-        }
-      ],
-      "kbMatches": [
-        "kb-panel-login-loop"
-      ],
-      "postmortem": {
-        "rootCause": "SSO cookie had expired token, causing redirect loop.",
-        "fix": "Cleared cPanel session and forced new SSO handshake.",
-        "followUp": "Document the cookie refresh steps for frontline staff.",
-        "prevention": "Add a KB snippet on cookie refresh to the login article.",
-        "knowledgeArticleStatus": ""
       },
-      "scorecard": {
-        "total": 62,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 14,
-            "max": 25,
-            "note": "Within SLA window but earlier response could reduce stress."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 14,
-            "max": 20,
-            "note": "Calm tone but can offer more assurance."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 13,
-            "max": 20,
-            "note": "Documented cookie reset."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "Shared KB article with instructions."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "Tier 1 is correct for now."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 4,
-            "max": 10,
-            "note": "Postmortem still needs final confirmation."
-          }
-        ]
-      }
+      "aiSummary": "Northline MSP Group is evaluating a stronger AVD cost-control story for multi-tenant managed desktops and is responsive to margin-focused proof points.",
+      "recommendedNextAction": "Send a tight email connecting right-sizing and after-hours shutdown controls to margin protection, then ask for a discovery slot.",
+      "crmCompleteness": 88,
+      "disqualificationReason": ""
     },
-    "customerProfile": {
-      "accountId": "acct-043",
-      "name": "White Oak Design",
-      "planTier": "Standard",
-      "persona": "Boutique agency with single admin",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
-      "timezone": "America/New_York",
-      "serverRegion": "us-east"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Security Ops"
-      ],
-      "notes": "Escalate if OTP requests exceed 4 in a 30-minute window."
-    }
-  },
-  {
-    "id": "scenario-backup-restore-failed",
-    "bucket": "Technical",
-    "title": "Backup Restore Failure",
-    "description": "Customer ran the restore button but their database stays at the pre-rollback state.",
-    "tags": [
-      "backup",
-      "restore",
-      "confusion",
-      "database"
-    ],
-    "ticket": {
-      "id": "ticket-backup-restore",
-      "subject": "Restored backup but site still old version",
-      "department": "Technical Operations",
-      "severity": "Medium",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Core",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-02-25T11:30:00Z",
-      "assignedTo": "Imani Stokes",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Flat-file backup flagged 7 minutes after restore",
-        "Database restore job completed but elapsed 2 hours ago"
-      ],
-      "thread": [
-        {
-          "id": "thread-7",
-          "author": "Emir (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-25T11:25:00Z",
-          "message": "I ran the restore for the Feb 10 backup but I still see the older homepage."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-5",
-          "author": "Imani",
-          "audience": "internal",
-          "createdAt": "2026-02-25T11:31:00Z",
-          "message": "Restore completed but caching layer still pointing to cached HTML. Need to flush CDN."
-        }
-      ],
-      "kbMatches": [
-        "kb-backup-restore-checks"
-      ],
-      "postmortem": {
-        "rootCause": "CDN cache and database were not invalidated after restore.",
-        "fix": "Ran cache flush and validated file timestamps.",
-        "followUp": "Add note to run CDN purge automatically after restores for this tier.",
-        "prevention": "Document the CDN flush step in the restore KB article.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 65,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 15,
-            "max": 25,
-            "note": "Still inside the longer SLA window."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 13,
-            "max": 20,
-            "note": "Needs more clarity on the next steps."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 14,
-            "max": 20,
-            "note": "Documented caching dependency."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "Article ready once flush completes."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "Tier 1 is acceptable."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 6,
-            "max": 10,
-            "note": "Postmortem nearly complete."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-052",
-      "name": "Crescent Outdoor",
-      "planTier": "Core",
-      "persona": "Solo founder",
-      "billingCycle": "Annual",
-      "slaEntitlementMinutes": 240,
-      "timezone": "America/Denver",
-      "serverRegion": "us-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Storage"
-      ],
-      "notes": "Escalate if backup restore exceeds 3 hours or CDN flush fails twice."
-    }
-  },
-  {
-    "id": "scenario-dns-propagation",
-    "bucket": "Technical",
-    "title": "DNS Change Not Propagating",
-    "description": "DNS change landed in registrars but the domain still points to the old host across Europe.",
-    "tags": [
-      "dns",
-      "propagation",
-      "network",
-      "domain"
-    ],
-    "ticket": {
-      "id": "ticket-dns-propagation",
-      "subject": "DNS record update not propagating",
-      "department": "Infrastructure",
-      "severity": "High",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Pro",
-      "slaTargetMinutes": 60,
-      "createdAt": "2026-03-03T08:10:00Z",
-      "assignedTo": "Evelyn Park",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "TTL for A record is 900 seconds but 4 hours later old IP still resolves in EU",
-        "Registrar confirms the update completed, but the NS group still shows old entry"
-      ],
-      "thread": [
-        {
-          "id": "thread-8",
-          "author": "Sofia (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-03T08:07:00Z",
-          "message": "The site still loads the old server despite updating the DNS."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-6",
-          "author": "Evelyn",
-          "audience": "internal",
-          "createdAt": "2026-03-03T08:09:00Z",
-          "message": "Current NS set includes legacy overlay; plan to push new NS group and monitor."
-        }
-      ],
-      "kbMatches": [
-        "kb-dns-propagation"
-      ],
-      "postmortem": {
-        "rootCause": "Legacy NS group slowed propagation across the European edge nodes.",
-        "fix": "Updated NS group, confirmed propagation in 10 minutes, and cleared CDN caches.",
-        "followUp": "Add stub to KB about checking registrar NS after hot changes.",
-        "prevention": "Prep DNS change checklist with propagation monitoring steps.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 74,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 20,
-            "max": 25,
-            "note": "Response came before SLA window closed."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 17,
-            "max": 20,
-            "note": "Customer feels heard but needs propagation updates."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 18,
-            "max": 20,
-            "note": "Documented NS issue and fix."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 14,
-            "max": 15,
-            "note": "Article matched keywords well."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 5,
-            "max": 10,
-            "note": "Plan not yet to push to Tier 2."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 0,
-            "max": 10,
-            "note": "Postmortem not filled yet."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-068",
-      "name": "Atlas Artisan",
-      "planTier": "Pro",
-      "persona": "Creative marketer with limited DNS knowledge",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 60,
-      "timezone": "Europe/London",
-      "serverRegion": "eu-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - DNS",
-        "Tier 2 - Networking"
-      ],
-      "notes": "Escalate if propagation exceeds 6 hours or registrar denies changes."
-    }
-  },
-  {
-    "id": "scenario-high-lag",
-    "bucket": "Technical",
-    "title": "High Ping / Lag Complaint",
-    "description": "Customer sees constant 300+ ms ping spikes during peak night hours despite premium plan.",
-    "tags": [
-      "performance",
-      "lag",
-      "ping",
-      "monitoring"
-    ],
-    "ticket": {
-      "id": "ticket-high-lag",
-      "subject": "Players seeing 300ms latency spikes in the evening",
-      "department": "Technical Operations",
-      "severity": "Medium",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Enterprise",
-      "slaTargetMinutes": 90,
-      "createdAt": "2026-03-02T20:10:00Z",
-      "assignedTo": "Nia Laurent",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Peak load starts at 20:00 UTC, coinciding with player queue growth",
-        "Host CPU spikes to 95% when latency climbs"
-      ],
-      "thread": [
-        {
-          "id": "thread-9",
-          "author": "Irene (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-02T20:05:00Z",
-          "message": "Saw 300ms ping tonight, the community is noticing huge frame drops."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-7",
-          "author": "Nia",
-          "audience": "internal",
-          "createdAt": "2026-03-02T20:07:00Z",
-          "message": "Host metrics show CPU climb; suspect cron job spike affecting IO."
-        }
-      ],
-      "kbMatches": [
-        "kb-high-ping-triage-checklist"
-      ],
-      "postmortem": {
-        "rootCause": "Nightly backup cron job contended with game server threads, spiking latency.",
-        "fix": "Rescheduled backups and added CPU guard rails.",
-        "followUp": "Add automation to pause non-critical jobs during peak concurrency.",
-        "prevention": "Document the CPU scheduling guidelines in the performance KB.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 81,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 20,
-            "max": 25,
-            "note": "Responded quickly; ongoing updates expected."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 16,
-            "max": 20,
-            "note": "Took ownership but follow-up promises needed."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 18,
-            "max": 20,
-            "note": "Identified backup conflict."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 13,
-            "max": 15,
-            "note": "Ready to share performance article."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 8,
-            "max": 10,
-            "note": "Keep in Tier 1 but monitor."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 6,
-            "max": 10,
-            "note": "Postmortem drafted but not shared."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-090",
-      "name": "Northern Echoes eSports",
-      "planTier": "Enterprise",
-      "persona": "Event-driven ops director",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 45,
-      "timezone": "Europe/Amsterdam",
-      "serverRegion": "eu-central"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Performance",
-        "Tier 2 - Infrastructure"
-      ],
-      "notes": "Offer to escalate when lag persists for two business hours."
-    }
-  },
-  {
-    "id": "scenario-mod-conflict",
-    "bucket": "Technical",
-    "title": "Mod Conflict",
-    "description": "Two mods try to write to the same file, causing a startup failure and a crash dump for the server.",
-    "tags": [
-      "mod conflict",
-      "crash",
-      "modpack"
-    ],
-    "ticket": {
-      "id": "ticket-mod-conflict",
-      "subject": "Modpack crashes with stack trace pointing to textures.json",
-      "department": "Technical Operations",
-      "severity": "High",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Pro",
-      "slaTargetMinutes": 60,
-      "createdAt": "2026-03-03T12:40:00Z",
-      "assignedTo": "Ravi Dalal",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Crash occurs shortly after the world loads",
-        "Textures module can't find textures.json when both mods install"
-      ],
-      "thread": [
-        {
-          "id": "thread-10",
-          "author": "Kara (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-03T12:35:00Z",
-          "message": "We hit a crash while loading the modpack after the latest update."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-8",
-          "author": "Ravi",
-          "audience": "internal",
-          "createdAt": "2026-03-03T12:37:00Z",
-          "message": "Mods A and B both write textures.json; need to modify the override order."
-        }
-      ],
-      "kbMatches": [
-        "kb-minecraft-server-plugin-start"
-      ],
-      "postmortem": {
-        "rootCause": "Two textures mods fighting over the same file when the world loads.",
-        "fix": "Temporarily disabled the secondary mod and documented the override order.",
-        "followUp": "Recommend mod compatibility check before patching next update.",
-        "prevention": "Add mod conflict detection to automation.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 72,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 21,
-            "max": 25,
-            "note": "Fast reply; still in SLA window."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 15,
-            "max": 20,
-            "note": "Needs more proactive updates."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 17,
-            "max": 20,
-            "note": "Documented conflicting mods."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "Caching article ready to share."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 5,
-            "max": 10,
-            "note": "Keep in Tier 1 for now."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 3,
-            "max": 10,
-            "note": "Needs postmortem detail."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-095",
-      "name": "NebulaMod Servers",
-      "planTier": "Pro",
-      "persona": "Modpack curator",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 45,
-      "timezone": "America/Los_Angeles",
-      "serverRegion": "us-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Technical",
-        "Tier 2 - Mod Engineering",
-        "Tier 3 - Game Ops"
-      ],
-      "notes": "Escalate if a repeat mod conflict occurs after two reorders."
-    }
-  },
-  {
-    "id": "scenario-upgrade-request",
-    "bucket": "Billing/Account",
-    "title": "Upgrade Request Without Data Loss",
-    "description": "Customer wants to move from Standard to Pro without downtime and needs assurance on migration steps.",
-    "tags": [
-      "upgrade",
-      "workflow",
-      "billing",
-      "planning"
-    ],
-    "ticket": {
-      "id": "ticket-upgrade-request",
-      "subject": "Requesting upgrade to Pro tier without losing configs",
-      "department": "Billing & Accounts",
-      "severity": "Medium",
-      "priority": "Medium",
-      "status": "Open",
-      "plan": "Standard",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-02-28T10:40:00Z",
-      "assignedTo": "Lena Torres",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Pending Upgrade",
-      "recentIncidents": [
-        "Customer sees the Pro tier listed but upgrade button is disabled",
-        "No recent failures; just planning quote"
-      ],
-      "thread": [
-        {
-          "id": "thread-11",
-          "author": "Gaby (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-28T10:35:00Z",
-          "message": "Can we upgrade to Pro but keep the same IP and configs?"
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-9",
-          "author": "Lena",
-          "audience": "internal",
-          "createdAt": "2026-02-28T10:38:00Z",
-          "message": "Plan change requires a short downtime to scale storage. Need to coordinate with billing ops."
-        }
-      ],
-      "kbMatches": [
-        "kb-safe-upgrade-path"
-      ],
-      "postmortem": {
-        "rootCause": "n/a",
-        "fix": "n/a",
-        "followUp": "Coordinate change window for upgrade.",
-        "prevention": "Document upgrade workflow in KB.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 68,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 16,
-            "max": 25,
-            "note": "Still early in queue for planning request."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 16,
-            "max": 20,
-            "note": "Acknowledged concern but needs timeline."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 12,
-            "max": 20,
-            "note": "Need to confirm storage scaling steps."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 12,
-            "max": 15,
-            "note": "Upgrade checklist article referenced."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "Low severity, no escalation yet."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 6,
-            "max": 10,
-            "note": "Needs formal handoff."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-108",
-      "name": "Veridian Studios",
-      "planTier": "Standard",
-      "persona": "Growing digital agency",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
+    "accountProfile": {
+      "accountId": "acct-201",
+      "name": "Northline MSP Group",
       "timezone": "America/Chicago",
-      "serverRegion": "us-east"
+      "region": "Central US",
+      "existingStack": "Azure, AVD, Microsoft 365, custom Power BI scripts",
+      "microsoftPriority": "Azure Virtual Desktop",
+      "motion": "Partner-led MSP expansion"
     },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Billing",
-        "Tier 2 - Platform"
-      ],
-      "notes": "Escalate if upgrade requires manual provisioning longer than 4 hours."
+    "handoffPlan": {
+      "currentPath": "SDR discovery",
+      "path": ["SDR discovery", "Technical validation", "AE handoff"],
+      "notes": "Do not hand off until the MSP reporting and host-pool governance questions are documented."
     }
   },
   {
-    "id": "scenario-downgrade-refund",
-    "bucket": "Billing/Account",
-    "title": "Downgrade & Refund Question",
-    "description": "Customer wants to downgrade due to budget pressure and asks about prorated refunds.",
-    "tags": [
-      "billing",
-      "refund",
-      "billing cycle"
-    ],
-    "ticket": {
-      "id": "ticket-downgrade-refund",
-      "subject": "Need to downgrade and refund unused days",
-      "department": "Billing & Accounts",
-      "severity": "Medium",
-      "priority": "Medium",
-      "status": "Open",
-      "plan": "Pro",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-02-26T13:15:00Z",
-      "assignedTo": "Lena Torres",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Customer requests downgrade to Standard",
-        "Mentions budget hold until next quarter"
+    "id": "scenario-windows365-byod",
+    "bucket": "BYOD rollout",
+    "title": "Contractor fleet for Windows 365",
+    "description": "A services company wants contractor desktops without shipping hardware and needs a BYOD-safe Cloud PC motion.",
+    "tags": ["windows 365", "cloud pc", "contractors", "byod"],
+    "record": {
+      "id": "lead-windows365-byod",
+      "subject": "Looking at Cloud PCs for a contractor-heavy BYOD team",
+      "company": "BlueRidge Advisory",
+      "segment": "Mid-market services",
+      "employeeRange": "501-1000",
+      "microsoftFootprint": ["Microsoft 365", "Entra ID"],
+      "useCase": "Windows 365 rollout for seasonal contractors on personal devices",
+      "buyerPersona": "IT Operations Manager",
+      "leadSource": "Inbound demo request",
+      "owner": "Jordan Ellis",
+      "stage": "New lead",
+      "stageEnteredAt": "2026-03-29T09:10:00Z",
+      "createdAt": "2026-03-29T09:10:00Z",
+      "lastTouchAt": "2026-03-29T09:10:00Z",
+      "nextTouchDueAt": "2026-03-29T18:00:00Z",
+      "painPoints": [
+        "Contractors onboard too quickly for laptop shipping",
+        "Security team is uneasy about unmanaged personal devices"
       ],
-      "thread": [
+      "objections": [
+        "Worried Cloud PCs may be overkill for short-term workers"
+      ],
+      "buyingSignals": [
+        "Submitted a demo form naming BYOD and contractor access"
+      ],
+      "activities": [
         {
-          "id": "thread-12",
-          "author": "Theo (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-26T13:10:00Z",
-          "message": "Can I downgrade to Standard and get a refund for the weeks left?"
+          "id": "activity-w365-1",
+          "type": "enrichment-update",
+          "owner": "Jordan Ellis",
+          "timestamp": "2026-03-29T09:20:00Z",
+          "channel": "crm",
+          "outcome": "Enriched",
+          "summary": "Captured company size, buyer role, and Microsoft 365 footprint from the inbound form.",
+          "nextStep": "Send first-touch email before end of day.",
+          "crmUpdated": true
         }
       ],
-      "internalNotes": [
-        {
-          "id": "note-10",
-          "author": "Lena",
-          "audience": "internal",
-          "createdAt": "2026-02-26T13:12:00Z",
-          "message": "Refund policy allows prorated credit; need finance approval for early downgrade."
-        }
-      ],
-      "kbMatches": [
-        "kb-refunds-downgrade"
-      ],
-      "postmortem": {
-        "rootCause": "n/a",
-        "fix": "n/a",
-        "followUp": "Prepare downgrade instructions for future CFO inquiries.",
-        "prevention": "Add plan comparison to billing KB.",
-        "knowledgeArticleStatus": ""
+      "playbookMatches": ["playbook-windows365-byod"],
+      "review": {
+        "deduplication": "Net-new account from inbound queue; no duplicate domain found.",
+        "stageCriteria": "Still in intake because there has been no outbound touch yet.",
+        "nextStepPlan": "Send first-touch email focused on secure contractor onboarding.",
+        "handoffNotes": "No handoff until timing, seat count, and security constraints are confirmed.",
+        "playbookStatus": "not-needed"
       },
       "scorecard": {
         "total": 66,
         "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 16,
-            "max": 25,
-            "note": "Standard SLA window for billing questions."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 17,
-            "max": 20,
-            "note": "Empathy shown but needs proactive guidance."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 11,
-            "max": 20,
-            "note": "More clarity on plan differences needed."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 12,
-            "max": 15,
-            "note": "Shared refund policy doc."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 5,
-            "max": 10,
-            "note": "No escalation required."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 5,
-            "max": 10,
-            "note": "Capture final refund once approved."
-          }
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 11, "max": 15, "note": "Basic form data is present but persona detail is still light." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 12, "max": 15, "note": "Owner and dated next step exist, so the record is workable." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 12, "max": 15, "note": "BYOD plus contractor access is a strong Windows 365 fit." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 10, "max": 15, "note": "First touch is due today." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 6, "max": 10, "note": "No outbound personalization yet." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 7, "max": 10, "note": "The next action is clear but not yet executed." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 2, "max": 10, "note": "Too early for handoff." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 6, "max": 10, "note": "Source and enrichment are captured, but outreach history is thin." }
         ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-118",
-      "name": "Blue Bridge Films",
-      "planTier": "Pro",
-      "persona": "Budget-conscious studio lead",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
-      "timezone": "America/Los_Angeles",
-      "serverRegion": "us-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Billing",
-        "Tier 2 - Finance"
-      ],
-      "notes": "Escalate to finance for any refunds that exceed $1,000."
-    }
-  },
-  {
-    "id": "scenario-domain-renewal",
-    "bucket": "Billing/Account",
-    "title": "Domain Renewal Confusion",
-    "description": "Customer says domain expired despite auto-renew being on; they want clarity before renewal hits their card.",
-    "tags": [
-      "domain",
-      "renewal",
-      "billing"
-    ],
-    "ticket": {
-      "id": "ticket-domain-renewal",
-      "subject": "Domain renewal charged twice",
-      "department": "Billing & Accounts",
-      "severity": "Medium",
-      "priority": "Medium",
-      "status": "Open",
-      "plan": "Standard",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-02-24T09:05:00Z",
-      "assignedTo": "Lena Torres",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Past Due",
-      "recentIncidents": [
-        "Wake up to charge from registrar despite auto-renew on",
-        "Registrar support assigned ticket #REG-908"
-      ],
-      "thread": [
-        {
-          "id": "thread-13",
-          "author": "Elise (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-24T09:00:00Z",
-          "message": "I was billed twice for the domain and now it's showing past due."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-11",
-          "author": "Lena",
-          "audience": "internal",
-          "createdAt": "2026-02-24T09:02:00Z",
-          "message": "Registrar report says auto-renew failed due to expired card; need to coordinate refund for duplicate charge."
-        }
-      ],
-      "kbMatches": [
-        "kb-domain-renewal"
-      ],
-      "postmortem": {
-        "rootCause": "Failed card prevented auto-renew so registrar issued manual charge.",
-        "fix": "Processed refund for duplicate charge and updated card on file.",
-        "followUp": "Send confirmation of renewal status once registrar updates records.",
-        "prevention": "Refresh billing KB to call out manual renewal steps.",
-        "knowledgeArticleStatus": ""
       },
-      "scorecard": {
-        "total": 64,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 18,
-            "max": 25,
-            "note": "SLA still healthy."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 15,
-            "max": 20,
-            "note": "Needs more empathy on double charge."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 11,
-            "max": 20,
-            "note": "Working through registrar."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 10,
-            "max": 15,
-            "note": "Domain renewal KB shared."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "No further escalation yet."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 4,
-            "max": 10,
-            "note": "Final confirmation pending."
-          }
-        ]
-      }
+      "aiSummary": "BlueRidge Advisory is a new inbound lead interested in secure contractor access without device shipping, which points directly to a Windows 365 BYOD story.",
+      "recommendedNextAction": "Send a first-touch email that frames Cloud PCs as a fast path for secure contractor onboarding on unmanaged devices.",
+      "crmCompleteness": 74,
+      "disqualificationReason": ""
     },
-    "customerProfile": {
-      "accountId": "acct-132",
-      "name": "Eastward Labs",
-      "planTier": "Standard",
-      "persona": "Consulting firm",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 120,
+    "accountProfile": {
+      "accountId": "acct-202",
+      "name": "BlueRidge Advisory",
       "timezone": "America/New_York",
-      "serverRegion": "us-east"
+      "region": "East US",
+      "existingStack": "Microsoft 365, Entra ID, unmanaged contractor laptops",
+      "microsoftPriority": "Windows 365",
+      "motion": "Inbound evaluation"
     },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Billing",
-        "Tier 2 - Registrar Ops"
-      ],
-      "notes": "Escalate to registrar team if invoice shows past due for more than 24 hours."
+    "handoffPlan": {
+      "currentPath": "New lead",
+      "path": ["New lead", "SDR qualification", "AE handoff"],
+      "notes": "Do not move forward without seat count, onboarding timeline, and security concerns captured."
     }
   },
   {
-    "id": "scenario-failed-autopay",
-    "bucket": "Billing/Account",
-    "title": "Failed Autopay, Active Card",
-    "description": "Autopay bounced despite an active card; customer worries service may suspend even though payment is ready.",
-    "tags": [
-      "billing",
-      "autopay",
-      "payment"
-    ],
-    "ticket": {
-      "id": "ticket-autopay",
-      "subject": "Autopay failed even though card is valid",
-      "department": "Billing & Accounts",
-      "severity": "Medium",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Standard",
-      "slaTargetMinutes": 90,
-      "createdAt": "2026-02-26T07:50:00Z",
-      "assignedTo": "Mara Quinn",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Pending Payment",
-      "recentIncidents": [
-        "Authorization error 402 returned from gateway",
-        "Card last used two days ago successfully"
+    "id": "scenario-intune-compliance",
+    "bucket": "Compliance rollout",
+    "title": "Intune compliance rollout",
+    "description": "An IT team is consolidating endpoint compliance policies and app deployment workflows before an audit window.",
+    "tags": ["intune", "compliance", "endpoint", "app deployment"],
+    "record": {
+      "id": "lead-intune-compliance",
+      "subject": "Need tighter Intune compliance reporting before our audit window",
+      "company": "Harbor Health Network",
+      "segment": "Healthcare",
+      "employeeRange": "1001-2500",
+      "microsoftFootprint": ["Microsoft 365", "Intune", "Defender for Endpoint"],
+      "useCase": "Intune compliance reporting and application rollout for distributed clinical staff",
+      "buyerPersona": "Endpoint Engineering Lead",
+      "leadSource": "Partner referral",
+      "owner": "Mina Patel",
+      "stage": "Active",
+      "stageEnteredAt": "2026-03-24T16:00:00Z",
+      "createdAt": "2026-03-22T15:00:00Z",
+      "lastTouchAt": "2026-03-28T17:30:00Z",
+      "nextTouchDueAt": "2026-03-29T20:00:00Z",
+      "painPoints": [
+        "Compliance reporting is spread across several admin views",
+        "App deployment verification is manual for field devices"
       ],
-      "thread": [
+      "objections": [
+        "Concerned any new layer will slow down urgent policy changes"
+      ],
+      "buyingSignals": [
+        "Requested examples tied to audit readiness and exception tracking"
+      ],
+      "activities": [
         {
-          "id": "thread-14",
-          "author": "Elliot (customer)",
-          "audience": "customer",
-          "createdAt": "2026-02-26T07:45:00Z",
-          "message": "My autopay failed, but the card is still active. Will service get suspended?"
+          "id": "activity-intune-1",
+          "type": "outbound-email",
+          "owner": "Mina Patel",
+          "timestamp": "2026-03-24T16:20:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Sent compliance-focused first touch referencing audit pressure and reporting consolidation.",
+          "nextStep": "Capture current reporting gaps and app deployment pain.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-intune-2",
+          "type": "call-attempt",
+          "owner": "Mina Patel",
+          "timestamp": "2026-03-27T18:00:00Z",
+          "channel": "call",
+          "outcome": "Voicemail",
+          "summary": "Left voicemail referencing the audit date and compliance reporting gaps.",
+          "nextStep": "Follow up by email with an Intune compliance angle.",
+          "crmUpdated": false
+        },
+        {
+          "id": "activity-intune-3",
+          "type": "reply-received",
+          "owner": "Mina Patel",
+          "timestamp": "2026-03-28T17:30:00Z",
+          "channel": "email",
+          "outcome": "Interested",
+          "summary": "Prospect asked whether the workflow could also help track app deployment confidence.",
+          "nextStep": "Send a combined compliance plus deployment follow-up today.",
+          "crmUpdated": true
         }
       ],
-      "internalNotes": [
-        {
-          "id": "note-12",
-          "author": "Mara",
-          "audience": "internal",
-          "createdAt": "2026-02-26T07:47:00Z",
-          "message": "Gateway sent 402 but the card response indicates AVS mismatch; need to verify address."
-        }
-      ],
-      "kbMatches": [
-        "kb-verify-service-activation-after-payment"
-      ],
-      "postmortem": {
-        "rootCause": "Autopay retried after AVS mismatch; system queued service hold.",
-        "fix": "Reauthorized card manually with updated billing address.",
-        "followUp": "Document the AVS issue in autopay KB.",
-        "prevention": "Add a 2-step verification before triggering suspension.",
-        "knowledgeArticleStatus": ""
+      "playbookMatches": ["playbook-intune-compliance", "playbook-healthcare-shared-devices"],
+      "review": {
+        "deduplication": "Single health-system record confirmed.",
+        "stageCriteria": "Working stage is valid because role, audit pressure, and app deployment scope are captured.",
+        "nextStepPlan": "Respond today with compliance reporting and app rollout proof points.",
+        "handoffNotes": "Handoff after confirming regulated-device count and deployment ownership.",
+        "playbookStatus": "updated"
       },
       "scorecard": {
-        "total": 69,
+        "total": 84,
         "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 18,
-            "max": 25,
-            "note": "Still well inside SLA."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 16,
-            "max": 20,
-            "note": "Calm but could reassure more."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 12,
-            "max": 20,
-            "note": "Need to confirm gateway logs."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "KB article about autopay shared."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "No escalation required yet."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 6,
-            "max": 10,
-            "note": "Follow-up documentation pending."
-          }
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 14, "max": 15, "note": "Role, workload, and source are all documented." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 14, "max": 15, "note": "Owner and next step are intact." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 14, "max": 15, "note": "Clear Intune/compliance use case with audit urgency." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 12, "max": 15, "note": "Follow-up is due today but still manageable." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 8, "max": 10, "note": "Touches reflect the audit and deployment pressure." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 8, "max": 10, "note": "Concrete email follow-up is scheduled." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 7, "max": 10, "note": "Needs device-count validation before handoff." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 7, "max": 10, "note": "The activity timeline is solid enough for forecast review." }
         ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-144",
-      "name": "Pioneer Archives",
-      "planTier": "Standard",
-      "persona": "Archivist and part-time engineer",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 120,
-      "timezone": "America/Montreal",
-      "serverRegion": "ca-central"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Billing",
-        "Tier 2 - Finance"
-      ],
-      "notes": "Escalate if autopay fails twice or service shows pending suspension."
-    }
-  },
-  {
-    "id": "scenario-angry-repeat-outage",
-    "bucket": "Communication/Judgment",
-    "title": "Angry Customer After Repeated Outages",
-    "description": "Customer is irate after multiple brief outages this week and expects ownership.",
-    "tags": [
-      "communication",
-      "empathy",
-      "escalation"
-    ],
-    "ticket": {
-      "id": "ticket-angry-customer",
-      "subject": "Outages keep happening, this is unacceptable",
-      "department": "Customer Advocacy",
-      "severity": "High",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Enterprise",
-      "slaTargetMinutes": 30,
-      "createdAt": "2026-03-03T16:55:00Z",
-      "assignedTo": "Noah Kim",
-      "escalationTier": "Tier 2 - Incident",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Three short outages in past eight hours",
-        "Customer manual downtime reports trending up"
-      ],
-      "thread": [
-        {
-          "id": "thread-15",
-          "author": "Nora (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-03T16:50:00Z",
-          "message": "I've already opened four tickets and still no resolution."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-13",
-          "author": "Noah",
-          "audience": "internal",
-          "createdAt": "2026-03-03T16:53:00Z",
-          "message": "Outages align with nightly patch window; need better expectation-setting."
-        }
-      ],
-      "kbMatches": [
-        "kb-outage-communication"
-      ],
-      "postmortem": {
-        "rootCause": "Patch window overlapped with peak usage, resulting in multiple restarts.",
-        "fix": "Shifted patch window and proactively notified the team.",
-        "followUp": "Offer loyalty gesture and proactive monitoring summary.",
-        "prevention": "Document the new maintenance calendar.",
-        "knowledgeArticleStatus": ""
       },
-      "scorecard": {
-        "total": 72,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 20,
-            "max": 25,
-            "note": "Immediate acknowledgment but requires faster updates."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 18,
-            "max": 20,
-            "note": "Strong empathy but needs root cause clarity."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 14,
-            "max": 20,
-            "note": "Captured maintenance window."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 10,
-            "max": 15,
-            "note": "Article about outage plans available."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 7,
-            "max": 10,
-            "note": "Already elevated to Tier 2."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 3,
-            "max": 10,
-            "note": "Awaiting closure summary."
-          }
-        ]
-      }
+      "aiSummary": "Harbor Health Network has active Intune compliance and app deployment pressure ahead of an audit and is asking workflow-level questions, which signals a qualified working opportunity.",
+      "recommendedNextAction": "Send a same-day follow-up tying audit reporting and app rollout verification into one operational story.",
+      "crmCompleteness": 90,
+      "disqualificationReason": ""
     },
-    "customerProfile": {
-      "accountId": "acct-153",
-      "name": "Brightstone Studios",
-      "planTier": "Enterprise",
-      "persona": "C-level executive",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 30,
-      "timezone": "America/Los_Angeles",
-      "serverRegion": "us-west"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 2 - Incident",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Incident",
-        "Tier 3 - Leadership"
-      ],
-      "notes": "Leadership notified if outages repeat three times in a day."
-    }
-  },
-  {
-    "id": "scenario-unsupported-action",
-    "bucket": "Communication/Judgment",
-    "title": "Unsupported Admin Action Request",
-    "description": "Customer asks for unsupported command permissions; the agent must say no while offering alternatives.",
-    "tags": [
-      "communication",
-      "judgment",
-      "policy"
-    ],
-    "ticket": {
-      "id": "ticket-unsupported-action",
-      "subject": "Can you give me root shell access to install custom kernel?",
-      "department": "Customer Advocacy",
-      "severity": "Low",
-      "priority": "Medium",
-      "status": "Open",
-      "plan": "Pro",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-03-01T12:20:00Z",
-      "assignedTo": "Jules Becker",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Customer insists custom kernel is needed for legacy mod",
-        "Customer aware it's outside supported scope"
-      ],
-      "thread": [
-        {
-          "id": "thread-16",
-          "author": "Leo (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-01T12:17:00Z",
-          "message": "Can you enable root access so I can install my custom kernel?"
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-14",
-          "author": "Jules",
-          "audience": "internal",
-          "createdAt": "2026-03-01T12:19:00Z",
-          "message": "Policy forbids root shell; suggest container layering instead."
-        }
-      ],
-      "kbMatches": [
-        "kb-policy-root-access"
-      ],
-      "postmortem": {
-        "rootCause": "n/a",
-        "fix": "n/a",
-        "followUp": "Provide KB guidance about container layering.",
-        "prevention": "Link policy KB to the request form.",
-        "knowledgeArticleStatus": ""
-      },
-      "scorecard": {
-        "total": 63,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 15,
-            "max": 25,
-            "note": "Standard SLA window for policy questions."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 18,
-            "max": 20,
-            "note": "Empathetic refusal needed."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 12,
-            "max": 20,
-            "note": "Suggest layered approach."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "Policy KB referenced."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 4,
-            "max": 10,
-            "note": "Not escalated; policy is firm."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 3,
-            "max": 10,
-            "note": "Need to summarize rejection."
-          }
-        ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-172",
-      "name": "Retrocraft Labs",
-      "planTier": "Pro",
-      "persona": "Legacy mod operator",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
+    "accountProfile": {
+      "accountId": "acct-203",
+      "name": "Harbor Health Network",
       "timezone": "America/New_York",
-      "serverRegion": "us-east"
+      "region": "East US 2",
+      "existingStack": "Microsoft 365 E5, Intune, Defender for Endpoint",
+      "microsoftPriority": "Intune",
+      "motion": "Referral-led compliance evaluation"
     },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Policy"
-      ],
-      "notes": "Policy team reviews any request for privileged access."
+    "handoffPlan": {
+      "currentPath": "SDR discovery",
+      "path": ["SDR discovery", "Technical validation", "AE handoff"],
+      "notes": "Capture audit timing, device count, and app deployment ownership before AE handoff."
     }
   },
   {
-    "id": "scenario-vague-complaint",
-    "bucket": "Communication/Judgment",
-    "title": "Vague Complaint",
-    "description": "Customer writes 'site is broken, fix now' without context; need to ask clarifying questions.",
-    "tags": [
-      "communication",
-      "clarification",
-      "prioritization"
-    ],
-    "ticket": {
-      "id": "ticket-vague-complaint",
-      "subject": "Site is broken, fix now",
-      "department": "Customer Advocacy",
-      "severity": "Medium",
-      "priority": "High",
-      "status": "New",
-      "plan": "Standard",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-03-04T08:55:00Z",
-      "assignedTo": "Mara Quinn",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "No diagnostics provided",
-        "Customer calls urgent without details"
+    "id": "scenario-citrix-research-needed",
+    "bucket": "Migration evaluation",
+    "title": "Citrix migration research needed",
+    "description": "A regional manufacturer wants a Citrix-to-AVD migration option, but the account is missing ownership and a dated next step.",
+    "tags": ["citrix", "avd", "migration", "research"],
+    "record": {
+      "id": "lead-citrix-research",
+      "subject": "Citrix costs are rising and leadership wants an AVD migration option",
+      "company": "ForgeWorks Manufacturing",
+      "segment": "Manufacturing",
+      "employeeRange": "2500-5000",
+      "microsoftFootprint": ["Azure", "Microsoft 365", "Citrix"],
+      "useCase": "Citrix to Azure Virtual Desktop migration review",
+      "buyerPersona": "",
+      "leadSource": "Outbound target account",
+      "owner": "",
+      "stage": "Active",
+      "stageEnteredAt": "2026-03-21T14:00:00Z",
+      "createdAt": "2026-03-21T14:00:00Z",
+      "lastTouchAt": "2026-03-25T16:00:00Z",
+      "nextTouchDueAt": "",
+      "painPoints": [
+        "Citrix licensing is under review",
+        "Leadership wants a cloud desktop migration path"
       ],
-      "thread": [
+      "objections": [
+        "No confirmed buyer champion yet"
+      ],
+      "buyingSignals": [
+        "Mentioned migration planning in a partner introduction"
+      ],
+      "activities": [
         {
-          "id": "thread-17",
-          "author": "Customer",
-          "audience": "customer",
-          "createdAt": "2026-03-04T08:52:00Z",
-          "message": "My site is broken, fix now!"
+          "id": "activity-citrix-1",
+          "type": "enrichment-update",
+          "owner": "Unassigned",
+          "timestamp": "2026-03-21T15:00:00Z",
+          "channel": "crm",
+          "outcome": "Needs owner",
+          "summary": "Created the account after a partner introduction but did not assign ownership.",
+          "nextStep": "Assign owner and capture a dated outreach plan.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-citrix-2",
+          "type": "note-added",
+          "owner": "Unassigned",
+          "timestamp": "2026-03-25T16:00:00Z",
+          "channel": "internal",
+          "outcome": "Research captured",
+          "summary": "Recorded the Citrix spend pressure but left buyer persona and next step blank.",
+          "nextStep": "Route to an SDR for research completion.",
+          "crmUpdated": false
         }
       ],
-      "internalNotes": [
-        {
-          "id": "note-15",
-          "author": "Mara",
-          "audience": "internal",
-          "createdAt": "2026-03-04T08:53:00Z",
-          "message": "Need clarifying diagnostics before triaging."
-        }
-      ],
-      "kbMatches": [
-        "kb-clarify-issues"
-      ],
-      "postmortem": {
-        "rootCause": "Pending details.",
-        "fix": "Pending details.",
-        "followUp": "Guide customer through diagnostics form.",
-        "prevention": "Link diagnostics checklist in the reply.",
-        "knowledgeArticleStatus": ""
+      "playbookMatches": ["playbook-avd-migration"],
+      "review": {
+        "deduplication": "Partner introduction is unique, but ownership is missing.",
+        "stageCriteria": "This should not remain active until an owner and next step are set.",
+        "nextStepPlan": "Assign an SDR and schedule an outreach date.",
+        "handoffNotes": "No handoff until buyer role is confirmed.",
+        "playbookStatus": ""
       },
       "scorecard": {
-        "total": 55,
+        "total": 47,
         "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 12,
-            "max": 25,
-            "note": "New ticket just opened."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 12,
-            "max": 20,
-            "note": "Need to reason about tone."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 8,
-            "max": 20,
-            "note": "Waiting on details."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 10,
-            "max": 15,
-            "note": "Shared diagnostics KB."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 6,
-            "max": 10,
-            "note": "Hold until more info."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 7,
-            "max": 10,
-            "note": "Pre-close steps mapped."
-          }
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 7, "max": 15, "note": "Persona and next step are missing." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 4, "max": 15, "note": "The record lacks both an owner and a dated next step." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 12, "max": 15, "note": "Citrix-to-AVD migration is a solid fit." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 4, "max": 15, "note": "No follow-up date is scheduled." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 5, "max": 10, "note": "Research exists but no outbound touch is logged." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 4, "max": 10, "note": "The account is directionally clear but not operationally ready." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 3, "max": 10, "note": "No buyer champion or handoff package exists." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 8, "max": 10, "note": "Source and basic pain context are documented." }
         ]
-      }
+      },
+      "aiSummary": "ForgeWorks Manufacturing appears to be a strong Citrix-to-AVD migration prospect, but the record is not pipeline-safe because ownership and the next step are missing.",
+      "recommendedNextAction": "Assign an SDR, confirm the desktop owner persona, and put a dated first-touch plan on the record immediately.",
+      "crmCompleteness": 58,
+      "disqualificationReason": ""
     },
-    "customerProfile": {
-      "accountId": "acct-185",
-      "name": "Signal Field",
-      "planTier": "Standard",
-      "persona": "Startup founder",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
-      "timezone": "America/Chicago",
-      "serverRegion": "us-central"
+    "accountProfile": {
+      "accountId": "acct-204",
+      "name": "ForgeWorks Manufacturing",
+      "timezone": "America/Detroit",
+      "region": "North Central US",
+      "existingStack": "Citrix, Azure, Microsoft 365",
+      "microsoftPriority": "Azure Virtual Desktop",
+      "motion": "Partner-sourced migration research"
     },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Technical"
-      ],
-      "notes": "Escalate if no details arrive within 3 hours."
+    "handoffPlan": {
+      "currentPath": "Research needed",
+      "path": ["Research needed", "SDR qualification", "Technical validation", "AE handoff"],
+      "notes": "This record should surface in cleanup until ownership and a next step are fixed."
     }
   },
   {
-    "id": "scenario-premium-expectation",
-    "bucket": "Communication/Judgment",
-    "title": "Premium Customer Expecting Faster Turnaround",
-    "description": "Premium-tier customer notes competitor SLA and demands immediate fix despite ongoing diagnostics.",
-    "tags": [
-      "premium",
-      "sla",
-      "expectations"
-    ],
-    "ticket": {
-      "id": "ticket-premium-expectation",
-      "subject": "Competitor replied faster; please match it",
-      "department": "Customer Advocacy",
-      "severity": "Medium",
-      "priority": "High",
-      "status": "Open",
-      "plan": "Enterprise",
-      "slaTargetMinutes": 30,
-      "createdAt": "2026-03-03T10:00:00Z",
-      "assignedTo": "Noah Kim",
-      "escalationTier": "Tier 2",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Customer referencing faster responses from another provider",
-        "Ticket mentions upcoming launch in 12 hours"
+    "id": "scenario-healthcare-stale",
+    "bucket": "Shared desktop",
+    "title": "Healthcare shared desktop motion went stale",
+    "description": "A healthcare prospect asked about shared clinical desktops, but the record has gone untouched long enough to be stale.",
+    "tags": ["avd", "shared desktops", "healthcare", "stale"],
+    "record": {
+      "id": "lead-healthcare-stale",
+      "subject": "Shared desktop workflow for rotating clinical staff",
+      "company": "Crescent Care Alliance",
+      "segment": "Healthcare",
+      "employeeRange": "5000+",
+      "microsoftFootprint": ["Azure", "AVD", "Intune"],
+      "useCase": "Shared desktops for rotating nurses and clinicians",
+      "buyerPersona": "Infrastructure Director",
+      "leadSource": "Conference follow-up",
+      "owner": "Sam Rivera",
+      "stage": "Active",
+      "stageEnteredAt": "2026-03-05T17:00:00Z",
+      "createdAt": "2026-03-04T14:00:00Z",
+      "lastTouchAt": "2026-03-08T16:30:00Z",
+      "nextTouchDueAt": "2026-03-10T18:00:00Z",
+      "painPoints": [
+        "Fast clinician sign-ins on shared stations",
+        "Need policy consistency without local admin sprawl"
       ],
-      "thread": [
+      "objections": [
+        "Team is worried about migration disruption on active floors"
+      ],
+      "buyingSignals": [
+        "Asked about shared-session desktop examples"
+      ],
+      "activities": [
         {
-          "id": "thread-18",
-          "author": "Evan (customer)",
-          "audience": "customer",
-          "createdAt": "2026-03-03T09:58:00Z",
-          "message": "Your competitor answered in 5 minutes; can you reply faster?"
+          "id": "activity-stale-1",
+          "type": "outbound-email",
+          "owner": "Sam Rivera",
+          "timestamp": "2026-03-05T17:10:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Sent a healthcare-shared-desktop intro after the conference conversation.",
+          "nextStep": "Follow up with shared-session operational notes.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-stale-2",
+          "type": "reply-received",
+          "owner": "Sam Rivera",
+          "timestamp": "2026-03-08T16:30:00Z",
+          "channel": "email",
+          "outcome": "Interested",
+          "summary": "Prospect asked whether shared desktops could coexist with existing compliance controls.",
+          "nextStep": "Reply with compliance and shared-session guidance by March 10.",
+          "crmUpdated": true
         }
       ],
-      "internalNotes": [
-        {
-          "id": "note-16",
-          "author": "Noah",
-          "audience": "internal",
-          "createdAt": "2026-03-03T09:59:00Z",
-          "message": "Need to reinforce SLA entitlement and focus on current diagnostics."
-        }
-      ],
-      "kbMatches": [
-        "kb-premium-expectations"
-      ],
-      "postmortem": {
-        "rootCause": "n/a",
-        "fix": "n/a",
-        "followUp": "Document our SLA philosophy vs. competitor claims.",
-        "prevention": "Add doc that sets expectation windows for Enterprise plan.",
-        "knowledgeArticleStatus": ""
+      "playbookMatches": ["playbook-healthcare-shared-devices", "playbook-intune-compliance"],
+      "review": {
+        "deduplication": "Single health-system record with no duplicate contacts.",
+        "stageCriteria": "Stage should be downgraded because time-in-stage and next step are both blown past.",
+        "nextStepPlan": "Re-engage or move to nurture after confirming interest.",
+        "handoffNotes": "Do not hand off until the account is reactivated.",
+        "playbookStatus": "not-needed"
       },
       "scorecard": {
-        "total": 70,
+        "total": 58,
         "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 21,
-            "max": 25,
-            "note": "On-time, but still needs updates."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 17,
-            "max": 20,
-            "note": "Empathy present but promises need cadence."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 14,
-            "max": 20,
-            "note": "Diagnostics underway."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 12,
-            "max": 15,
-            "note": "Expectation doc ready to share."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 5,
-            "max": 10,
-            "note": "Already in Tier 2; continue monitoring."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 1,
-            "max": 10,
-            "note": "Need to finish once resolved."
-          }
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 12, "max": 15, "note": "Core data is present." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 7, "max": 15, "note": "The account is stale and needs cleanup." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 13, "max": 15, "note": "Use case strongly fits shared AVD workflows." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 2, "max": 15, "note": "The dated next step is long overdue." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 7, "max": 10, "note": "Earlier touches were relevant to clinical workflows." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 5, "max": 10, "note": "The old next step is clear but expired." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 4, "max": 10, "note": "No active engagement, so handoff would be premature." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 8, "max": 10, "note": "The stale state is visible in the timeline." }
         ]
-      }
-    },
-    "customerProfile": {
-      "accountId": "acct-192",
-      "name": "Summit Digital",
-      "planTier": "Enterprise",
-      "persona": "Product marketing lead",
-      "billingCycle": "Quarterly",
-      "slaEntitlementMinutes": 30,
-      "timezone": "America/New_York",
-      "serverRegion": "us-east"
-    },
-    "escalationRules": {
-      "currentTier": "Tier 2",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Incident",
-        "Tier 3 - Leadership"
-      ],
-      "notes": "Escalate to leadership if SLA breaches 30 minutes."
-    }
-  },
-  {
-    "id": "scenario-duplicate-tickets",
-    "bucket": "Communication/Judgment",
-    "title": "Duplicate Tickets from Same Incident",
-    "description": "Multiple tickets opened for the same outage; triage must merge and de-escalate.",
-    "tags": [
-      "duplicate",
-      "judgment",
-      "triage"
-    ],
-    "ticket": {
-      "id": "ticket-duplicate",
-      "subject": "Issue still happening (duplicate)",
-      "department": "Customer Advocacy",
-      "severity": "Medium",
-      "priority": "Medium",
-      "status": "New",
-      "plan": "Pro",
-      "slaTargetMinutes": 120,
-      "createdAt": "2026-03-02T11:00:00Z",
-      "assignedTo": "Mara Quinn",
-      "escalationTier": "Tier 1",
-      "invoiceState": "Active",
-      "recentIncidents": [
-        "Original outage ticket already in Tier 2",
-        "Customer opened duplicate with similar description"
-      ],
-      "thread": [
-        {
-          "id": "thread-19",
-          "author": "Customer",
-          "audience": "customer",
-          "createdAt": "2026-03-02T10:58:00Z",
-          "message": "Just checking back, issue still happening."
-        }
-      ],
-      "internalNotes": [
-        {
-          "id": "note-17",
-          "author": "Mara",
-          "audience": "internal",
-          "createdAt": "2026-03-02T11:00:00Z",
-          "message": "Link to ticket #5123 and merge updates in original thread."
-        }
-      ],
-      "kbMatches": [
-        "kb-duplicate-tickets"
-      ],
-      "postmortem": {
-        "rootCause": "Customer not sure whether their first ticket dropped off.",
-        "fix": "Merged tickets and mirrored updates.",
-        "followUp": "Remind them to reference the ongoing incident moving forward.",
-        "prevention": "Add guidance on duplicate reporting to KB.",
-        "knowledgeArticleStatus": ""
       },
-      "scorecard": {
-        "total": 61,
-        "metrics": [
-          {
-            "id": "slaCompliance",
-            "label": "SLA compliance",
-            "value": 15,
-            "max": 25,
-            "note": "Response pending triage."
-          },
-          {
-            "id": "communication",
-            "label": "Communication & empathy",
-            "value": 15,
-            "max": 20,
-            "note": "Needs empathy about repeated tickets."
-          },
-          {
-            "id": "technicalOwnership",
-            "label": "Technical ownership",
-            "value": 10,
-            "max": 20,
-            "note": "Focus on merging tickets."
-          },
-          {
-            "id": "kbSelfService",
-            "label": "KB & self-service",
-            "value": 11,
-            "max": 15,
-            "note": "Shared duplicate-handling KB."
-          },
-          {
-            "id": "escalationJudgment",
-            "label": "Escalation judgment",
-            "value": 5,
-            "max": 10,
-            "note": "Should stay at Tier 1 and reference Tier 2 ticket."
-          },
-          {
-            "id": "closureCompleteness",
-            "label": "Closure completeness",
-            "value": 5,
-            "max": 10,
-            "note": "Need to consolidate resolution notes."
-          }
-        ]
-      }
+      "aiSummary": "Crescent Care Alliance fits the healthcare shared-desktop motion, but the record is stale and should not be treated as an active opportunity until a new next step is scheduled.",
+      "recommendedNextAction": "Send a concise reactivation follow-up tied to compliance-safe shared desktops, and if there is no response, move the record to nurture.",
+      "crmCompleteness": 81,
+      "disqualificationReason": ""
     },
-    "customerProfile": {
+    "accountProfile": {
       "accountId": "acct-205",
-      "name": "Bright Path Events",
-      "planTier": "Pro",
-      "persona": "Operations manager",
-      "billingCycle": "Monthly",
-      "slaEntitlementMinutes": 180,
-      "timezone": "America/Denver",
-      "serverRegion": "us-west"
+      "name": "Crescent Care Alliance",
+      "timezone": "America/New_York",
+      "region": "East US",
+      "existingStack": "Azure, AVD, Intune, shared workstation environment",
+      "microsoftPriority": "Azure Virtual Desktop",
+      "motion": "Conference re-engagement"
     },
-    "escalationRules": {
-      "currentTier": "Tier 1",
-      "path": [
-        "Tier 1 - Desk",
-        "Tier 2 - Incident"
+    "handoffPlan": {
+      "currentPath": "Stale",
+      "path": ["Stale", "Reactivation", "SDR qualification", "AE handoff"],
+      "notes": "Treat this as stale until a fresh dated next step is captured."
+    }
+  },
+  {
+    "id": "scenario-education-meeting-booked",
+    "bucket": "Education",
+    "title": "Education lab environment with meeting booked",
+    "description": "A university desktop team has already engaged and booked a meeting to review Windows 365 versus shared lab alternatives.",
+    "tags": ["education", "windows 365", "labs", "meeting booked"],
+    "record": {
+      "id": "lead-education-meeting",
+      "subject": "Booked review for lab access and temporary faculty desktops",
+      "company": "Lakeview University",
+      "segment": "Education",
+      "employeeRange": "5000+",
+      "microsoftFootprint": ["Microsoft 365", "Windows 365", "Intune"],
+      "useCase": "Temporary faculty desktops and remote lab access",
+      "buyerPersona": "Director of Academic Technology",
+      "leadSource": "Website contact form",
+      "owner": "Priya Shah",
+      "stage": "Meeting booked",
+      "stageEnteredAt": "2026-03-28T14:30:00Z",
+      "createdAt": "2026-03-20T15:00:00Z",
+      "lastTouchAt": "2026-03-28T14:30:00Z",
+      "nextTouchDueAt": "2026-03-31T15:00:00Z",
+      "painPoints": [
+        "Need short-lived desktops for faculty and adjuncts",
+        "Lab access must stay simple for off-campus use"
       ],
-      "notes": "Merge duplicates before escalating; only escalate if first ticket needs Tier 2."
+      "objections": [
+        "Unsure whether Cloud PCs or shared sessions fit best"
+      ],
+      "buyingSignals": [
+        "Booked a 45-minute review",
+        "Shared student device constraints before the meeting"
+      ],
+      "activities": [
+        {
+          "id": "activity-edu-1",
+          "type": "outbound-email",
+          "owner": "Priya Shah",
+          "timestamp": "2026-03-21T16:00:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Sent an education-focused first touch around flexible faculty access.",
+          "nextStep": "Offer a meeting if remote lab access is a priority.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-edu-2",
+          "type": "reply-received",
+          "owner": "Priya Shah",
+          "timestamp": "2026-03-27T13:00:00Z",
+          "channel": "email",
+          "outcome": "Interested",
+          "summary": "Prospect asked to compare Windows 365 with shared alternatives for labs.",
+          "nextStep": "Book a meeting and collect current access constraints.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-edu-3",
+          "type": "meeting-booked",
+          "owner": "Priya Shah",
+          "timestamp": "2026-03-28T14:30:00Z",
+          "channel": "meeting",
+          "outcome": "Confirmed",
+          "summary": "Booked a working session with desktop and academic technology stakeholders.",
+          "nextStep": "Send meeting agenda and expected decision points.",
+          "crmUpdated": true
+        }
+      ],
+      "playbookMatches": ["playbook-windows365-byod", "playbook-education-labs"],
+      "review": {
+        "deduplication": "No duplicate academic departments in the CRM.",
+        "stageCriteria": "Meeting-booked criteria are met because outbound activity and a response are both logged.",
+        "nextStepPlan": "Send agenda and confirm who will evaluate Cloud PCs versus shared options.",
+        "handoffNotes": "If the meeting confirms scope and budget, prepare AE handoff package.",
+        "playbookStatus": "updated"
+      },
+      "scorecard": {
+        "total": 88,
+        "metrics": [
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 14, "max": 15, "note": "The education motion is clearly documented." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 14, "max": 15, "note": "Owner, next step, and stage evidence are clean." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 13, "max": 15, "note": "There is a real desktop access problem tied to Microsoft tooling." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 13, "max": 15, "note": "The next step is scheduled after the booked meeting." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 9, "max": 10, "note": "Touches reflect faculty and lab-specific constraints." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 9, "max": 10, "note": "Agenda and stakeholders are the next clear move." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 7, "max": 10, "note": "Close to handoff pending the meeting outcome." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 9, "max": 10, "note": "The progression from first touch to meeting is fully logged." }
+        ]
+      },
+      "aiSummary": "Lakeview University has moved beyond first-touch and now has a booked discovery meeting around faculty desktops and remote lab access, which makes this a healthy active opportunity.",
+      "recommendedNextAction": "Send a short agenda that frames the meeting around decision criteria: Windows 365 Cloud PCs versus shared alternatives, faculty onboarding, and remote access.",
+      "crmCompleteness": 92,
+      "disqualificationReason": ""
+    },
+    "accountProfile": {
+      "accountId": "acct-206",
+      "name": "Lakeview University",
+      "timezone": "America/Chicago",
+      "region": "Central US",
+      "existingStack": "Microsoft 365, Intune, remote lab tooling",
+      "microsoftPriority": "Windows 365",
+      "motion": "Inbound qualification"
+    },
+    "handoffPlan": {
+      "currentPath": "Meeting booked",
+      "path": ["SDR qualification", "Meeting booked", "AE handoff"],
+      "notes": "Handoff after the meeting confirms workload size and evaluation criteria."
+    }
+  },
+  {
+    "id": "scenario-msp-handoff-ready",
+    "bucket": "Multi-tenant management",
+    "title": "MSP handoff-ready desktop management motion",
+    "description": "An MSP already validated the Microsoft desktop use case and is ready for a cleaner AE handoff.",
+    "tags": ["msp", "multi-tenant", "handoff", "avd"],
+    "record": {
+      "id": "lead-msp-handoff",
+      "subject": "Ready to evaluate multi-tenant desktop management in more depth",
+      "company": "West Harbor Managed Services",
+      "segment": "MSP",
+      "employeeRange": "501-1000",
+      "microsoftFootprint": ["Azure", "AVD", "Windows 365", "Intune"],
+      "useCase": "Multi-tenant management for customer AVD and Cloud PC estates",
+      "buyerPersona": "VP of Managed Workplace",
+      "leadSource": "Partner referral",
+      "owner": "Leo Martinez",
+      "stage": "Handoff ready",
+      "stageEnteredAt": "2026-03-28T19:00:00Z",
+      "createdAt": "2026-03-16T16:00:00Z",
+      "lastTouchAt": "2026-03-28T19:00:00Z",
+      "nextTouchDueAt": "2026-03-31T16:00:00Z",
+      "painPoints": [
+        "Managing multiple customer desktop estates from separate tools",
+        "Need repeatable operational controls across tenants"
+      ],
+      "objections": [
+        "Needs proof that AE resources will understand partner motion"
+      ],
+      "buyingSignals": [
+        "Confirmed target workloads and stakeholder list",
+        "Asked for next-step ownership across sales and technical teams"
+      ],
+      "activities": [
+        {
+          "id": "activity-handoff-1",
+          "type": "outbound-email",
+          "owner": "Leo Martinez",
+          "timestamp": "2026-03-18T15:00:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Opened with an MSP workflow angle tied to operational consistency across customers.",
+          "nextStep": "Qualify desktop workload breadth and partner motion.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-handoff-2",
+          "type": "reply-received",
+          "owner": "Leo Martinez",
+          "timestamp": "2026-03-21T18:00:00Z",
+          "channel": "email",
+          "outcome": "Interested",
+          "summary": "Prospect shared tenant count, workload mix, and current desktop operations pain.",
+          "nextStep": "Confirm handoff package requirements and stakeholder map.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-handoff-3",
+          "type": "stage-changed",
+          "owner": "Leo Martinez",
+          "timestamp": "2026-03-28T19:00:00Z",
+          "channel": "crm",
+          "outcome": "Moved to handoff ready",
+          "summary": "Validated owner, persona, Microsoft fit, and next step; record is ready for AE review.",
+          "nextStep": "Create AE handoff brief and attach discovery notes.",
+          "crmUpdated": true
+        }
+      ],
+      "playbookMatches": ["playbook-msp-multi-tenant", "playbook-avd-cost-control"],
+      "review": {
+        "deduplication": "Account and key contact set are clean.",
+        "stageCriteria": "Handoff criteria are fully met and evidenced in the activity history.",
+        "nextStepPlan": "Create AE brief with workload scope, tenant count, and partner motion.",
+        "handoffNotes": "AE should lead with multi-tenant governance and cross-workload coverage.",
+        "playbookStatus": "updated"
+      },
+      "scorecard": {
+        "total": 93,
+        "metrics": [
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 15, "max": 15, "note": "The record is fully populated." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 15, "max": 15, "note": "Owner, stage, and dated next step are clean." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 14, "max": 15, "note": "This is a strong MSP fit across AVD, Cloud PC, and Intune." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 13, "max": 15, "note": "The next touch is scheduled promptly post-handoff." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 9, "max": 10, "note": "The motion is tailored to partner operations." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 9, "max": 10, "note": "AE brief creation is explicit." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 10, "max": 10, "note": "All gate requirements are met." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 8, "max": 10, "note": "The handoff package is forecast-ready." }
+        ]
+      },
+      "aiSummary": "West Harbor Managed Services is ready for AE handoff with clear multi-tenant workload scope, buyer ownership, and a dated next step already captured.",
+      "recommendedNextAction": "Generate the AE handoff brief and anchor it on multi-tenant governance, operational consistency, and workload breadth.",
+      "crmCompleteness": 96,
+      "disqualificationReason": ""
+    },
+    "accountProfile": {
+      "accountId": "acct-207",
+      "name": "West Harbor Managed Services",
+      "timezone": "America/Los_Angeles",
+      "region": "West US 2",
+      "existingStack": "Azure, AVD, Windows 365, Intune, partner automation",
+      "microsoftPriority": "Multi-workload desktop management",
+      "motion": "Partner referral and qualification"
+    },
+    "handoffPlan": {
+      "currentPath": "Handoff ready",
+      "path": ["SDR qualification", "Technical validation", "Handoff ready", "AE ownership"],
+      "notes": "The AE brief should include workload mix, tenant count, owner map, and next-step date."
+    }
+  },
+  {
+    "id": "scenario-nurture-budget",
+    "bucket": "Nurture",
+    "title": "Budget-frozen desktop refresh motion in nurture",
+    "description": "The account fits the Microsoft-cloud story but timing is blocked by a current budget freeze.",
+    "tags": ["nurture", "budget", "windows 365", "avd"],
+    "record": {
+      "id": "lead-nurture-budget",
+      "subject": "Interested in Cloud PCs after budget cycle resets",
+      "company": "Summit Property Group",
+      "segment": "Commercial real estate",
+      "employeeRange": "1001-2500",
+      "microsoftFootprint": ["Microsoft 365", "Azure"],
+      "useCase": "Flexible desktops for seasonal office turnover",
+      "buyerPersona": "IT Director",
+      "leadSource": "Outbound campaign",
+      "owner": "Jules Carter",
+      "stage": "Nurture",
+      "stageEnteredAt": "2026-03-18T13:00:00Z",
+      "createdAt": "2026-03-10T15:00:00Z",
+      "lastTouchAt": "2026-03-18T13:00:00Z",
+      "nextTouchDueAt": "2026-04-15T14:00:00Z",
+      "painPoints": [
+        "Device shipping slows property onboarding",
+        "Needs flexibility for seasonal staffing"
+      ],
+      "objections": [
+        "Budget is locked until next quarter"
+      ],
+      "buyingSignals": [
+        "Asked to revisit after budget reset"
+      ],
+      "activities": [
+        {
+          "id": "activity-nurture-1",
+          "type": "outbound-email",
+          "owner": "Jules Carter",
+          "timestamp": "2026-03-12T16:00:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Sent a Windows 365 angle focused on flexible staffing.",
+          "nextStep": "See whether budget exists this quarter.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-nurture-2",
+          "type": "reply-received",
+          "owner": "Jules Carter",
+          "timestamp": "2026-03-18T13:00:00Z",
+          "channel": "email",
+          "outcome": "Budget delayed",
+          "summary": "Prospect asked to revisit once the next budget cycle opens.",
+          "nextStep": "Re-engage in mid-April with a short nurture note.",
+          "crmUpdated": true
+        }
+      ],
+      "playbookMatches": ["playbook-windows365-byod"],
+      "review": {
+        "deduplication": "Single account, no duplicate contacts.",
+        "stageCriteria": "Nurture is appropriate because timing is blocked but the fit remains solid.",
+        "nextStepPlan": "Re-engage after the budget cycle resets.",
+        "handoffNotes": "Do not hand off while the account is budget-blocked.",
+        "playbookStatus": "not-needed"
+      },
+      "scorecard": {
+        "total": 74,
+        "metrics": [
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 12, "max": 15, "note": "Core fields are present." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 13, "max": 15, "note": "The next touch is properly dated into nurture." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 12, "max": 15, "note": "The problem still fits Cloud PCs." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 12, "max": 15, "note": "The nurture date is intentional, not neglected." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 8, "max": 10, "note": "Touches speak to seasonal staffing pain." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 7, "max": 10, "note": "Mid-April nurture re-engagement is documented." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 3, "max": 10, "note": "Budget timing blocks handoff." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 7, "max": 10, "note": "The nurture reason is captured for forecast hygiene." }
+        ]
+      },
+      "aiSummary": "Summit Property Group still fits a Cloud PC motion, but the record belongs in nurture until the next budget cycle opens.",
+      "recommendedNextAction": "Queue a short nurture note for mid-April that reconnects flexible staffing pain to Cloud PC onboarding.",
+      "crmCompleteness": 82,
+      "disqualificationReason": ""
+    },
+    "accountProfile": {
+      "accountId": "acct-208",
+      "name": "Summit Property Group",
+      "timezone": "America/Denver",
+      "region": "West US",
+      "existingStack": "Microsoft 365, Azure, mixed local devices",
+      "microsoftPriority": "Windows 365",
+      "motion": "Outbound nurture"
+    },
+    "handoffPlan": {
+      "currentPath": "Nurture",
+      "path": ["SDR qualification", "Nurture", "Reactivation", "AE handoff"],
+      "notes": "Keep the record in nurture until budget timing changes."
+    }
+  },
+  {
+    "id": "scenario-disqualified",
+    "bucket": "Disqualified",
+    "title": "Non-Microsoft desktop stack disqualified",
+    "description": "A prospect wants desktop automation help but is committed to a non-Microsoft stack and should not stay active.",
+    "tags": ["disqualified", "non-microsoft", "cleanup"],
+    "record": {
+      "id": "lead-disqualified",
+      "subject": "Asked about desktop ops help but staying fully outside Microsoft",
+      "company": "Pine Street Design Co.",
+      "segment": "Creative agency",
+      "employeeRange": "51-200",
+      "microsoftFootprint": ["Google Workspace"],
+      "useCase": "General desktop operations, but no Microsoft cloud adoption planned",
+      "buyerPersona": "Operations Lead",
+      "leadSource": "Outbound target account",
+      "owner": "Nia Brooks",
+      "stage": "Disqualified",
+      "stageEnteredAt": "2026-03-27T18:30:00Z",
+      "createdAt": "2026-03-17T14:00:00Z",
+      "lastTouchAt": "2026-03-27T18:30:00Z",
+      "nextTouchDueAt": "",
+      "painPoints": [
+        "Wants desktop operations help without changing stack"
+      ],
+      "objections": [
+        "No Microsoft adoption planned"
+      ],
+      "buyingSignals": [],
+      "activities": [
+        {
+          "id": "activity-disq-1",
+          "type": "outbound-email",
+          "owner": "Nia Brooks",
+          "timestamp": "2026-03-19T15:00:00Z",
+          "channel": "email",
+          "outcome": "Delivered",
+          "summary": "Opened with a desktop management angle.",
+          "nextStep": "Validate whether Microsoft cloud is in scope.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-disq-2",
+          "type": "reply-received",
+          "owner": "Nia Brooks",
+          "timestamp": "2026-03-22T16:30:00Z",
+          "channel": "email",
+          "outcome": "Not a fit",
+          "summary": "Prospect said the team is committed to a non-Microsoft stack and is not evaluating AVD, Windows 365, or Intune.",
+          "nextStep": "Disqualify with reason code.",
+          "crmUpdated": true
+        },
+        {
+          "id": "activity-disq-3",
+          "type": "stage-changed",
+          "owner": "Nia Brooks",
+          "timestamp": "2026-03-27T18:30:00Z",
+          "channel": "crm",
+          "outcome": "Disqualified",
+          "summary": "Moved the record out of the active pipeline after confirming no Microsoft-cloud path.",
+          "nextStep": "No active next step.",
+          "crmUpdated": true
+        }
+      ],
+      "playbookMatches": [],
+      "review": {
+        "deduplication": "No duplicate issue.",
+        "stageCriteria": "Disqualification is correct because Microsoft fit is absent.",
+        "nextStepPlan": "None; keep out of active views.",
+        "handoffNotes": "No handoff.",
+        "playbookStatus": "not-needed"
+      },
+      "scorecard": {
+        "total": 71,
+        "metrics": [
+          { "id": "crmCompleteness", "label": "CRM completeness", "value": 11, "max": 15, "note": "Reason and source are captured." },
+          { "id": "dataHygiene", "label": "Data hygiene", "value": 14, "max": 15, "note": "The record is properly removed from active work." },
+          { "id": "icpFitJudgment", "label": "ICP fit judgment", "value": 9, "max": 15, "note": "Fit is low and correctly documented." },
+          { "id": "followUpTimeliness", "label": "Follow-up timeliness", "value": 10, "max": 15, "note": "The team closed the loop instead of leaving it open." },
+          { "id": "personalizationQuality", "label": "Personalization quality", "value": 7, "max": 10, "note": "The initial outreach was reasonable before the mismatch surfaced." },
+          { "id": "nextStepClarity", "label": "Next-step clarity", "value": 8, "max": 10, "note": "The record has a clear disposition." },
+          { "id": "handoffReadiness", "label": "Handoff readiness", "value": 2, "max": 10, "note": "Not applicable because the record is disqualified." },
+          { "id": "reportingCompleteness", "label": "Reporting completeness", "value": 10, "max": 10, "note": "The disqualification reason is captured for review." }
+        ]
+      },
+      "aiSummary": "Pine Street Design Co. should stay disqualified because the team explicitly said Microsoft cloud is not in scope.",
+      "recommendedNextAction": "Keep the record out of active views and preserve the reason code for reporting.",
+      "crmCompleteness": 79,
+      "disqualificationReason": "No Microsoft-cloud initiative planned"
+    },
+    "accountProfile": {
+      "accountId": "acct-209",
+      "name": "Pine Street Design Co.",
+      "timezone": "America/Los_Angeles",
+      "region": "West US",
+      "existingStack": "Google Workspace, non-Microsoft desktop tooling",
+      "microsoftPriority": "None",
+      "motion": "Outbound disqualification"
+    },
+    "handoffPlan": {
+      "currentPath": "Disqualified",
+      "path": ["Outbound research", "Qualification", "Disqualified"],
+      "notes": "Keep the reason code visible so it does not re-enter active work by accident."
     }
   }
 ]

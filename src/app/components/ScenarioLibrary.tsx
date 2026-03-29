@@ -3,7 +3,7 @@ import type { ScenarioSeed } from '../../types'
 
 type Props = {
   scenarios: ScenarioSeed[]
-  onSelectScenario: (ticketId: string) => void
+  onSelectScenario: (recordId: string) => void
 }
 
 const ScenarioLibrary = ({ scenarios, onSelectScenario }: Props) => (
@@ -22,9 +22,9 @@ const ScenarioLibrary = ({ scenarios, onSelectScenario }: Props) => (
               <p>{scenario.description}</p>
             </div>
             <div className="scenario-meta">
-              <p>Plan Tier: {scenario.ticket.plan}</p>
-              <p>Status: {scenario.ticket.status}</p>
-              <p>Severity: {scenario.ticket.severity}</p>
+              <p>Company: {scenario.record.company}</p>
+              <p>Stage: {scenario.record.stage}</p>
+              <p>Motion: {scenario.accountProfile.microsoftPriority}</p>
               <div className="tag-row">
                 {scenario.tags.map((tag) => (
                   <span key={tag} className="tag">
@@ -32,7 +32,7 @@ const ScenarioLibrary = ({ scenarios, onSelectScenario }: Props) => (
                   </span>
                 ))}
               </div>
-              <button type="button" onClick={() => onSelectScenario(scenario.ticket.id)}>
+              <button type="button" onClick={() => onSelectScenario(scenario.record.id)}>
                 Jump into this scenario
               </button>
             </div>

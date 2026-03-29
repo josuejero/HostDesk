@@ -1,38 +1,31 @@
 import { expect, test } from '@playwright/test'
 
-test('demo scenario flow', async ({ page }) => {
+test('hero sales-ops flow', async ({ page }) => {
   await page.goto('/')
 
   await page.getByRole('button', { name: /Browse library/i }).click()
   await expect(page.getByText('Scenario catalog')).toBeVisible()
 
   await page.getByRole('button', { name: 'Jump into this scenario' }).first().click()
-  await expect(page.getByText('Invoice paid, but site still suspended')).toBeVisible()
+  await expect(page.getByText('Northline MSP Group', { exact: true }).first()).toBeVisible()
 
-  await page.getByLabel('Compose reply').fill('Thanks for the patience; I’m on this and will update tomorrow.')
-  await page.getByRole('button', { name: /Send reply/i }).click()
-  await expect(page.getByText('Thanks for the patience; I’m on this and will update tomorrow.')).toBeVisible()
+  await page.getByRole('button', { name: /Draft follow-up/i }).click()
+  await expect(page.getByText('AI follow-up draft')).toBeVisible()
+  await page.getByRole('button', { name: /Apply suggestion/i }).click()
 
-  await page.getByRole('button', { name: /Share article/i }).click()
-  await expect(page.locator('text=Sharing KB')).toBeVisible()
+  const composer = page.locator('.composer-panel')
 
-  const narrativeLabels = [
-    'Root cause documented',
-    'Fix applied',
-    'Follow-up message sent',
-    'Prevention action captured',
-  ]
-  for (const label of narrativeLabels) {
-    await page.getByLabel(label).fill('Documented narrative details')
-  }
+  await expect(composer.getByLabel('Log activity')).toContainText('Hi Director of Cloud Services')
+  await composer.getByLabel('Outcome').fill('Sent')
+  await composer.getByRole('textbox', { name: /^Next step$/ }).fill('Propose a discovery call after sharing the cost narrative.')
+  await composer.getByLabel('Next touch due').fill('2026-03-30T10:00')
+  await composer.getByRole('button', { name: /Log activity/i }).click()
 
-  await page.getByLabel('Article created or updated?').selectOption('yes')
+  await expect(page.getByText(/Outbound email logged/i)).toBeVisible()
+  await expect(page.locator('.conversation-stream').getByText('Hi Director of Cloud Services').first()).toBeVisible()
 
-  const closureMetric = page.locator('.panel-body.scorecard .score-metric', {
-    hasText: 'Closure completeness',
-  })
-  await expect(closureMetric.getByText('10/10')).toBeVisible()
+  await page.locator('.status-actions select').first().selectOption('Handoff ready')
+  await page.getByRole('button', { name: /Apply stage/i }).click()
 
-  await page.locator('.status-actions button', { hasText: 'Solved' }).click()
-  await expect(page.getByText('Solved action queued.')).toBeVisible()
+  await expect(page.getByText('Handoff ready stage applied.')).toBeVisible()
 })

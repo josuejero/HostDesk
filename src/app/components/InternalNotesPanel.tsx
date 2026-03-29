@@ -1,27 +1,30 @@
 import { MessageCircle } from 'lucide-react'
-import type { ThreadEntry } from '../../types'
+import type { ActivityEntry } from '../../types'
 
 type Props = {
-  internalNotes: ThreadEntry[]
+  researchActivities: ActivityEntry[]
 }
 
-const InternalNotesPanel = ({ internalNotes }: Props) => (
+const InternalNotesPanel = ({ researchActivities }: Props) => (
   <div className="panel internal-notes-panel">
     <div className="panel-heading">
       <MessageCircle size={18} />
-      <h3>Internal notes</h3>
+      <h3>Research notes</h3>
     </div>
     <div className="panel-body">
-      {internalNotes.map((note) => (
+      {researchActivities.map((note) => (
         <div key={note.id} className="thread-entry internal">
           <div className="thread-meta">
-            <strong>{note.author}</strong>
-            <span>{new Date(note.createdAt).toLocaleString()}</span>
+            <strong>{note.owner}</strong>
+            <span>{new Date(note.timestamp).toLocaleString()}</span>
           </div>
-          <p>{note.message}</p>
+          <p>{note.summary}</p>
+          <small className="muted">
+            {note.outcome} · next step: {note.nextStep}
+          </small>
         </div>
       ))}
-      {!internalNotes.length && <p className="muted">No private notes yet.</p>}
+      {!researchActivities.length && <p className="muted">No research-only notes yet.</p>}
     </div>
   </div>
 )

@@ -1,24 +1,24 @@
 import { Layers } from 'lucide-react'
+import type { PlaybookArticle } from '../../types'
 import type { GuidedEntry } from '../constants/subjectTriggers'
-import type { KBArticle } from '../../types'
 
 type Props = {
-  guidedTroubleshooting: GuidedEntry[]
-  handleShareKB: (article: KBArticle) => void
+  guidedResearch: GuidedEntry[]
+  handleSharePlaybook: (article: PlaybookArticle) => void
 }
 
-const GuidedTroubleshootingPanel = ({ guidedTroubleshooting, handleShareKB }: Props) => (
+const GuidedTroubleshootingPanel = ({ guidedResearch, handleSharePlaybook }: Props) => (
   <div className="panel panel--guided">
     <div className="panel-heading">
       <Layers size={18} />
-      <h3>Guided troubleshooting</h3>
+      <h3>Guided account research</h3>
     </div>
     <div className="panel-body guided-body">
       <p className="muted">
-        Atlassian-style subject-triggered suggestions pair keywords with KB articles and tips.
+        Subject-triggered research hints keep the motion tied to how the prospect describes the problem.
       </p>
-      {guidedTroubleshooting.length ? (
-        guidedTroubleshooting.map((group) => (
+      {guidedResearch.length ? (
+        guidedResearch.map((group) => (
           <div key={group.id} className="guided-card">
             <div className="guided-card__header">
               <strong>{group.headline}</strong>
@@ -37,8 +37,8 @@ const GuidedTroubleshootingPanel = ({ guidedTroubleshooting, handleShareKB }: Pr
                     <strong>{article.title}</strong>
                     <p>{article.summary}</p>
                   </div>
-                  <button type="button" className="ghost-btn" onClick={() => handleShareKB(article)}>
-                    Share
+                  <button type="button" className="ghost-btn" onClick={() => handleSharePlaybook(article)}>
+                    Save
                   </button>
                 </div>
               ))}
@@ -47,7 +47,7 @@ const GuidedTroubleshootingPanel = ({ guidedTroubleshooting, handleShareKB }: Pr
         ))
       ) : (
         <p className="muted">
-          No guided path triggered yet — mention plugin, paid/invoice, or lag/high ping in the subject to unlock them.
+          No guided research path triggered yet. Mention Citrix, AVD, Cloud PC, BYOD, Intune, compliance, or MSP language to unlock one.
         </p>
       )}
     </div>

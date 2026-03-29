@@ -1,76 +1,75 @@
-import { buildRoutingInsights, getPanelStatus } from './routing'
-import { baseScenario, createScenario, createTicket } from '../../tests/fixtures'
+import {
+  buildRoutingInsights,
+  canMoveToStage,
+  getMicrosoftMotion,
+  getQueueLabel,
+  isRecordStale,
+} from './routing'
+import { createRecord, createScenario } from '../../tests/fixtures'
 
 describe('routing utilities', () => {
   afterEach(() => {
     vi.useRealTimers()
   })
 
-  it('flags the billing suspension path, billing headline, and escalation when SLA is missed', () => {
+  it('routes missing owner or next step into research-needed', () => {
     vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-03-05T11:30:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
 
     const scenario = createScenario({
-      bucket: 'Billing/Account',
-      tags: ['billing'],
-      escalationRules: { path: ['Tier 1', 'Tier 2', 'Tier 3'], currentTier: 'Tier 2', notes: '' },
-      customerProfile: { ...baseScenario.customerProfile, slaEntitlementMinutes: 60 },
+      tags: ['citrix', 'avd'],
     })
 
-    const ticket = createTicket({
-      department: 'Billing & Accounts',
-      invoiceState: 'Paid - Suspended',
-      createdAt: '2026-03-05T09:00:00Z',
-      slaTargetMinutes: 60,
-      status: 'Escalated',
-      escalationTier: 'Tier 2',
-      recentIncidents: ['Invoice says paid but panel stuck suspended'],
+    const record = createRecord({
+      owner: '',
+      nextTouchDueAt: '',
+      subject: 'Citrix migration review',
+      useCase: 'Citrix to AVD migration',
     })
 
-    const insights = buildRoutingInsights(ticket, scenario)
-    expect(insights.queueLabel).toBe('Billing & Accounts')
-    expect(insights.billingHeadline).toBe('Billing urgency: High')
-    expect(insights.escalationHeadline).toBe('Escalation triggered')
-    expect(insights.panelStatus).toBe('Panel locked by billing suspension')
+    const insights = buildRoutingInsights(record, scenario)
+    expect(getQueueLabel(record)).toBe('Research needed')
+    expect(insights.dataHygieneHeadline).toBe('Data hygiene risk: High')
+    expect(getMicrosoftMotion(record, scenario)).toBe('Azure Virtual Desktop')
   })
 
-  it('returns a technical queue when outage keywords dominate and keeps the tier stable', () => {
+  it('flags stale records and keeps meeting-booked stage gated by activity proof', () => {
     vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-03-05T12:00:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
 
-    const scenario = createScenario({
-      bucket: 'Technical',
-      description: 'Service outage due to CDN change',
-      tags: ['outage'],
-      escalationRules: { path: ['Tier 1', 'Tier 2'], currentTier: 'Tier 1', notes: '' },
+    const staleRecord = createRecord({
+      lastTouchAt: '2026-03-01T12:00:00Z',
+      nextTouchDueAt: '2026-03-05T12:00:00Z',
     })
 
-    const ticket = createTicket({
-      department: 'Technical Operations',
-      invoiceState: 'Active',
-      createdAt: '2026-03-05T11:30:00Z',
-      slaTargetMinutes: 45,
-      status: 'Open',
-      escalationTier: 'Tier 1',
-      recentIncidents: ['Service unavailable after CDN change'],
-      subject: 'Service outage after CDN change',
+    expect(isRecordStale(staleRecord)).toBe(true)
+    expect(getQueueLabel(staleRecord)).toBe('Stale')
+
+    const blockedMeetingRecord = createRecord({
+      activities: [],
+      stage: 'Active',
     })
 
-    const insights = buildRoutingInsights(ticket, scenario)
-    expect(insights.queueLabel).toBe('Technical Operations')
-    expect(insights.escalationHeadline).toBe('Tier stable')
-    expect(insights.billingHeadline).toBe('Billing steady')
+    expect(canMoveToStage(blockedMeetingRecord, 'Meeting booked')).toEqual({
+      allowed: false,
+      message: 'Meeting booked requires outbound activity plus a reply or meeting event in the timeline.',
+    })
   })
 
-  it('identifies login loop and falls back to nominal status when nothing matches', () => {
-    const loopTicket = createTicket({ subject: 'Panel login loop', invoiceState: 'Active' })
-    expect(getPanelStatus(loopTicket)).toBe('Panel stuck in login loop')
-
-    const nominalTicket = createTicket({
-      subject: 'Friendly follow-up',
-      invoiceState: 'Active',
-      recentIncidents: [],
+  it('allows handoff-ready only when owner, persona, next step, and Microsoft fit exist', () => {
+    const scenario = createScenario({
+      tags: ['msp', 'multi-tenant', 'avd'],
     })
-    expect(getPanelStatus(nominalTicket)).toBe('Panel appears nominal')
+
+    const strongRecord = createRecord({
+      owner: 'Leo Martinez',
+      buyerPersona: 'VP of Managed Workplace',
+      nextTouchDueAt: '2026-03-31T16:00:00Z',
+      lastTouchAt: '2026-03-28T19:00:00Z',
+      subject: 'Need help with multi-tenant AVD operations',
+      useCase: 'Multi-tenant AVD management',
+    })
+
+    expect(canMoveToStage(strongRecord, 'Handoff ready', scenario).allowed).toBe(true)
   })
 })

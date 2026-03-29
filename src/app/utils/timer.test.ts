@@ -1,5 +1,5 @@
 import { getCountdownLabel, getTimerStatus } from './timer'
-import { createTicket } from '../../tests/fixtures'
+import { createRecord } from '../../tests/fixtures'
 
 describe('timer utilities', () => {
   afterEach(() => {
@@ -8,37 +8,43 @@ describe('timer utilities', () => {
 
   it('formats a remaining countdown and stays in the normal zone', () => {
     vi.useFakeTimers()
-    const ticket = createTicket({
-      createdAt: '2026-03-01T09:00:00Z',
-      slaTargetMinutes: 60,
-    })
-    vi.setSystemTime(new Date('2026-03-01T09:30:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
 
-    const label = getCountdownLabel(ticket)
-    expect(label).toContain('30 minutes remaining')
-    expect(getTimerStatus(ticket)).toBe('normal')
+    const record = createRecord({
+      nextTouchDueAt: '2026-03-31T12:00:00Z',
+    })
+
+    expect(getCountdownLabel(record)).toContain('remaining')
+    expect(getTimerStatus(record)).toBe('normal')
   })
 
-  it('returns warning when under the 5-minute threshold', () => {
+  it('returns warning when the next step is due within 24 hours', () => {
     vi.useFakeTimers()
-    const ticket = createTicket({
-      createdAt: '2026-03-05T11:30:00Z',
-      slaTargetMinutes: 35,
-    })
-    vi.setSystemTime(new Date('2026-03-05T12:02:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
 
-    expect(getTimerStatus(ticket)).toBe('warning')
+    const record = createRecord({
+      nextTouchDueAt: '2026-03-29T18:00:00Z',
+    })
+
+    expect(getTimerStatus(record)).toBe('warning')
   })
 
-  it('reports overdue labels and status when the target has passed', () => {
+  it('reports overdue and missing labels correctly', () => {
     vi.useFakeTimers()
-    const ticket = createTicket({
-      createdAt: '2026-03-01T09:00:00Z',
-      slaTargetMinutes: 60,
-    })
-    vi.setSystemTime(new Date('2026-03-05T12:00:00Z'))
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
 
-    expect(getTimerStatus(ticket)).toBe('overdue')
-    expect(getCountdownLabel(ticket)).toMatch(/Overdue by/) 
+    const overdueRecord = createRecord({
+      nextTouchDueAt: '2026-03-28T12:00:00Z',
+    })
+
+    expect(getCountdownLabel(overdueRecord)).toContain('Overdue by')
+    expect(getTimerStatus(overdueRecord)).toBe('overdue')
+
+    const missingRecord = createRecord({
+      nextTouchDueAt: '',
+    })
+
+    expect(getCountdownLabel(missingRecord)).toBe('Next step missing')
+    expect(getTimerStatus(missingRecord)).toBe('missing')
   })
 })
