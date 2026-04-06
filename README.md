@@ -193,12 +193,3 @@ Because of that, a static host by itself is not enough unless it also reverse-pr
 | --- | --- |
 | ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![HostDesk workspace snapshot](public/images/ticket-screenshot.svg) |
 
-## Project Status Notes
-
-The docs now reflect an important implementation detail that was easy to miss before:
-
-- Cadence tasks are persisted in the database and used by the metrics dashboard.
-- The backend already exposes create and update endpoints for cadence tasks.
-- The current UI does not yet have a dedicated task-management panel, so task data is mostly surfaced through seeded records, next-touch dates, and metrics.
-
-That is intentional to document because it is implemented API surface, but not yet a full frontend workflow.
