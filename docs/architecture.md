@@ -200,14 +200,3 @@ The metrics dashboard reads from persisted MySQL data, not local browser state.
 - the top 25 overdue follow-up items
 
 Because metrics read saved activity and task data, they survive reloads and new sessions.
-
-## UI Coverage Vs API Coverage
-
-One of the easiest places for docs to drift was cadence tasks, so it is called out explicitly here:
-
-- the API supports creating and updating cadence tasks
-- seeded data creates open cadence tasks when a scenario has a next-touch date
-- metrics use cadence task data
-- the current UI does not expose a dedicated task editor yet
-
-That means cadence tasks are real persisted domain data, but not yet a fully surfaced frontend workflow.
