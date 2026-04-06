@@ -1,7 +1,15 @@
 import { expect, test } from '@playwright/test'
 
-test('hero sales-ops flow', async ({ page }) => {
+test('authenticated sales-ops flow', async ({ page }) => {
   await page.goto('/')
+
+  await page.getByRole('button', { name: /Need an account/i }).click()
+  await page.getByLabel('Display name').fill('Playwright Tester')
+  await page.getByLabel('Email').fill(`playwright-${Date.now()}@example.com`)
+  await page.getByLabel('Password').fill('Password123!')
+  await page.getByRole('button', { name: /Create account/i }).click()
+
+  await expect(page.getByText(/records matching filters/i)).toBeVisible()
 
   await page.getByRole('button', { name: /Browse library/i }).click()
   await expect(page.getByText('Scenario catalog')).toBeVisible()
@@ -24,8 +32,18 @@ test('hero sales-ops flow', async ({ page }) => {
   await expect(page.getByText(/Outbound email logged/i)).toBeVisible()
   await expect(page.locator('.conversation-stream').getByText('Hi Director of Cloud Services').first()).toBeVisible()
 
+  await page.reload()
+  await expect(page.locator('.conversation-stream').getByText('Hi Director of Cloud Services').first()).toBeVisible()
+
   await page.locator('.status-actions select').first().selectOption('Handoff ready')
   await page.getByRole('button', { name: /Apply stage/i }).click()
 
   await expect(page.getByText('Handoff ready stage applied.')).toBeVisible()
+
+  await page.getByRole('button', { name: /Metrics/i }).click()
+  await expect(page.getByRole('heading', { name: /Operational health from persisted activity/i })).toBeVisible()
+  await expect(page.getByText(/Response rate/i)).toBeVisible()
+
+  await page.getByRole('button', { name: /Logout/i }).click()
+  await expect(page.getByRole('button', { name: /^Login$/i })).toBeVisible()
 })

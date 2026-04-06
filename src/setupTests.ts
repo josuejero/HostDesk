@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom'
+import { vi, beforeEach, afterEach } from 'vitest'
+import { mockApiFetch, resetMockApiState } from './tests/mockApi'
 
 class LocalStorageMock implements Storage {
   private store = new Map<string, string>()
@@ -28,11 +30,22 @@ class LocalStorageMock implements Storage {
   }
 }
 
-Object.defineProperty(window, 'localStorage', {
-  value: new LocalStorageMock(),
-  configurable: true,
-})
-Object.defineProperty(globalThis, 'localStorage', {
-  value: window.localStorage,
-  configurable: true,
-})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', {
+    value: new LocalStorageMock(),
+    configurable: true,
+  })
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: window.localStorage,
+    configurable: true,
+  })
+
+  beforeEach(() => {
+    resetMockApiState()
+    vi.stubGlobal('fetch', vi.fn(mockApiFetch))
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+}

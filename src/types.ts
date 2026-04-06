@@ -57,6 +57,8 @@ export type LeadStage =
 
 export interface ProspectRecord {
   id: string
+  persistedId?: string
+  externalKey?: string
   subject: string
   company: string
   segment: string
@@ -82,6 +84,9 @@ export interface ProspectRecord {
   recommendedNextAction: string
   crmCompleteness: number
   disqualificationReason: string
+  notes?: Note[]
+  cadenceTasks?: CadenceTask[]
+  stageHistory?: StageHistoryEntry[]
 }
 
 export interface AccountProfile {
@@ -173,4 +178,109 @@ export interface DemoState {
   selectedRecordId: string
   walkthroughActive: boolean
   showScenarioLibrary: boolean
+}
+
+export interface SessionUser {
+  id: string
+  email: string
+  displayName: string
+  createdAt: string
+  lastLoginAt: string | null
+}
+
+export interface SessionState {
+  authenticated: boolean
+  user: SessionUser | null
+  csrfToken: string | null
+}
+
+export interface Note {
+  id: string
+  authorUserId: string
+  authorName: string
+  body: string
+  createdAt: string
+}
+
+export type CadenceTaskStatus = 'open' | 'completed' | 'skipped'
+
+export interface CadenceTask {
+  id: string
+  prospectId: string
+  stepName: string
+  channel: string
+  dueAt: string
+  completedAt: string | null
+  status: CadenceTaskStatus
+}
+
+export interface StageHistoryEntry {
+  id: string
+  prospectId: string
+  fromStage: string | null
+  toStage: string
+  changedByUserId: string
+  changedByName: string
+  changedAt: string
+}
+
+export interface ProspectSummary {
+  id: string
+  externalKey: string
+  subject: string
+  company: string
+  segment: string
+  employeeRange: string
+  microsoftFootprint: string[]
+  useCase: string
+  buyerPersona: string
+  leadSource: string
+  owner: string
+  stage: LeadStage
+  stageEnteredAt: string
+  createdAt: string
+  lastTouchAt: string
+  nextTouchDueAt: string
+  painPoints: string[]
+  objections: string[]
+  buyingSignals: string[]
+  playbookMatches: string[]
+  review: CRMHygieneReview
+  aiSummary: string
+  recommendedNextAction: string
+  crmCompleteness: number
+  disqualificationReason: string
+}
+
+export interface ProspectDetail extends ProspectSummary {
+  activities: ActivityEntry[]
+  notes: Note[]
+  cadenceTasks: CadenceTask[]
+  stageHistory: StageHistoryEntry[]
+}
+
+export type MetricsRange = '7d' | '30d'
+
+export interface StageConversionMetric {
+  fromStage: string | null
+  toStage: string
+  convertedProspects: number
+  conversionPct: number | null
+}
+
+export interface OverdueTaskItem {
+  company: string
+  owner: string
+  stepName: string
+  dueAt: string
+}
+
+export interface MetricsSnapshot {
+  range: MetricsRange
+  responseRatePct: number
+  stageConversions: StageConversionMetric[]
+  overdueFollowups: number
+  tasksDueToday: number
+  meetingsBooked: number
+  overdueItems: OverdueTaskItem[]
 }

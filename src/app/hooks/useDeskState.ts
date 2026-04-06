@@ -1,9 +1,10 @@
-import { type KeyboardEvent, useEffect, useMemo, useState } from 'react'
+import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { cannedReplies, kbArticles, scenarioCatalog } from '../../data'
 import { useLocalStorageState } from '../../hooks/useLocalStorageState'
+import { adaptProspectDetail, adaptProspectSummary, scenarioByExternalKey, upsertSummary } from '../../api/adapters'
+import { apiFetch, ApiClientError } from '../../api/client'
+import { useProspect, useProspects } from '../../api/hooks'
 import type {
-  ActivityChannel,
-  ActivityEntry,
   ActivityType,
   AiSuggestion,
   AiSuggestionKind,
@@ -12,13 +13,16 @@ import type {
   OutreachTemplateCategory,
   PlaybookArticle,
   PlaybookStatus,
+  ProspectDetail,
   ProspectRecord,
+  ProspectSummary,
   ScenarioSeed,
+  SessionState,
 } from '../../types'
 import { cannedCategoryLabels, cannedCategoryOrder, formatCannedText } from '../constants/cannedReplies'
 import { queueViews } from '../constants/queueViews'
 import { subjectTriggers, type GuidedEntry } from '../constants/subjectTriggers'
-import { getInitialState, isResearchActivity } from '../utils/helpers'
+import { isResearchActivity } from '../utils/helpers'
 import { reviewFieldLabels, reviewNarrativeFields } from '../utils/postmortem'
 import {
   buildRoutingInsights,
@@ -29,9 +33,21 @@ import {
   isRecordStale,
   type RoutingInsights,
 } from '../utils/routing'
-import { buildOperationalScorecard, evaluateExecutionScore, executionMaxTotal } from '../utils/scorecard'
+import { evaluateExecutionScore, executionMaxTotal } from '../utils/scorecard'
 import { getCountdownLabel, getTimerStatus, timerStatusDescriptions } from '../utils/timer'
 import { buildAiSuggestion } from '../utils/aiAssist'
+
+const fallbackSession: SessionState = {
+  authenticated: true,
+  user: {
+    id: '1',
+    email: 'demo@hostdesk.local',
+    displayName: 'HostDesk Demo',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    lastLoginAt: '2026-03-29T12:00:00.000Z',
+  },
+  csrfToken: 'test-csrf-token',
+}
 
 const activityTypeLabels: Record<ActivityType, string> = {
   'outbound-email': 'Outbound email',
@@ -46,25 +62,27 @@ const activityTypeLabels: Record<ActivityType, string> = {
   'note-added': 'Note added',
 }
 
-const activityChannelMap: Record<ActivityType, ActivityChannel> = {
-  'outbound-email': 'email',
-  'call-attempt': 'call',
-  'linkedin-touch': 'linkedin',
-  'reply-received': 'email',
-  'meeting-booked': 'meeting',
-  'enrichment-update': 'crm',
-  'ownership-changed': 'crm',
-  'stage-changed': 'crm',
-  'ai-draft-used': 'internal',
-  'note-added': 'internal',
-}
-
 const stageOptions: LeadStage[] = ['New lead', 'Active', 'Meeting booked', 'Handoff ready', 'Nurture', 'Disqualified']
 
 const countFilled = (values: Array<string | string[]>) =>
   values.filter((value) => (Array.isArray(value) ? value.length > 0 : value.trim().length > 0)).length
 
-const computeCrmCompleteness = (record: ProspectRecord) => {
+const computeCrmCompleteness = (record: Pick<
+  ProspectRecord,
+  | 'company'
+  | 'segment'
+  | 'employeeRange'
+  | 'microsoftFootprint'
+  | 'useCase'
+  | 'buyerPersona'
+  | 'leadSource'
+  | 'owner'
+  | 'painPoints'
+  | 'buyingSignals'
+  | 'nextTouchDueAt'
+  | 'stage'
+  | 'disqualificationReason'
+>) => {
   const completed = countFilled([
     record.company,
     record.segment,
@@ -80,40 +98,12 @@ const computeCrmCompleteness = (record: ProspectRecord) => {
     record.stage === 'Disqualified' ? record.disqualificationReason : 'n/a',
   ])
 
-  return Math.round(completed / 12 * 100)
+  return Math.round((completed / 12) * 100)
 }
 
 const toDatetimeLocalValue = (value: string) => (value ? value.slice(0, 16) : '')
 
 const toIso = (value: string) => (value ? new Date(value).toISOString() : '')
-
-const shouldAdvanceLastTouch = (type: ActivityType) =>
-  ['outbound-email', 'call-attempt', 'linkedin-touch', 'reply-received', 'meeting-booked', 'note-added'].includes(type)
-
-const defaultOutcomeForType = (type: ActivityType) => {
-  switch (type) {
-    case 'outbound-email':
-      return 'Delivered'
-    case 'call-attempt':
-      return 'Completed'
-    case 'linkedin-touch':
-      return 'Sent'
-    case 'reply-received':
-      return 'Received'
-    case 'meeting-booked':
-      return 'Confirmed'
-    case 'enrichment-update':
-      return 'Updated'
-    case 'ownership-changed':
-      return 'Reassigned'
-    case 'stage-changed':
-      return 'Moved'
-    case 'ai-draft-used':
-      return 'Applied'
-    default:
-      return 'Captured'
-  }
-}
 
 const dedupePlaybooks = (articles: PlaybookArticle[]) => {
   const seen = new Set<string>()
@@ -126,8 +116,39 @@ const dedupePlaybooks = (articles: PlaybookArticle[]) => {
   })
 }
 
-export const useDeskState = () => {
-  const [state, setState, resetState] = useLocalStorageState('hostdesk-sales-ops-v1', getInitialState)
+const toSummary = (detail: ProspectDetail): ProspectSummary => ({
+  id: detail.id,
+  externalKey: detail.externalKey,
+  subject: detail.subject,
+  company: detail.company,
+  segment: detail.segment,
+  employeeRange: detail.employeeRange,
+  microsoftFootprint: [...detail.microsoftFootprint],
+  useCase: detail.useCase,
+  buyerPersona: detail.buyerPersona,
+  leadSource: detail.leadSource,
+  owner: detail.owner,
+  stage: detail.stage,
+  stageEnteredAt: detail.stageEnteredAt,
+  createdAt: detail.createdAt,
+  lastTouchAt: detail.lastTouchAt,
+  nextTouchDueAt: detail.nextTouchDueAt,
+  painPoints: [...detail.painPoints],
+  objections: [...detail.objections],
+  buyingSignals: [...detail.buyingSignals],
+  playbookMatches: [...detail.playbookMatches],
+  review: { ...detail.review },
+  aiSummary: detail.aiSummary,
+  recommendedNextAction: detail.recommendedNextAction,
+  crmCompleteness: detail.crmCompleteness,
+  disqualificationReason: detail.disqualificationReason,
+})
+
+const deriveApiErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof ApiClientError ? error.message : error instanceof Error ? error.message : fallback
+
+export const useDeskState = (session: SessionState = fallbackSession) => {
+  const [selectedViewId, setSelectedViewId] = useLocalStorageState('hostdesk-ui-selected-view', () => queueViews[0]?.id ?? 'new-leads')
   const [selectedReplyId, setSelectedReplyId] = useState<string | null>(null)
   const [draftReply, setDraftReply] = useState('')
   const [draftActivityType, setDraftActivityType] = useState<ActivityType>('outbound-email')
@@ -135,12 +156,58 @@ export const useDeskState = () => {
   const [draftNextStep, setDraftNextStep] = useState('')
   const [draftNextTouchDueAt, setDraftNextTouchDueAt] = useState('')
   const [draftCrmUpdated, setDraftCrmUpdated] = useState(true)
-  const [selectedStage, setSelectedStage] = useState<LeadStage>(scenarioCatalog[0]?.record.stage ?? 'New lead')
+  const [selectedStageState, setSelectedStageState] = useState<LeadStage>('New lead')
+  const [stageSelectionRecordId, setStageSelectionRecordId] = useState<string>('')
   const [manualSelectedArticleId, setManualSelectedArticleId] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedViewId, setSelectedViewId] = useState(queueViews[0]?.id ?? 'new-leads')
   const [aiSuggestion, setAiSuggestion] = useState<AiSuggestion | null>(null)
+  const [selectedRecordId, setSelectedRecordId] = useState<string>('')
+  const [showScenarioLibrary, setShowScenarioLibrary] = useState(false)
+  const [walkthroughActive, setWalkthroughActive] = useState(false)
+
+  const reviewSaveTimerRef = useRef<number | null>(null)
+  const reviewSavePayloadRef = useRef<Record<string, string>>({})
+  const ownershipSaveTimerRef = useRef<number | null>(null)
+  const ownershipSavePayloadRef = useRef<Record<string, string>>({})
+
+  const {
+    prospects,
+    setProspects,
+    isLoading: prospectsLoading,
+    error: prospectsError,
+    refresh: refreshProspects,
+  } = useProspects(session.authenticated)
+
+  const summaryRecords = useMemo(() => prospects.map(adaptProspectSummary), [prospects])
+
+  const effectiveSelectedRecordId =
+    selectedRecordId && summaryRecords.some((record) => record.id === selectedRecordId)
+      ? selectedRecordId
+      : summaryRecords[0]?.id ?? ''
+
+  const selectedSummaryRecord = summaryRecords.find((record) => record.id === effectiveSelectedRecordId) ?? summaryRecords[0]
+  const selectedPersistedId = selectedSummaryRecord?.persistedId ?? null
+
+  const {
+    prospect: selectedProspectDetail,
+    setProspect: setSelectedProspectDetail,
+    isLoading: selectedRecordLoading,
+    error: selectedRecordError,
+    refresh: refreshSelectedProspect,
+  } = useProspect(selectedPersistedId, session.authenticated)
+
+  const selectedRecord = useMemo(() => {
+    if (selectedProspectDetail && selectedSummaryRecord && selectedProspectDetail.id === selectedSummaryRecord.persistedId) {
+      return adaptProspectDetail(selectedProspectDetail)
+    }
+
+    return selectedSummaryRecord
+  }, [selectedProspectDetail, selectedSummaryRecord])
+
+  const selectedScenario = selectedRecord
+    ? scenarioByExternalKey.get(selectedRecord.externalKey ?? selectedRecord.id)
+    : undefined
 
   const scenarioMap = useMemo(() => {
     const map = new Map<string, ScenarioSeed>()
@@ -148,18 +215,44 @@ export const useDeskState = () => {
     return map
   }, [])
 
-  const rehydrateRecord = (record: ProspectRecord) => {
-    const scenario = scenarioMap.get(record.id)
-    const crmCompleteness = computeCrmCompleteness(record)
-    const hydrated = { ...record, crmCompleteness }
-    return {
-      ...hydrated,
-      scorecard: buildOperationalScorecard(hydrated, scenario),
+  useEffect(() => {
+    return () => {
+      if (reviewSaveTimerRef.current) {
+        window.clearTimeout(reviewSaveTimerRef.current)
+      }
+      if (ownershipSaveTimerRef.current) {
+        window.clearTimeout(ownershipSaveTimerRef.current)
+      }
     }
+  }, [])
+
+  const syncDetail = (detail: ProspectDetail) => {
+    setSelectedProspectDetail(detail)
+    setProspects((prev) => upsertSummary(prev, toSummary(detail)))
   }
 
-  const selectedRecord = state.records.find((record) => record.id === state.selectedRecordId) ?? state.records[0]
-  const selectedScenario = selectedRecord ? scenarioMap.get(selectedRecord.id) : undefined
+  const applyLocalDetailPatch = (patch: (detail: ProspectDetail) => ProspectDetail) => {
+    setSelectedProspectDetail((current) => {
+      if (!current) {
+        return current
+      }
+
+      const next = patch(current)
+      setProspects((prev) => upsertSummary(prev, toSummary(next)))
+      return next
+    })
+  }
+
+  const queueScenarioMap = useMemo(() => {
+    const map = new Map<string, ScenarioSeed>()
+    summaryRecords.forEach((record) => {
+      const scenario = scenarioByExternalKey.get(record.externalKey ?? record.id)
+      if (scenario) {
+        map.set(record.id, scenario)
+      }
+    })
+    return map
+  }, [summaryRecords])
 
   const cannedRepliesByCategory = useMemo(() => {
     const grouped = cannedCategoryOrder.reduce<Record<OutreachTemplateCategory, OutreachTemplate[]>>((acc, category) => {
@@ -183,20 +276,20 @@ export const useDeskState = () => {
   const viewCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     queueViews.forEach((view) => {
-      counts[view.id] = state.records.filter((record) => view.filter(record, scenarioMap.get(record.id))).length
+      counts[view.id] = summaryRecords.filter((record) => view.filter(record, queueScenarioMap.get(record.id))).length
     })
     return counts
-  }, [state.records, scenarioMap])
+  }, [queueScenarioMap, summaryRecords])
 
   const activeView = queueViews.find((view) => view.id === selectedViewId) ?? queueViews[0]
 
   const recordsInView = useMemo(() => {
     if (!activeView) {
-      return state.records
+      return summaryRecords
     }
 
-    return state.records.filter((record) => activeView.filter(record, scenarioMap.get(record.id)))
-  }, [activeView, state.records, scenarioMap])
+    return summaryRecords.filter((record) => activeView.filter(record, queueScenarioMap.get(record.id)))
+  }, [activeView, queueScenarioMap, summaryRecords])
 
   const filteredRecords = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase()
@@ -209,7 +302,7 @@ export const useDeskState = () => {
     }
 
     return sortedRecords.filter((record) => {
-      const scenario = scenarioMap.get(record.id)
+      const scenario = queueScenarioMap.get(record.id)
       const searchable = [
         record.subject,
         record.company,
@@ -228,7 +321,7 @@ export const useDeskState = () => {
 
       return searchable.includes(normalizedSearch)
     })
-  }, [recordsInView, scenarioMap, searchTerm])
+  }, [queueScenarioMap, recordsInView, searchTerm])
 
   const routingInsights = useMemo<RoutingInsights | null>(() => {
     if (!selectedRecord) return null
@@ -325,77 +418,143 @@ export const useDeskState = () => {
     [selectedRecord],
   )
 
-  const updateRecord = (recordId: string, updater: (record: ProspectRecord) => ProspectRecord) => {
-    setState((prev) => ({
-      ...prev,
-      records: prev.records.map((record) => (record.id === recordId ? rehydrateRecord(updater(record)) : record)),
-    }))
+  const selectedStage =
+    selectedRecord && stageSelectionRecordId === selectedRecord.id
+      ? selectedStageState
+      : selectedRecord?.stage ?? 'New lead'
+
+  const setSelectedStage = (value: LeadStage) => {
+    setStageSelectionRecordId(effectiveSelectedRecordId)
+    setSelectedStageState(value)
+  }
+
+  const persistReviewPatch = (prospectId: string, payload: Record<string, string>) => {
+    if (reviewSaveTimerRef.current) {
+      window.clearTimeout(reviewSaveTimerRef.current)
+    }
+
+    reviewSavePayloadRef.current = {
+      ...reviewSavePayloadRef.current,
+      ...payload,
+    }
+
+    reviewSaveTimerRef.current = window.setTimeout(async () => {
+      const nextPayload = { ...reviewSavePayloadRef.current }
+      reviewSavePayloadRef.current = {}
+
+      try {
+        const detail = await apiFetch<ProspectDetail>(`/prospects/${prospectId}/review`, {
+          method: 'PATCH',
+          json: nextPayload,
+          csrfToken: session.csrfToken,
+        })
+        syncDetail(detail)
+      } catch (error) {
+        setToastMessage(deriveApiErrorMessage(error, 'Unable to save review changes right now.'))
+      }
+    }, 450)
+  }
+
+  const persistOwnershipPatch = (prospectId: string, payload: Record<string, string>) => {
+    if (ownershipSaveTimerRef.current) {
+      window.clearTimeout(ownershipSaveTimerRef.current)
+    }
+
+    ownershipSavePayloadRef.current = {
+      ...ownershipSavePayloadRef.current,
+      ...payload,
+    }
+
+    ownershipSaveTimerRef.current = window.setTimeout(async () => {
+      const nextPayload = { ...ownershipSavePayloadRef.current }
+      ownershipSavePayloadRef.current = {}
+
+      try {
+        const detail = await apiFetch<ProspectDetail>(`/prospects/${prospectId}/ownership`, {
+          method: 'PATCH',
+          json: nextPayload,
+          csrfToken: session.csrfToken,
+        })
+        syncDetail(detail)
+      } catch (error) {
+        setToastMessage(deriveApiErrorMessage(error, 'Unable to save field updates right now.'))
+      }
+    }, 450)
+  }
+
+  const flushOwnershipPatch = async (prospectId: string) => {
+    if (ownershipSaveTimerRef.current) {
+      window.clearTimeout(ownershipSaveTimerRef.current)
+      ownershipSaveTimerRef.current = null
+    }
+
+    const nextPayload = { ...ownershipSavePayloadRef.current }
+    ownershipSavePayloadRef.current = {}
+
+    if (!Object.keys(nextPayload).length) {
+      return null
+    }
+
+    const detail = await apiFetch<ProspectDetail>(`/prospects/${prospectId}/ownership`, {
+      method: 'PATCH',
+      json: nextPayload,
+      csrfToken: session.csrfToken,
+    })
+    syncDetail(detail)
+    return detail
   }
 
   const handleSelectRecord = (recordId: string) => {
-    const nextRecord = state.records.find((record) => record.id === recordId)
-    setState((prev) => ({ ...prev, selectedRecordId: recordId, showScenarioLibrary: false }))
-    setSelectedStage(nextRecord?.stage ?? 'New lead')
+    const nextRecord = summaryRecords.find((record) => record.id === recordId)
+    setSelectedRecordId(recordId)
+    setShowScenarioLibrary(false)
+    setSelectedProspectDetail(null)
+    setStageSelectionRecordId(recordId)
+    setSelectedStageState(nextRecord?.stage ?? 'New lead')
     setAiSuggestion(null)
     setDraftNextTouchDueAt('')
   }
 
   const handleToggleScenarioLibrary = () => {
-    setState((prev) => ({ ...prev, showScenarioLibrary: !prev.showScenarioLibrary }))
+    setShowScenarioLibrary((current) => !current)
   }
 
   const handleToggleWalkthrough = () => {
-    setState((prev) => ({ ...prev, walkthroughActive: !prev.walkthroughActive }))
+    setWalkthroughActive((current) => !current)
   }
 
-  const logActivity = (activity: ActivityEntry, nextTouchDueAt?: string) => {
-    if (!selectedRecord) return
-
-    updateRecord(selectedRecord.id, (record) => ({
-      ...record,
-      activities: [...record.activities, activity],
-      lastTouchAt: shouldAdvanceLastTouch(activity.type) ? activity.timestamp : record.lastTouchAt,
-      nextTouchDueAt: nextTouchDueAt ?? record.nextTouchDueAt,
-    }))
-  }
-
-  const handleLogActivity = () => {
-    if (!selectedRecord || !draftReply.trim()) return
+  const handleLogActivity = async () => {
+    if (!selectedRecord?.persistedId || !draftReply.trim()) return
     if (requiresCannedEdit) {
       setToastMessage('Edit the outreach template before logging it so the touch feels account-specific.')
       return
     }
 
-    const timestamp = new Date().toISOString()
-    const nextTouchDueAt = draftNextTouchDueAt ? toIso(draftNextTouchDueAt) : selectedRecord.nextTouchDueAt
-    const activity: ActivityEntry = {
-      id: `${draftActivityType}-${Date.now()}`,
-      type: draftActivityType,
-      owner: selectedRecord.owner.trim() || 'HostDesk SDR',
-      timestamp,
-      channel: activityChannelMap[draftActivityType],
-      outcome: draftOutcome.trim() || defaultOutcomeForType(draftActivityType),
-      summary: draftReply.trim(),
-      nextStep: draftNextStep.trim() || 'Next step not captured',
-      crmUpdated: draftCrmUpdated,
+    try {
+      const detail = await apiFetch<ProspectDetail>(`/prospects/${selectedRecord.persistedId}/activities`, {
+        method: 'POST',
+        csrfToken: session.csrfToken,
+        json: {
+          type: draftActivityType,
+          summary: draftReply.trim(),
+          outcome: draftOutcome.trim() || undefined,
+          nextStep: draftNextStep.trim() || undefined,
+          nextTouchDueAt: draftNextTouchDueAt ? toIso(draftNextTouchDueAt) : undefined,
+          crmUpdated: draftCrmUpdated,
+        },
+      })
+
+      syncDetail(detail)
+      setDraftReply('')
+      setDraftOutcome('')
+      setDraftNextStep('')
+      setDraftNextTouchDueAt('')
+      setDraftCrmUpdated(true)
+      setSelectedReplyId(null)
+      setToastMessage(`${activityTypeLabels[draftActivityType]} logged.`)
+    } catch (error) {
+      setToastMessage(deriveApiErrorMessage(error, 'Unable to log the activity right now.'))
     }
-
-    logActivity(activity, nextTouchDueAt)
-
-    if (draftNextStep.trim()) {
-      updateRecord(selectedRecord.id, (record) => ({
-        ...record,
-        recommendedNextAction: draftNextStep.trim(),
-      }))
-    }
-
-    setDraftReply('')
-    setDraftOutcome('')
-    setDraftNextStep('')
-    setDraftNextTouchDueAt('')
-    setDraftCrmUpdated(true)
-    setSelectedReplyId(null)
-    setToastMessage(`${activityTypeLabels[draftActivityType]} logged.`)
   }
 
   const handleUseCannedReply = (replyId: string) => {
@@ -406,101 +565,144 @@ export const useDeskState = () => {
     setDraftActivityType('outbound-email')
   }
 
-  const handleSharePlaybook = (article: PlaybookArticle) => {
-    if (!selectedRecord) return
+  const handleSharePlaybook = async (article: PlaybookArticle) => {
+    if (!selectedRecord?.persistedId) return
 
-    const activity: ActivityEntry = {
-      id: `note-${Date.now()}`,
-      type: 'note-added',
-      owner: selectedRecord.owner.trim() || 'HostDesk SDR',
-      timestamp: new Date().toISOString(),
-      channel: 'internal',
-      outcome: 'Playbook surfaced',
-      summary: `Matched playbook "${article.title}" for ${article.focusArea}. ${article.summary}`,
-      nextStep: selectedRecord.recommendedNextAction || 'Use the playbook to tighten the next touch.',
-      crmUpdated: false,
+    try {
+      const detail = await apiFetch<ProspectDetail>(`/prospects/${selectedRecord.persistedId}/notes`, {
+        method: 'POST',
+        csrfToken: session.csrfToken,
+        json: {
+          body: `Matched playbook "${article.title}" for ${article.focusArea}. ${article.summary}`,
+          nextStep: selectedRecord.recommendedNextAction || 'Use the playbook to tighten the next touch.',
+          outcome: 'Playbook surfaced',
+          playbookId: article.id,
+        },
+      })
+
+      syncDetail(detail)
+      setToastMessage(`Added "${article.title}" to the record playbooks.`)
+    } catch (error) {
+      setToastMessage(deriveApiErrorMessage(error, 'Unable to save the playbook note right now.'))
     }
-
-    updateRecord(selectedRecord.id, (record) => ({
-      ...record,
-      activities: [...record.activities, activity],
-      playbookMatches: record.playbookMatches.includes(article.id)
-        ? record.playbookMatches
-        : [...record.playbookMatches, article.id],
-    }))
-
-    setToastMessage(`Added "${article.title}" to the record playbooks.`)
   }
 
   const handleShareSelectedArticle = () => {
     if (!selectedArticleId) return
     const article = playbookSuggestions.find((item) => item.id === selectedArticleId)
     if (!article) return
-    handleSharePlaybook(article)
+    void handleSharePlaybook(article)
   }
 
   const handleRecordFieldChange = (
     field: 'owner' | 'buyerPersona' | 'nextTouchDueAt' | 'disqualificationReason',
     value: string,
   ) => {
-    if (!selectedRecord) return
+    if (!selectedRecord?.persistedId) return
 
-    updateRecord(selectedRecord.id, (record) => ({
-      ...record,
-      [field]: field === 'nextTouchDueAt' ? toIso(value) : value,
-    }))
+    const normalizedValue = field === 'nextTouchDueAt' ? toIso(value) : value
+    const apiField = field
+
+    setProspects((current) =>
+      current.map((summary) => {
+        if (summary.id !== selectedRecord.persistedId) {
+          return summary
+        }
+
+        const nextSummary = {
+          ...summary,
+          [field]: normalizedValue,
+        } as ProspectSummary
+
+        return {
+          ...nextSummary,
+          crmCompleteness: computeCrmCompleteness({
+            ...selectedRecord,
+            ...nextSummary,
+            nextTouchDueAt: nextSummary.nextTouchDueAt,
+          }),
+        }
+      }),
+    )
+
+    applyLocalDetailPatch((current) => {
+      const next = {
+        ...current,
+        [field]: normalizedValue,
+      } as ProspectDetail
+
+      next.crmCompleteness = computeCrmCompleteness({
+        ...next,
+        nextTouchDueAt: next.nextTouchDueAt,
+      })
+
+      return next
+    })
+
+    persistOwnershipPatch(selectedRecord.persistedId, {
+      [apiField]: normalizedValue,
+    })
   }
 
-  const handleReviewChange = (
-    field: keyof ProspectRecord['review'],
-    value: string,
-  ) => {
-    if (!selectedRecord) return
+  const handleReviewChange = (field: keyof ProspectRecord['review'], value: string) => {
+    if (!selectedRecord?.persistedId) return
 
-    updateRecord(selectedRecord.id, (record) => ({
-      ...record,
+    setProspects((current) =>
+      current.map((summary) =>
+        summary.id === selectedRecord.persistedId
+          ? {
+              ...summary,
+              review: {
+                ...summary.review,
+                [field]: value as PlaybookStatus,
+              },
+            }
+          : summary,
+      ),
+    )
+
+    applyLocalDetailPatch((current) => ({
+      ...current,
       review: {
-        ...record.review,
+        ...current.review,
         [field]: value as PlaybookStatus,
       },
     }))
+
+    persistReviewPatch(selectedRecord.persistedId, {
+      [field]: value,
+    })
   }
 
-  const handleApplyStageChange = () => {
-    if (!selectedRecord) return
+  const handleApplyStageChange = async () => {
+    if (!selectedRecord?.persistedId) return
 
-    const pendingRecord = rehydrateRecord({
+    const pendingRecord = {
       ...selectedRecord,
       stage: selectedStage,
-    })
+    }
     const gate = canMoveToStage(pendingRecord, selectedStage, selectedScenario)
     if (!gate.allowed) {
       setToastMessage(gate.message)
       return
     }
 
-    const timestamp = new Date().toISOString()
-    updateRecord(selectedRecord.id, (record) => ({
-      ...record,
-      stage: selectedStage,
-      stageEnteredAt: timestamp,
-      activities: [
-        ...record.activities,
-        {
-          id: `stage-${Date.now()}`,
-          type: 'stage-changed',
-          owner: record.owner.trim() || 'HostDesk SDR',
-          timestamp,
-          channel: 'crm',
-          outcome: `Moved to ${selectedStage}`,
-          summary: `Stage moved to ${selectedStage}.`,
-          nextStep: record.nextTouchDueAt ? `Next touch remains scheduled for ${new Date(record.nextTouchDueAt).toLocaleString()}.` : 'Next step should be reviewed.',
-          crmUpdated: true,
+    try {
+      await flushOwnershipPatch(selectedRecord.persistedId)
+      const detail = await apiFetch<ProspectDetail>(`/prospects/${selectedRecord.persistedId}/stage-transitions`, {
+        method: 'POST',
+        csrfToken: session.csrfToken,
+        json: {
+          toStage: selectedStage,
         },
-      ],
-    }))
-
-    setToastMessage(`${selectedStage} stage applied.`)
+      })
+      syncDetail(detail)
+      setStageSelectionRecordId(selectedRecord.id)
+      setSelectedStageState(detail.stage)
+      setToastMessage(`${selectedStage} stage applied.`)
+    } catch (error) {
+      setToastMessage(deriveApiErrorMessage(error, 'Unable to apply the stage change right now.'))
+    }
   }
 
   const handleGenerateAiSuggestion = (kind: AiSuggestionKind) => {
@@ -508,88 +710,62 @@ export const useDeskState = () => {
     setAiSuggestion(buildAiSuggestion(kind, selectedRecord, selectedScenario, playbookSuggestions))
   }
 
-  const handleApplyAiSuggestion = () => {
-    if (!selectedRecord || !aiSuggestion) return
+  const handleApplyAiSuggestion = async () => {
+    if (!selectedRecord?.persistedId || !aiSuggestion) return
 
-    const timestamp = new Date().toISOString()
-
-    if (aiSuggestion.kind === 'summary') {
-      updateRecord(selectedRecord.id, (record) => ({
-        ...record,
-        aiSummary: aiSuggestion.body,
-        activities: [
-          ...record.activities,
-          {
-            id: `ai-${Date.now()}`,
-            type: 'ai-draft-used',
-            owner: record.owner.trim() || 'HostDesk SDR',
-            timestamp,
-            channel: 'internal',
-            outcome: 'Summary applied',
-            summary: 'Applied AI account summary to the record.',
-            nextStep: record.recommendedNextAction || 'Review next-best action.',
-            crmUpdated: true,
-          },
-        ],
-      }))
-    }
-
-    if (aiSuggestion.kind === 'next-step') {
-      updateRecord(selectedRecord.id, (record) => ({
-        ...record,
-        recommendedNextAction: aiSuggestion.body,
-        activities: [
-          ...record.activities,
-          {
-            id: `ai-${Date.now()}`,
-            type: 'ai-draft-used',
-            owner: record.owner.trim() || 'HostDesk SDR',
-            timestamp,
-            channel: 'internal',
-            outcome: 'Next step applied',
-            summary: 'Applied AI next-best-action guidance to the record.',
-            nextStep: aiSuggestion.body,
-            crmUpdated: true,
-          },
-        ],
-      }))
-      setDraftNextStep(aiSuggestion.body)
-    }
-
-    if (aiSuggestion.kind === 'draft') {
-      setDraftReply(aiSuggestion.body)
-      setDraftActivityType('outbound-email')
-      logActivity({
-        id: `ai-${Date.now()}`,
-        type: 'ai-draft-used',
-        owner: selectedRecord.owner.trim() || 'HostDesk SDR',
-        timestamp,
-        channel: 'internal',
-        outcome: 'Draft applied',
-        summary: 'Applied AI follow-up draft to the activity composer.',
-        nextStep: selectedRecord.recommendedNextAction || 'Review and send the personalized draft.',
-        crmUpdated: false,
+    try {
+      const detail = await apiFetch<ProspectDetail>(`/prospects/${selectedRecord.persistedId}/ai-fields`, {
+        method: 'PATCH',
+        csrfToken: session.csrfToken,
+        json: {
+          kind: aiSuggestion.kind,
+          body: aiSuggestion.body,
+        },
       })
-    }
 
-    setAiSuggestion((prev) => (prev ? { ...prev, applied: true } : prev))
-    setToastMessage(`${aiSuggestion.headline} applied.`)
+      syncDetail(detail)
+
+      if (aiSuggestion.kind === 'next-step') {
+        setDraftNextStep(aiSuggestion.body)
+      }
+
+      if (aiSuggestion.kind === 'draft') {
+        setDraftReply(aiSuggestion.body)
+        setDraftActivityType('outbound-email')
+      }
+
+      setAiSuggestion((previous) => (previous ? { ...previous, applied: true } : previous))
+      setToastMessage(`${aiSuggestion.headline} applied.`)
+    } catch (error) {
+      setToastMessage(deriveApiErrorMessage(error, 'Unable to apply the AI suggestion right now.'))
+    }
   }
 
-  const handleReset = () => {
-    resetState()
-    setSearchTerm('')
-    setSelectedViewId(queueViews[0]?.id ?? 'new-leads')
-    setSelectedReplyId(null)
-    setDraftReply('')
-    setDraftActivityType('outbound-email')
-    setDraftOutcome('')
-    setDraftNextStep('')
-    setDraftNextTouchDueAt('')
-    setDraftCrmUpdated(true)
-    setSelectedStage(scenarioCatalog[0]?.record.stage ?? 'New lead')
-    setAiSuggestion(null)
-    setToastMessage('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')
+  const handleReset = async () => {
+    try {
+      const data = await apiFetch<{ records: ProspectSummary[] }>('/demo/reset', {
+        method: 'POST',
+        csrfToken: session.csrfToken,
+      })
+      setProspects(data.records)
+      setSelectedProspectDetail(null)
+      setSelectedRecordId(data.records[0]?.externalKey ?? '')
+      setSearchTerm('')
+      setSelectedViewId(queueViews[0]?.id ?? 'new-leads')
+      setSelectedReplyId(null)
+      setDraftReply('')
+      setDraftActivityType('outbound-email')
+      setDraftOutcome('')
+      setDraftNextStep('')
+      setDraftNextTouchDueAt('')
+      setDraftCrmUpdated(true)
+      setStageSelectionRecordId(data.records[0]?.externalKey ?? '')
+      setSelectedStageState('New lead')
+      setAiSuggestion(null)
+      setToastMessage('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')
+    } catch (error) {
+      setToastMessage(deriveApiErrorMessage(error, 'Unable to reset the demo workspace right now.'))
+    }
   }
 
   const handleWalkthroughKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -612,15 +788,15 @@ export const useDeskState = () => {
     selectedViewId,
     setSelectedViewId,
     filteredRecords,
-    jumpTargetId: selectedRecord?.id ?? state.records[0]?.id ?? '',
+    jumpTargetId: selectedRecord?.id ?? summaryRecords[0]?.id ?? '',
     searchTerm,
     setSearchTerm,
     scenarioMap,
     handleSelectRecord,
     handleToggleScenarioLibrary,
     handleToggleWalkthrough,
-    showScenarioLibrary: state.showScenarioLibrary,
-    walkthroughActive: state.walkthroughActive,
+    showScenarioLibrary,
+    walkthroughActive,
     selectedRecord,
     selectedScenario,
     routingInsights,
@@ -676,5 +852,9 @@ export const useDeskState = () => {
     isRecordStale: selectedRecord ? isRecordStale(selectedRecord) : false,
     nextTouchInputValue: toDatetimeLocalValue(selectedRecord?.nextTouchDueAt ?? ''),
     hasDatedNextStep: selectedRecord ? hasDatedNextStep(selectedRecord) : false,
+    workspaceLoading: prospectsLoading || (Boolean(selectedPersistedId) && selectedRecordLoading),
+    workspaceError: prospectsError ?? selectedRecordError,
+    refreshProspects,
+    refreshSelectedProspect,
   }
 }

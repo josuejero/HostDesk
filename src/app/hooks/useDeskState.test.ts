@@ -1,10 +1,10 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useDeskState } from './useDeskState'
 
 describe('useDeskState hook interactions', () => {
   beforeEach(() => {
     window.localStorage.clear()
-    vi.useFakeTimers()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
     vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
   })
 
@@ -12,21 +12,26 @@ describe('useDeskState hook interactions', () => {
     vi.useRealTimers()
   })
 
-  it('selects a record and hides the scenario library', () => {
+  it('selects a record and hides the scenario library', async () => {
     const { result } = renderHook(() => useDeskState())
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBeDefined()
     const secondRecordId = result.current.scenarioCatalog[1].record.id
 
-    act(() => {
+    await act(async () => {
       result.current.handleToggleScenarioLibrary()
       result.current.handleSelectRecord(secondRecordId)
+      await vi.runAllTimersAsync()
     })
 
     expect(result.current.selectedRecord?.id).toBe(secondRecordId)
     expect(result.current.showScenarioLibrary).toBe(false)
   })
 
-  it('requires outreach templates to be personalized before logging activity', () => {
+  it('requires outreach templates to be personalized before logging activity', async () => {
     const { result } = renderHook(() => useDeskState())
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBeDefined()
     const firstCategory = result.current.cannedCategoryOrder[0]
     const template = result.current.cannedRepliesByCategory[firstCategory][0]
     const initialActivities = result.current.selectedRecord?.activities.length ?? 0
@@ -37,8 +42,8 @@ describe('useDeskState hook interactions', () => {
 
     expect(result.current.requiresCannedEdit).toBe(true)
 
-    act(() => {
-      result.current.handleLogActivity()
+    await act(async () => {
+      await result.current.handleLogActivity()
     })
 
     expect(result.current.toastMessage).toMatch(/Edit the outreach template/)
@@ -48,8 +53,8 @@ describe('useDeskState hook interactions', () => {
       result.current.setDraftReply('Personalized follow-up tied to this account.')
     })
 
-    act(() => {
-      result.current.handleLogActivity()
+    await act(async () => {
+      await result.current.handleLogActivity()
     })
 
     expect(result.current.selectedRecord?.activities.length).toBe(initialActivities + 1)
@@ -57,8 +62,10 @@ describe('useDeskState hook interactions', () => {
     expect(result.current.selectedReplyId).toBeNull()
   })
 
-  it('saves matched playbooks onto the record and logs a note', () => {
+  it('saves matched playbooks onto the record and logs a note', async () => {
     const { result } = renderHook(() => useDeskState())
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBeDefined()
     if (!result.current.playbookSuggestions.length) {
       throw new Error('Expected playbook suggestions for the default record')
     }
@@ -71,13 +78,15 @@ describe('useDeskState hook interactions', () => {
       result.current.handleShareSelectedArticle()
     })
 
-    expect(result.current.selectedRecord?.playbookMatches).toContain(articleId)
+    await waitFor(() => expect(result.current.selectedRecord?.playbookMatches).toContain(articleId))
     expect(result.current.selectedRecord?.activities.length).toBe(activityLength + 1)
     expect(result.current.toastMessage).toContain('Added')
   })
 
-  it('blocks handoff-ready until required fields are filled', () => {
+  it('blocks handoff-ready until required fields are filled', async () => {
     const { result } = renderHook(() => useDeskState())
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBeDefined()
 
     act(() => {
       result.current.handleSelectRecord('lead-citrix-research')
@@ -107,16 +116,21 @@ describe('useDeskState hook interactions', () => {
       result.current.handleApplyStageChange()
     })
 
-    expect(result.current.selectedRecord?.stage).toBe('Handoff ready')
+    await waitFor(() => expect(result.current.selectedRecord?.stage).toBe('Handoff ready'))
   })
 
-  it('resets filters, queue view, and toast state', () => {
+  it('resets filters, queue view, and toast state', async () => {
     const { result } = renderHook(() => useDeskState())
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBeDefined()
 
     act(() => {
       result.current.setSearchTerm('citrix')
       result.current.setSelectedViewId('stale')
-      result.current.handleReset()
+    })
+
+    await act(async () => {
+      await result.current.handleReset()
     })
 
     expect(result.current.searchTerm).toBe('')

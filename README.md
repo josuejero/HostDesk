@@ -1,11 +1,8 @@
 # HostDesk
 
-HostDesk is a recruiter-facing Microsoft cloud sales-operations simulator built in React/TypeScript with Vite, JSON seeds, and localStorage. It models queue-based prospect research, follow-up cadence, playbook suggestions, outreach templates, AI-assisted drafting, stage gating, and CRM hygiene review for Azure Virtual Desktop, Windows 365, and Intune motions.
+HostDesk is a recruiter-facing Microsoft cloud sales-operations simulator built with React/TypeScript on the frontend and a small PHP/MySQL JSON API on the backend. It models queue-based prospect research, follow-up cadence, playbook suggestions, outreach templates, AI-assisted drafting, stage gating, CRM hygiene review, persisted notes, cadence tasks, and stage history for Azure Virtual Desktop, Windows 365, and Intune motions.
 
-The product story is intentionally static and free to host: a deterministic, browser-only portfolio app that feels like a real SDR / sales-ops console without requiring a backend or paid AI API.
-
-## Live demo (GitHub Pages)
-`https://josuejero.github.io/HostDesk/`
+The UI is still scenario-driven and deterministic for portfolio storytelling, but canonical user data now lives in MySQL instead of `localStorage`.
 
 ## Screenshots
 | Overview | Workspace |
@@ -19,14 +16,16 @@ The product story is intentionally static and free to host: a deterministic, bro
 - **Playbooks + guided research:** Keyword-driven playbook suggestions and guided account research surface the right motion when a prospect mentions Citrix, Cloud PCs, BYOD, compliance, MSP operations, or Azure cost pressure.
 - **AI Assist (`mock` mode):** Deterministic account summaries, next-best-action suggestions, and follow-up drafts generated in-browser from the record, activity history, and matched playbooks.
 - **Stage discipline:** Meeting-booked, handoff-ready, and disqualified stages enforce operational rules instead of allowing soft-progress records to drift through the pipeline.
-- **Testing + static deployment:** Vitest, Testing Library, Playwright, GitHub Actions, and GitHub Pages keep the project fully static and recruiter-friendly.
+- **Auth + persistence:** PHP sessions handle auth state, MySQL/InnoDB stores prospects and operational history, and new users get seeded portfolio scenarios automatically.
+- **Metrics page:** Response rate, stage conversions, overdue follow-ups, due-today tasks, and meetings booked now come from SQL-backed API queries.
 
 ## Architecture overview
 - `data/scenario-catalog.json`, `data/kb-articles.json`, `data/canned-replies.json`, and `data/scoring-rubric.json` provide the synthetic scenario catalog, playbooks, outreach templates, and SDR-ops rubric.
-- `useLocalStorageState` persists a self-contained demo state in the browser so recruiters can replay workflows without a backend.
-- `useDeskState` is the orchestration layer for queue slices, activity logging, stage gating, playbook matching, scorecards, and AI suggestions.
+- `api/` contains the PHP 8 JSON API, PDO repositories, session/CSRF handling, MySQL schema, and scenario seeding services.
+- `useDeskState` remains the frontend orchestration layer, but now coordinates fetch-based record loading and server-backed mutations instead of browser-only persistence.
+- `useLocalStorageState` is limited to harmless UI preferences such as active panels and queue view selection.
 - Routing logic scores ICP fit, Microsoft relevance, urgency, recommended channel, handoff status, and data-hygiene risk from the current record state.
-- Vite/TypeScript handles bundling, and GitHub Actions builds and deploys the static app to `gh-pages`.
+- Vite/TypeScript handles bundling, proxies `/api` in local development, and the Docker Compose stack provides PHP 8.3 + MySQL 8 for local work.
 
 ## Scenario catalog
 HostDesk ships with 9 seeded scenarios in `data/scenario-catalog.json`. The first three are the primary portfolio demos:
@@ -48,17 +47,30 @@ This repo demonstrates more than React UI polish:
 
 It is intentionally inspired by real Microsoft cloud sales/ops workflows, but it is not affiliated with Nerdio or any Microsoft product team.
 
-## Getting started
+## Local setup
+Copy `.env.example` to `.env` if you need custom local values.
+
+Start the backend dependencies:
+
+```bash
+npm run docker:up
+```
+
+Start the frontend dev server in another terminal:
+
 ```bash
 npm install
 npm run dev
 ```
+
+The Vite app runs on `http://127.0.0.1:5173` by default and proxies `/api` to the PHP service on `http://127.0.0.1:8080`.
 
 Quality gates:
 
 ```bash
 npm run lint
 npm test
+npm run test:api
 npm run test:e2e
 ```
 
@@ -68,4 +80,23 @@ If Playwright browsers are not installed locally yet, run:
 npx playwright install
 ```
 
-GitHub Pages deployment is handled by `npm run build`, `npm run deploy`, and the workflow in `.github/workflows/deploy.yml`.
+## Backend endpoints
+- `GET /api/health`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/session`
+- `GET /api/prospects`
+- `GET /api/prospects/:id`
+- `POST /api/prospects/:id/notes`
+- `POST /api/prospects/:id/activities`
+- `POST /api/prospects/:id/cadence-tasks`
+- `PATCH /api/cadence-tasks/:id`
+- `POST /api/prospects/:id/stage-transitions`
+- `PATCH /api/prospects/:id/review`
+- `PATCH /api/prospects/:id/ownership`
+- `PATCH /api/prospects/:id/ai-fields`
+- `GET /api/metrics?range=7d|30d`
+- `POST /api/demo/reset`
+
+Production deployment now targets a same-origin host that can serve both the React bundle and the PHP API, rather than GitHub Pages.

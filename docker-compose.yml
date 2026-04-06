@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hostdesk-mysql
+    environment:
+      MYSQL_DATABASE: hostdesk
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: hostdesk
+      MYSQL_PASSWORD: hostdesk
+    ports:
+      - "3306:3306"
+    volumes:
+      - hostdesk-mysql-data:/var/lib/mysql
+      - ./api/database/init/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: hostdesk-api
+    working_dir: /app
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "1"
+      APP_TIMEZONE: UTC
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: hostdesk
+      DB_USER: hostdesk
+      DB_PASSWORD: hostdesk
+      SESSION_NAME: hostdesk_session
+      SESSION_COOKIE_SECURE: "0"
+      SESSION_COOKIE_SAMESITE: Lax
+    command: php -S 0.0.0.0:8080 api/public/router.php
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  hostdesk-mysql-data:

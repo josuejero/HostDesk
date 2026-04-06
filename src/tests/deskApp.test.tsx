@@ -7,6 +7,7 @@ describe('DeskApp integration', () => {
     'renders queue controls, timer labels, and the sidebar scorecard with a search filter',
     async () => {
       render(<DeskApp />)
+      await waitFor(() => expect(screen.getByText(/records matching filters/i)).toBeInTheDocument())
       const searchInput = screen.getByPlaceholderText('Company, workload, stage, tag, or owner')
 
       const nav = screen.getByRole('navigation')
@@ -16,7 +17,7 @@ describe('DeskApp integration', () => {
       })
 
       fireEvent.change(searchInput, { target: { value: 'Windows 365' } })
-      expect(screen.getByText('1 records matching filters')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByText('1 records matching filters')).toBeInTheDocument())
 
       expect(screen.getByRole('heading', { name: /Operational scorecard/ })).toBeInTheDocument()
       expect(screen.getByText(/Total \d+\/100/)).toBeInTheDocument()
@@ -29,6 +30,7 @@ describe('DeskApp integration', () => {
     'toggles the overlays and the reset toast',
     async () => {
       render(<DeskApp />)
+      await waitFor(() => expect(screen.getByText(/records matching filters/i)).toBeInTheDocument())
       fireEvent.click(screen.getByRole('button', { name: /Browse library/i }))
       expect(screen.getByText('Scenario catalog')).toBeInTheDocument()
 
@@ -42,7 +44,9 @@ describe('DeskApp integration', () => {
       await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
       fireEvent.click(screen.getByRole('button', { name: /Reset demo/i }))
-      expect(screen.getByText('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')).toBeInTheDocument(),
+      )
 
       await waitFor(
         () => expect(screen.queryByText('Demo data reset. HostDesk sales-ops scenarios are back to baseline.')).toBeNull(),
