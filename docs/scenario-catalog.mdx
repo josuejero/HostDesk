@@ -1,39 +1,115 @@
-import scenarioCatalog from '../data/scenario-catalog.json';
-
 # Scenario Catalog
 
-HostDesk ships with 9 synthetic Microsoft cloud sales-ops scenarios. Each record is defined in `data/scenario-catalog.json` and combines account context, activity history, playbook matches, scoring, and CRM hygiene review state.
+HostDesk ships with 9 seeded scenarios that are copied into MySQL for each user on registration and on `POST /api/demo/reset`.
 
-## Hero demos
+The source of truth is `data/scenario-catalog.json`. During seeding:
 
-- **MSP evaluating AVD cost control**
-  - Multi-tenant MSP motion focused on Azure Virtual Desktop cost visibility and margin protection.
-- **Contractor fleet for Windows 365**
-  - New inbound lead for secure contractor onboarding and BYOD-safe Cloud PC access.
-- **Intune compliance rollout**
-  - Active compliance and app-deployment motion driven by audit pressure.
+- `record.id` becomes `prospects.external_key`
+- record arrays are stored in JSON columns
+- stage history gets an initial entry for the seeded stage
+- scenarios with `nextTouchDueAt` also receive an open cadence task
 
-## Additional states covered
+## Coverage Summary
 
-- **Research needed**
-  - Citrix migration record missing owner and dated next step.
-- **Stale**
-  - Healthcare shared-desktop account with overdue cadence.
-- **Meeting booked**
-  - Education lab-access motion that progressed from outreach to a confirmed session.
-- **Handoff ready**
-  - MSP multi-workload record ready for AE packaging.
-- **Nurture**
-  - Budget-blocked desktop refresh motion with a future re-entry date.
-- **Disqualified**
-  - Non-Microsoft account intentionally removed from active work with a reason code.
+The catalog is designed to cover the main demo motions and the operational edge cases that drive queueing and stage discipline:
 
-## Object structure
+- 3 primary hero demos
+- 6 supporting operational states
+- Microsoft motions across Azure Virtual Desktop, Windows 365, Intune, mixed MSP management, nurture, and disqualification cleanup
+- every queue view in the app
 
-Each scenario contains:
+## Full Scenario Roster
 
-1. `record`: the core prospect record with stage, cadence fields, activities, review notes, AI summary, and scorecard.
-2. `accountProfile`: regional context, current stack, Microsoft workload priority, and sales motion.
-3. `handoffPlan`: the intended path from SDR work to later technical or AE ownership.
+| External key | Scenario title | Seeded stage | Primary queue coverage | Why it exists |
+| --- | --- | --- | --- | --- |
+| `lead-avd-cost-control` | MSP evaluating AVD cost control | `Active` | `follow-up-due` | Demonstrates a healthy AVD cost-optimization motion with real outbound and reply history. |
+| `lead-windows365-byod` | Contractor fleet for Windows 365 | `New lead` | `new-leads`, `needs-first-touch` | Demonstrates a fresh inbound Cloud PC / BYOD qualification motion. |
+| `lead-intune-compliance` | Intune compliance rollout | `Active` | `follow-up-due` | Demonstrates an active compliance-focused motion with audit pressure and reply history. |
+| `lead-citrix-research` | Citrix migration research needed | `Active` | `research-needed` | Demonstrates missing owner and missing dated next step on an otherwise attractive migration opportunity. |
+| `lead-healthcare-stale` | Healthcare shared desktop motion went stale | `Active` | `stale` | Demonstrates a record that should not stay healthy-looking after 14+ days without meaningful progress. |
+| `lead-education-meeting` | Education lab environment with meeting booked | `Meeting booked` | `meeting-booked` | Demonstrates the meeting-booked stage with the required outbound and reply evidence. |
+| `lead-msp-handoff` | MSP handoff-ready desktop management motion | `Handoff ready` | `handoff-ready` | Demonstrates a record that satisfies ownership, persona, Microsoft fit, and dated next-step requirements. |
+| `lead-nurture-budget` | Budget-frozen desktop refresh motion in nurture | `Nurture` | `nurture-disqualified` | Demonstrates an intentional nurture state rather than neglected follow-up. |
+| `lead-disqualified` | Non-Microsoft desktop stack disqualified | `Disqualified` | `nurture-disqualified` | Demonstrates a correctly closed-out record with an explicit disqualification reason. |
 
-The catalog is designed to demonstrate queue slicing, stage gates, AI-assist UX, and sales-ops hygiene, not to mirror any real customer data.
+## Hero Demos
+
+These are the three best first-stop scenarios for demos and screenshots:
+
+### MSP evaluating AVD cost control
+
+- motion: Azure Virtual Desktop
+- segment: MSP
+- strength: strong AVD cost narrative, reply evidence, clear next step
+- good for showing: queue prioritization, scorecard, guided research, and follow-up drafting
+
+### Contractor fleet for Windows 365
+
+- motion: Windows 365
+- segment: mid-market services
+- strength: fresh inbound lead with clear BYOD and contractor pain
+- good for showing: new lead intake, first-touch planning, and queue movement
+
+### Intune compliance rollout
+
+- motion: Intune
+- segment: healthcare
+- strength: active compliance and app deployment motion with audit urgency
+- good for showing: playbook matching, follow-up due workflow, and metrics impact
+
+## Operational State Coverage
+
+The supporting scenarios are not filler. Each one exists to exercise a specific workflow or guardrail:
+
+- `lead-citrix-research`: incomplete record hygiene and blocked handoff
+- `lead-healthcare-stale`: stale follow-up detection
+- `lead-education-meeting`: valid meeting-booked progression
+- `lead-msp-handoff`: valid handoff-ready progression
+- `lead-nurture-budget`: intentional nurture timing
+- `lead-disqualified`: clean removal from active pipeline with a reason code
+
+## Queue View Coverage
+
+The queue definitions in `src/app/constants/queueViews.ts` are all represented by the seeded data:
+
+| Queue view | Covered by |
+| --- | --- |
+| `new-leads` | `lead-windows365-byod` |
+| `needs-first-touch` | `lead-windows365-byod` |
+| `follow-up-due` | `lead-avd-cost-control`, `lead-intune-compliance` |
+| `stale` | `lead-healthcare-stale` |
+| `research-needed` | `lead-citrix-research` |
+| `meeting-booked` | `lead-education-meeting` |
+| `handoff-ready` | `lead-msp-handoff` |
+| `nurture-disqualified` | `lead-nurture-budget`, `lead-disqualified` |
+
+## Motion Coverage
+
+The scenario language is intentionally designed so the routing helpers and stage rules can infer a Microsoft motion:
+
+| Motion | Covered by |
+| --- | --- |
+| Azure Virtual Desktop | `lead-avd-cost-control`, `lead-citrix-research`, `lead-healthcare-stale` |
+| Windows 365 | `lead-windows365-byod`, `lead-education-meeting`, `lead-nurture-budget` |
+| Intune | `lead-intune-compliance` |
+| multi-workload MSP motion | `lead-msp-handoff` |
+| non-fit / mixed cleanup | `lead-disqualified` |
+
+## Related Seeded Assets
+
+The scenario catalog is only one part of the seeded storytelling layer:
+
+- `data/kb-articles.json` supplies 8 playbook articles
+- `data/canned-replies.json` supplies 7 canned outreach templates
+- `data/scoring-rubric.json` supplies the scorecard rubric metadata
+- `data/schemas/` stores JSON schemas for the data assets
+
+## When To Update This Doc
+
+Update this document whenever you:
+
+- add or remove a scenario
+- change a scenario's `record.id`
+- change stage assignments that affect queue coverage
+- repurpose a scenario so its demo role changes
+- add a new queue view that needs seeded representation

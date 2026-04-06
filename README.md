@@ -1,91 +1,155 @@
 # HostDesk
 
-HostDesk is a recruiter-facing Microsoft cloud sales-operations simulator built with React/TypeScript on the frontend and a small PHP/MySQL JSON API on the backend. It models queue-based prospect research, follow-up cadence, playbook suggestions, outreach templates, AI-assisted drafting, stage gating, CRM hygiene review, persisted notes, cadence tasks, and stage history for Azure Virtual Desktop, Windows 365, and Intune motions.
+HostDesk is a recruiter-facing Microsoft cloud sales-operations simulator. The frontend is built with React 19, TypeScript, and Vite, and the backend is a small PHP 8.3 JSON API backed by MySQL 8.
 
-The UI is still scenario-driven and deterministic for portfolio storytelling, but canonical user data now lives in MySQL instead of `localStorage`.
+The app models a saved pipeline instead of a browser-only demo. Users register or sign in, receive their own seeded workspace, and then work through queue slices, stage gates, notes, activity logging, guided research, canned outreach, deterministic AI assist, and metrics that are computed from persisted activity.
 
-## Screenshots
-| Overview | Workspace |
-| --- | --- |
-| ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![HostDesk workspace snapshot](public/images/ticket-screenshot.svg) |
+## Documentation Map
 
-## Feature list
-- **Sales-ops queue slices:** New leads, needs-first-touch, due-today, stale, research-needed, meeting-booked, handoff-ready, and nurture/disqualified views.
-- **Microsoft-cloud scenarios:** Seeded account motions for AVD cost optimization, Windows 365 contractor/BYOD rollout, Intune compliance, Citrix migration, MSP multi-tenant management, healthcare shared desktops, and education lab access.
-- **Activity timeline:** Typed CRM activity tracking for outbound email, calls, LinkedIn touches, replies, meetings, enrichment, stage changes, AI usage, and notes.
-- **Playbooks + guided research:** Keyword-driven playbook suggestions and guided account research surface the right motion when a prospect mentions Citrix, Cloud PCs, BYOD, compliance, MSP operations, or Azure cost pressure.
-- **AI Assist (`mock` mode):** Deterministic account summaries, next-best-action suggestions, and follow-up drafts generated in-browser from the record, activity history, and matched playbooks.
-- **Stage discipline:** Meeting-booked, handoff-ready, and disqualified stages enforce operational rules instead of allowing soft-progress records to drift through the pipeline.
-- **Auth + persistence:** PHP sessions handle auth state, MySQL/InnoDB stores prospects and operational history, and new users get seeded portfolio scenarios automatically.
-- **Metrics page:** Response rate, stage conversions, overdue follow-ups, due-today tasks, and meetings booked now come from SQL-backed API queries.
+- [Architecture and runtime](docs/architecture.md)
+- [API reference](docs/api-reference.md)
+- [Development workflow](docs/development.md)
+- [Scenario catalog](docs/scenario-catalog.mdx)
 
-## Architecture overview
-- `data/scenario-catalog.json`, `data/kb-articles.json`, `data/canned-replies.json`, and `data/scoring-rubric.json` provide the synthetic scenario catalog, playbooks, outreach templates, and SDR-ops rubric.
-- `api/` contains the PHP 8 JSON API, PDO repositories, session/CSRF handling, MySQL schema, and scenario seeding services.
-- `useDeskState` remains the frontend orchestration layer, but now coordinates fetch-based record loading and server-backed mutations instead of browser-only persistence.
-- `useLocalStorageState` is limited to harmless UI preferences such as active panels and queue view selection.
-- Routing logic scores ICP fit, Microsoft relevance, urgency, recommended channel, handoff status, and data-hygiene risk from the current record state.
-- Vite/TypeScript handles bundling, proxies `/api` in local development, and the Docker Compose stack provides PHP 8.3 + MySQL 8 for local work.
+## What The Project Covers
 
-## Scenario catalog
-HostDesk ships with 9 seeded scenarios in `data/scenario-catalog.json`. The first three are the primary portfolio demos:
+- Authenticated workspace with PHP sessions and CSRF-protected mutations
+- Per-user seeded demo data copied from `data/scenario-catalog.json`
+- Queue slices for new leads, first touch, follow-up due, stale, research needed, meeting booked, handoff ready, and nurture or disqualified work
+- Guided research and playbook suggestions driven by scenario metadata and keywords
+- Deterministic AI assist that can apply summaries, next-best actions, and draft replies without calling an external LLM
+- SQL-backed metrics for response rate, stage conversions, overdue follow-ups, tasks due today, and meetings booked
+- Stage-gated pipeline motion enforced in both frontend helpers and backend services
 
-1. MSP evaluating AVD cost control
-2. Contractor fleet for Windows 365
-3. Intune compliance rollout
+## Stack Snapshot
 
-Additional scenarios cover stale records, nurture, research cleanup, meeting-booked progression, handoff-ready packaging, and disqualification hygiene. See `docs/scenario-catalog.mdx` for the breakdown.
+- Frontend: React 19, TypeScript, Vite, ESLint, Vitest, Playwright
+- Backend: PHP 8.3 CLI server, PDO, MySQL 8, session auth, CSRF tokens
+- Test layers:
+  - `npm run test` for frontend units and component-level integration with the mock API
+  - `npm run test:api` for real PHP/MySQL integration tests
+  - `npm run test:e2e` for Playwright end-to-end coverage
+- Local orchestration: Docker Compose for MySQL and the PHP API
 
-## Why this is a strong portfolio project
-This repo demonstrates more than React UI polish:
+## Repo Layout
 
-- queue slicing and operational prioritization
-- deterministic AI-assist UX without backend dependencies
-- enforceable stage gates and CRM hygiene rules
-- scenario-driven workflow design across Microsoft cloud motions
-- testable local persistence and GitHub Pages deployment
-
-It is intentionally inspired by real Microsoft cloud sales/ops workflows, but it is not affiliated with Nerdio or any Microsoft product team.
-
-## Local setup
-Copy `.env.example` to `.env` if you need custom local values.
-
-Start the backend dependencies:
-
-```bash
-npm run docker:up
+```text
+HostDesk/
+|- api/                   PHP API, routes, services, repositories, schema
+|- data/                  Scenario catalog, playbooks, canned replies, scoring rubric, JSON schemas
+|- docs/                  Project documentation
+|- public/                Static assets
+|- src/                   React app, hooks, components, styles, API client
+|- tests/                 API and Playwright tests
+|- .github/workflows/     CI and build workflows
+|- docker-compose.yml     Local MySQL + PHP API stack
 ```
 
-Start the frontend dev server in another terminal:
+## Seeded Content
 
-```bash
-npm install
-npm run dev
-```
+The repository ships with:
 
-The Vite app runs on `http://127.0.0.1:5173` by default and proxies `/api` to the PHP service on `http://127.0.0.1:8080`.
+- 9 seeded scenarios
+- 8 playbook articles
+- 7 canned outreach templates
+- 1 scoring rubric used by the sidebar scorecard
 
-Quality gates:
+The source of truth for seeded records is [`data/scenario-catalog.json`](data/scenario-catalog.json). On registration and on `POST /api/demo/reset`, those scenarios are copied into MySQL for the current user. The original scenario `record.id` is stored in the database as `external_key`.
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+- Docker Desktop or another Docker engine that supports Compose
+- Open ports `3306`, `5173`, and `8080`
+
+### Local Setup
+
+1. Install frontend dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env` if you need to override defaults.
+
+3. Start MySQL and the PHP API:
+
+   ```bash
+   npm run docker:up
+   ```
+
+4. Start the frontend in a second terminal:
+
+   ```bash
+   npm run dev
+   ```
+
+### Local URLs
+
+- Frontend: `http://127.0.0.1:5173`
+- API: `http://127.0.0.1:8080`
+- Health check: `http://127.0.0.1:8080/api/health`
+
+In development, Vite proxies `/api` requests to the PHP server. In deployed environments, the frontend expects the API to be reachable at the same origin under `/api`.
+
+## Environment Variables
+
+These values are loaded from `.env` by the PHP bootstrap and partly reused by Vite and tests:
+
+| Variable | Used by | Purpose |
+| --- | --- | --- |
+| `APP_ENV` | API | Environment label |
+| `APP_DEBUG` | API | Enables PHP error display when set to `1` |
+| `APP_TIMEZONE` | API | Default timezone for backend date handling |
+| `DB_HOST` | API | MySQL host |
+| `DB_PORT` | API | MySQL port |
+| `DB_NAME` | API | Database name |
+| `DB_USER` | API | Database username |
+| `DB_PASSWORD` | API | Database password |
+| `SESSION_NAME` | API | PHP session cookie name |
+| `SESSION_COOKIE_SECURE` | API | Secure cookie toggle |
+| `SESSION_COOKIE_SAMESITE` | API | SameSite policy for the session cookie |
+| `VITE_BASE_PATH` | Frontend build | Base path for the generated bundle |
+| `VITE_API_PROXY_TARGET` | Vite dev server | Proxy target for `/api` during local development |
+| `HOSTDESK_API_BASE_URL` | Node-side tests | Base URL for `npm run test:api` |
+
+## Quality Gates
 
 ```bash
 npm run lint
-npm test
+npm run test
 npm run test:api
 npm run test:e2e
 ```
 
-If Playwright browsers are not installed locally yet, run:
+If Playwright browsers are missing locally:
 
 ```bash
 npx playwright install
 ```
 
-## Backend endpoints
+Useful Docker helpers:
+
+```bash
+npm run docker:logs
+npm run docker:down
+```
+
+## API Snapshot
+
+Auth and session:
+
 - `GET /api/health`
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `GET /api/auth/session`
+
+Prospects and mutations:
+
 - `GET /api/prospects`
 - `GET /api/prospects/:id`
 - `POST /api/prospects/:id/notes`
@@ -99,4 +163,42 @@ npx playwright install
 - `GET /api/metrics?range=7d|30d`
 - `POST /api/demo/reset`
 
-Production deployment now targets a same-origin host that can serve both the React bundle and the PHP API, rather than GitHub Pages.
+Every API response uses the same envelope:
+
+- Success: `{ "ok": true, "data": ... }`
+- Failure: `{ "ok": false, "error": { "code": "...", "message": "...", "fieldErrors": {} } }`
+
+See [docs/api-reference.md](docs/api-reference.md) for payloads, stage-gate rules, CSRF behavior, and error codes.
+
+## CI And Build Automation
+
+- `.github/workflows/ci.yml` runs lint, frontend tests, real API tests, and Playwright against the Docker Compose stack.
+- `.github/workflows/deploy.yml` currently validates that the frontend bundle builds with `npm run build`.
+
+That second workflow is a build check, not a full deployment pipeline. The generated frontend bundle still needs an API host mounted at `/api` to work outside local development.
+
+## Hosting Notes
+
+This repo is no longer a static-only demo:
+
+- Browser requests are made to relative `/api` paths.
+- Session auth depends on cookies.
+- Mutations after login require CSRF headers.
+
+Because of that, a static host by itself is not enough unless it also reverse-proxies or serves the PHP API on the same origin. The simplest production model is a same-origin host that serves both the Vite build output and the PHP API.
+
+## Screenshots
+
+| Overview | Workspace |
+| --- | --- |
+| ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![HostDesk workspace snapshot](public/images/ticket-screenshot.svg) |
+
+## Project Status Notes
+
+The docs now reflect an important implementation detail that was easy to miss before:
+
+- Cadence tasks are persisted in the database and used by the metrics dashboard.
+- The backend already exposes create and update endpoints for cadence tasks.
+- The current UI does not yet have a dedicated task-management panel, so task data is mostly surfaced through seeded records, next-touch dates, and metrics.
+
+That is intentional to document because it is implemented API surface, but not yet a full frontend workflow.
