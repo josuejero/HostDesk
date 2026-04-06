@@ -149,6 +149,7 @@ const deriveApiErrorMessage = (error: unknown, fallback: string) =>
 
 export const useDeskState = (session: SessionState = fallbackSession) => {
   const [selectedViewId, setSelectedViewId] = useLocalStorageState('hostdesk-ui-selected-view', () => queueViews[0]?.id ?? 'new-leads')
+  const [selectedRecordId, setSelectedRecordId] = useLocalStorageState('hostdesk-ui-selected-record', () => '')
   const [selectedReplyId, setSelectedReplyId] = useState<string | null>(null)
   const [draftReply, setDraftReply] = useState('')
   const [draftActivityType, setDraftActivityType] = useState<ActivityType>('outbound-email')
@@ -162,7 +163,6 @@ export const useDeskState = (session: SessionState = fallbackSession) => {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [aiSuggestion, setAiSuggestion] = useState<AiSuggestion | null>(null)
-  const [selectedRecordId, setSelectedRecordId] = useState<string>('')
   const [showScenarioLibrary, setShowScenarioLibrary] = useState(false)
   const [walkthroughActive, setWalkthroughActive] = useState(false)
 

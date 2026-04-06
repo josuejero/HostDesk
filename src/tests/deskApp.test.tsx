@@ -55,4 +55,36 @@ describe('DeskApp integration', () => {
     },
     10000,
   )
+
+  it(
+    'restores the active record after the app remounts',
+    async () => {
+      const { unmount } = render(<DeskApp />)
+      await waitFor(() => expect(screen.getByText(/records matching filters/i)).toBeInTheDocument())
+
+      fireEvent.change(screen.getByLabelText('Jump to demo case'), {
+        target: { value: 'lead-windows365-byod' },
+      })
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('heading', {
+            name: 'Looking at Cloud PCs for a contractor-heavy BYOD team',
+          }),
+        ).toBeInTheDocument(),
+      )
+
+      unmount()
+
+      render(<DeskApp />)
+
+      await waitFor(() => expect(screen.getByLabelText('Jump to demo case')).toHaveValue('lead-windows365-byod'))
+      expect(
+        screen.getByRole('heading', {
+          name: 'Looking at Cloud PCs for a contractor-heavy BYOD team',
+        }),
+      ).toBeInTheDocument()
+    },
+    10000,
+  )
 })

@@ -28,6 +28,16 @@ describe('useDeskState hook interactions', () => {
     expect(result.current.showScenarioLibrary).toBe(false)
   })
 
+  it('restores the selected record from localStorage on reload', async () => {
+    const selectedRecordId = 'lead-windows365-byod'
+    window.localStorage.setItem('hostdesk-ui-selected-record', JSON.stringify(selectedRecordId))
+
+    const { result } = renderHook(() => useDeskState())
+
+    await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
+    expect(result.current.selectedRecord?.id).toBe(selectedRecordId)
+  })
+
   it('requires outreach templates to be personalized before logging activity', async () => {
     const { result } = renderHook(() => useDeskState())
     await waitFor(() => expect(result.current.workspaceLoading).toBe(false))
