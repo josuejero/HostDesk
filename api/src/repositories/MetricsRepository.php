@@ -73,18 +73,21 @@ final class MetricsRepository
                 SELECT h.from_stage, h.to_stage, COUNT(DISTINCT h.prospect_id) AS converted
                 FROM prospect_stage_history h
                 INNER JOIN prospects p1 ON p1.id = h.prospect_id
-                WHERE p1.user_id = :userId
+                WHERE p1.user_id = :historyUserId
                 GROUP BY h.from_stage, h.to_stage
              ) s
              LEFT JOIN (
-                SELECT stage AS from_stage, COUNT(*) AS base_count
-                FROM prospects
-                WHERE user_id = :userId
-                GROUP BY stage
-             ) b ON b.from_stage = s.from_stage
-             ORDER BY s.converted DESC, s.to_stage ASC',
-        );
-        $statement->execute(['userId' => $userId]);
+                 SELECT stage AS from_stage, COUNT(*) AS base_count
+                 FROM prospects
+                 WHERE user_id = :baseUserId
+                 GROUP BY stage
+              ) b ON b.from_stage = s.from_stage
+              ORDER BY s.converted DESC, s.to_stage ASC',
+         );
+        $statement->execute([
+            'historyUserId' => $userId,
+            'baseUserId' => $userId,
+        ]);
         $rows = $statement->fetchAll();
 
         return array_map(static fn (array $row): array => [
