@@ -1,8 +1,43 @@
 # HostDesk
 
-HostDesk is a recruiter-facing Microsoft cloud sales-operations simulator. The frontend is built with React 19, TypeScript, and Vite, and the backend is a small PHP 8.3 JSON API backed by MySQL 8.
+HostDesk is a full-stack SaaS-style workflow simulator for researching, qualifying, routing, and following up with cloud sales prospects. It uses a React/TypeScript frontend, PHP JSON API, MySQL persistence, session authentication, CSRF-protected mutations, Docker Compose orchestration, and automated tests across frontend, API, and end-to-end flows. This project demonstrates full-stack application development, REST-style APIs, SQL-backed workflows, authentication, data modeling, test automation, and local deployment.
 
 The app models a saved pipeline instead of a browser-only demo. Users register or sign in, receive their own seeded workspace, and then work through queue slices, stage gates, notes, activity logging, guided research, canned outreach, deterministic AI assist, and metrics that are computed from persisted activity.
+
+## Quick links
+- **Live demo:** [GitHub Pages static frontend preview](https://josuejero.github.io/HostDesk/) for the built UI shell; use local Docker for the full API-backed demo
+- **Screenshots:** [login](public/images/screenshots/login.svg), [queue](public/images/screenshots/prospect-queue.svg), [detail](public/images/screenshots/prospect-detail.svg), [activity flow](public/images/screenshots/notes-activity-flow.svg), [stage transition](public/images/screenshots/stage-transition.svg), [metrics](public/images/screenshots/metrics.svg), [test output](public/images/screenshots/test-output.svg)
+- **Test report:** `npm run test`, `npm run test:api`, and `npm run test:e2e`
+- **CI workflow:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`
+- **Architecture docs:** `docs/architecture.md`, `docs/api-reference.md`, `docs/development.md`
+- **Main code to inspect:** `src/`, `api/`, `tests/`, `data/scenario-catalog.json`
+
+## Employer scan
+**Best fit roles:** Junior Full-Stack Developer, Software Developer, Application Developer  
+**Core stack:** React, TypeScript, PHP, MySQL, Docker Compose, Vitest, Playwright  
+**What this proves:** Authenticated workflows, REST-style APIs, SQL persistence, CSRF protection, test automation, Docker-based local setup  
+**Start here:** `src/`, `api/`, `tests/`, `docs/api-reference.md`
+
+## Demo options
+- **Fast scan:** open the screenshots below to review login, queue routing, prospect details, notes/activity logging, stage movement, metrics, and test coverage without running the app.
+- **Full local demo:** run `npm install`, `npm run docker:up`, and `npm run dev`; click **Need an account?** and use the default local demo fields (`demo@hostdesk.local` / `Password123!`) to create a seeded account.
+- **Seed/reset flow:** registration creates a personal copy of `data/scenario-catalog.json`; `POST /api/demo/reset` reseeds the current user's workspace.
+- **Deployment note:** static hosting alone is not the full app because browser requests expect a same-origin `/api`, session cookies, and CSRF headers.
+
+## Screenshot gallery
+| Login | Prospect queue |
+| --- | --- |
+| ![HostDesk login screenshot](public/images/screenshots/login.svg) | ![HostDesk prospect queue screenshot](public/images/screenshots/prospect-queue.svg) |
+
+| Prospect detail | Notes and activity flow |
+| --- | --- |
+| ![HostDesk prospect detail screenshot](public/images/screenshots/prospect-detail.svg) | ![HostDesk notes and activity flow screenshot](public/images/screenshots/notes-activity-flow.svg) |
+
+| Stage transition | Metrics and test output |
+| --- | --- |
+| ![HostDesk stage transition screenshot](public/images/screenshots/stage-transition.svg) | ![HostDesk metrics screenshot](public/images/screenshots/metrics.svg) |
+
+![HostDesk test output screenshot](public/images/screenshots/test-output.svg)
 
 ## Documentation Map
 
@@ -187,9 +222,12 @@ This repo is no longer a static-only demo:
 
 Because of that, a static host by itself is not enough unless it also reverse-proxies or serves the PHP API on the same origin. The simplest production model is a same-origin host that serves both the Vite build output and the PHP API.
 
-## Screenshots
+## Project Status Notes
 
-| Overview | Workspace |
-| --- | --- |
-| ![HostDesk hero snapshot](public/images/hero-screenshot.svg) | ![HostDesk workspace snapshot](public/images/ticket-screenshot.svg) |
+The docs now reflect an important implementation detail that was easy to miss before:
 
+- Cadence tasks are persisted in the database and used by the metrics dashboard.
+- The backend already exposes create and update endpoints for cadence tasks.
+- The current UI does not yet have a dedicated task-management panel, so task data is mostly surfaced through seeded records, next-touch dates, and metrics.
+
+That is intentional to document because it is implemented API surface, but not yet a full frontend workflow.
