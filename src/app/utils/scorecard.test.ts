@@ -2,7 +2,14 @@ import { buildOperationalScorecard, evaluateExecutionScore, executionMaxTotal } 
 import { createRecord, createScenario } from '../../tests/fixtures'
 
 describe('scorecard utilities', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('builds stronger operational scores for clean active records', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
+
     const scenario = createScenario()
     const record = createRecord({
       crmCompleteness: 92,
@@ -39,6 +46,9 @@ describe('scorecard utilities', () => {
   })
 
   it('builds an execution score aligned to research, cadence, and stage discipline', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-03-29T12:00:00Z'))
+
     const scenario = createScenario()
     const record = createRecord({
       owner: 'Leo Martinez',
