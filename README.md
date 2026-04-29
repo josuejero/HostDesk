@@ -31,6 +31,14 @@ The app models a saved pipeline instead of a browser-only demo. Users register o
 - **Architecture docs:** `docs/architecture.md`, `docs/api-reference.md`, `docs/development.md`, `docs/project-metrics.md`
 - **Main code to inspect:** `src/`, `api/`, `tests/`, `data/scenario-catalog.json`
 
+## Security
+
+Security reporting expectations are documented in [SECURITY.md](SECURITY.md). Please do not open public issues for suspected vulnerabilities.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
+
 ## Engineering evidence
 
 HostDesk includes 17 API route entries, a 7-table MySQL schema with 7 foreign keys and 10 indexes, 9 seeded workflow scenarios, session authentication, CSRF-protected mutations, SQL-backed workflow metrics, and CI validation across linting, TypeScript build, frontend tests, API integration tests, coverage, seed-data schemas, PHP syntax, and Playwright E2E tests.

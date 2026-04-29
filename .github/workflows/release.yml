@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run data:validate
+      - run: npm run build
+      - run: npm run sbom
+
+      - name: Bundle release artifact
+        run: |
+          mkdir -p release
+          zip -r "release/hostdesk-release-${GITHUB_REF_NAME}.zip" \
+            dist \
+            api \
+            data \
+            docs \
+            public \
+            README.md \
+            SECURITY.md \
+            LICENSE \
+            package.json \
+            package-lock.json \
+            docker-compose.yml
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: hostdesk-release-${{ github.ref_name }}
+          path: |
+            release/hostdesk-release-${{ github.ref_name }}.zip
+            sbom.cdx.json
+          retention-days: 30
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            "release/hostdesk-release-${GITHUB_REF_NAME}.zip" \
+            "sbom.cdx.json" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "HostDesk release ${GITHUB_REF_NAME} with static build artifact and CycloneDX SBOM."

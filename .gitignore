@@ -21,6 +21,7 @@ metrics/reports/lighthouse/
 metrics/reports/*.sarif
 metrics/reports/npm-audit.json
 metrics/reports/npm-audit-prod.json
+sbom.cdx.json
 __MACOSX/
 repomix-output.xml
 *.zip
