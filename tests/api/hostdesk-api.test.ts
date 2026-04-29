@@ -170,4 +170,40 @@ maybeDescribe('HostDesk PHP API', () => {
     })
     expect(loggedOut.authenticated).toBe(false)
   })
+
+  it('rejects state-changing API requests without a valid CSRF token', async () => {
+    const client = new ApiSessionClient(apiBaseUrl!)
+    const email = `hostdesk-csrf-${Date.now()}@example.com`
+
+    await client.json<SessionState>('/api/auth/register', {
+      method: 'POST',
+      json: {
+        email,
+        password: 'Password123!',
+        displayName: 'CSRF Tester',
+      },
+    })
+
+    const list = await client.json<{ prospects: ProspectSummary[] }>('/api/prospects')
+    const target = list.prospects[0]
+    const savedToken = client.csrfToken
+    client.csrfToken = null
+
+    const rejected = await client.request(`/api/prospects/${target.id}/notes`, {
+      method: 'POST',
+      json: {
+        body: 'This should not be accepted without CSRF.',
+      },
+      allowError: true,
+    })
+
+    expect(rejected.response.status).toBe(403)
+    const payload = (await rejected.response.json()) as {
+      ok: false
+      error: { code: string; message: string }
+    }
+    expect(payload.error.code).toBe('csrf_invalid')
+
+    client.csrfToken = savedToken
+  })
 })
