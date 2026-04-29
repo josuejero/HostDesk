@@ -1,0 +1,44 @@
+{
+  "updatedAt": "2026-04-29",
+  "project": "HostDesk",
+  "scope": {
+    "apiRouteEntries": 17,
+    "databaseTables": 7,
+    "databaseIndexes": 10,
+    "databaseForeignKeys": 7,
+    "reactComponentFiles": 18,
+    "seedScenarios": 9,
+    "kbArticles": 8,
+    "cannedReplies": 7,
+    "executableTestCases": 20,
+    "workflowFiles": 5
+  },
+  "quality": {
+    "lint": null,
+    "build": null,
+    "unitTests": null,
+    "apiTests": null,
+    "e2eTests": null,
+    "statementCoveragePct": null,
+    "branchCoveragePct": null,
+    "functionCoveragePct": null,
+    "lineCoveragePct": null
+  },
+  "performance": {
+    "lighthousePerformance": null,
+    "lighthouseAccessibility": null,
+    "lighthouseBestPractices": null,
+    "lighthouseSeo": null,
+    "largestContentfulPaintMs": null,
+    "totalBlockingTimeMs": null,
+    "cumulativeLayoutShift": null
+  },
+  "security": {
+    "npmCriticalVulnerabilities": null,
+    "npmHighVulnerabilities": null,
+    "npmModerateVulnerabilities": null,
+    "dependabotOpenAlerts": null,
+    "codeScanningOpenAlerts": null,
+    "openssfScorecard": null
+  }
+}
