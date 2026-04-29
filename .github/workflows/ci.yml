@@ -29,11 +29,29 @@ jobs:
           docker compose logs api mysql
           exit 1
       - run: npm run lint
+      - run: npm run build
       - run: npm run test
+      - run: npm run test:coverage
       - run: npm run test:api
         env:
           HOSTDESK_API_BASE_URL: http://127.0.0.1:8080
       - run: npx playwright install --with-deps
       - run: npm run test:e2e
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            metrics/reports/playwright
+            metrics/reports/playwright-results
+          retention-days: 14
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: metrics/reports/coverage
+          retention-days: 14
       - if: always()
         run: docker compose down
