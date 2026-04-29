@@ -23,7 +23,10 @@ function walk(dir) {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name)
     if (entry.isDirectory()) {
-      if (!ignoredDirs.has(entry.name)) files.push(...walk(fullPath))
+      const relativePath = path.relative(root, fullPath)
+      const topLevelDir = relativePath.split(path.sep)[0]
+
+      if (!ignoredDirs.has(topLevelDir)) files.push(...walk(fullPath))
       continue
     }
     files.push(fullPath)
@@ -74,15 +77,10 @@ const metrics = {
     seedScenarios: countJsonArray('data/scenario-catalog.json'),
     kbArticles: countJsonArray('data/kb-articles.json'),
     cannedReplies: countJsonArray('data/canned-replies.json'),
-    executableTestCases: countMatches(sourceAndTestFiles, /\b(it|test)\(['"]/g),
+    executableTestCases: countMatches(sourceAndTestFiles, /\b(?:it|test)\s*\(\s*['"`]/g),
     workflowFiles: countFiles('.github/workflows', (filePath) => /\.ya?ml$/.test(filePath)),
   },
   quality: {
-    lint: null,
-    build: null,
-    unitTests: null,
-    apiTests: null,
-    e2eTests: null,
     statementCoveragePct: null,
     branchCoveragePct: null,
     functionCoveragePct: null,
@@ -98,9 +96,11 @@ const metrics = {
     cumulativeLayoutShift: null,
   },
   security: {
-    npmCriticalVulnerabilities: null,
-    npmHighVulnerabilities: null,
-    npmModerateVulnerabilities: null,
+    runtimeNpmCriticalVulnerabilities: null,
+    runtimeNpmHighVulnerabilities: null,
+    fullNpmCriticalVulnerabilities: null,
+    fullNpmHighVulnerabilities: null,
+    fullNpmModerateVulnerabilities: null,
     dependabotOpenAlerts: null,
     codeScanningOpenAlerts: null,
     openssfScorecard: null,

@@ -1,14 +1,26 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hostdesk.local/schemas/customer-account.json",
   "title": "Account profile schema",
-  "summary": "Describes regional context, current stack, and Microsoft workload priority that shape routing and handoff context.",
-  "fields": {
-    "accountId": "string",
-    "name": "string",
-    "timezone": "string",
-    "region": "string",
-    "existingStack": "string",
-    "microsoftPriority": "string",
-    "motion": "string"
-  },
-  "notes": "Account profile data helps the UI explain why a record belongs to a specific Microsoft-cloud motion."
+  "description": "Describes regional context, current stack, and Microsoft workload priority that shape routing and handoff context.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "accountId",
+    "name",
+    "timezone",
+    "region",
+    "existingStack",
+    "microsoftPriority",
+    "motion"
+  ],
+  "properties": {
+    "accountId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "timezone": { "type": "string", "minLength": 1 },
+    "region": { "type": "string", "minLength": 1 },
+    "existingStack": { "type": "string", "minLength": 1 },
+    "microsoftPriority": { "type": "string", "minLength": 1 },
+    "motion": { "type": "string", "minLength": 1 }
+  }
 }

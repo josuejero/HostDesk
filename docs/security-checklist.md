@@ -15,7 +15,10 @@
 
 | Check | Tool | Status |
 |---|---|---:|
-| npm dependency audit | `npm audit --json` | Baseline captured: 0 critical, 4 high, 4 moderate, 3 low |
+| Runtime npm dependency audit | `npm run audit:prod` | Baseline captured: 0 high/critical |
+| Full npm dependency audit | `npm run audit:json` | Baseline captured: 0 critical, 0 high, 2 moderate dev-tooling, 3 low |
+| PHP syntax check | `npm run php:lint` | Passing |
+| Seed data schema validation | `npm run data:validate` | Passing |
 | Dependency alerting | Dependabot | Pending after GitHub push |
 | Static code scanning | CodeQL for JavaScript/TypeScript and Actions | Pending after GitHub push |
 | Repository security posture | OpenSSF Scorecard | Pending after GitHub push |
@@ -23,5 +26,6 @@
 ## Known limits
 
 - CodeQL evidence should not be described as full PHP analysis.
+- The remaining full-tree npm findings are dev-tooling findings and should not be presented as runtime risk.
 - This is a portfolio/demo project, not a hardened production SaaS deployment.
 - The static deployment does not prove the full PHP/MySQL API is deployed publicly.

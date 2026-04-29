@@ -12,15 +12,21 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "metrics:static": "node scripts/collect-static-metrics.mjs",
-    "metrics:all": "npm run metrics:static && npm run test:coverage && npm run audit:json",
-    "test": "vitest run",
-    "test:api": "vitest run tests/api",
-    "test:coverage": "vitest run --coverage",
+    "metrics:reports": "node scripts/collect-report-metrics.mjs",
+    "metrics:all": "npm run metrics:static && npm run test:coverage && npm run audit:json && npm run audit:prod:json && npm run build && npm run lhci && npm run metrics:reports",
+    "test": "vitest run src",
+    "test:api": "vitest run --config vitest.api.config.ts",
+    "test:coverage": "vitest run src --coverage",
     "test:watch": "vitest --watch",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report metrics/reports/playwright",
     "lhci": "lhci autorun",
-    "audit:json": "mkdir -p metrics/reports && npm audit --json > metrics/reports/npm-audit.json || true"
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "audit:all": "npm audit --audit-level=high",
+    "audit:json": "mkdir -p metrics/reports && npm audit --json > metrics/reports/npm-audit.json || true",
+    "audit:prod:json": "mkdir -p metrics/reports && npm audit --omit=dev --json > metrics/reports/npm-audit-prod.json || true",
+    "php:lint": "find api -name '*.php' -print0 | xargs -0 -n1 php -l",
+    "data:validate": "node scripts/validate-data-schemas.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",
@@ -39,8 +45,10 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.1",
+    "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "4.0.18",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
@@ -48,7 +56,7 @@
     "jsdom": "28.1.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
-    "vite": "^7.3.1",
+    "vite": "^7.3.2",
     "vitest": "4.0.18"
   }
 }

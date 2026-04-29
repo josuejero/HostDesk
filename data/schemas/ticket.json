@@ -1,55 +1,166 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hostdesk.local/schemas/ticket.json",
   "title": "Lead record schema",
-  "summary": "Defines the prospect record fields that HostDesk uses for queue routing, cadence, activity logging, and stage gating.",
-  "fields": {
-    "id": "string (unique record identifier)",
-    "subject": "string (brief prospect context for routing and playbook suggestions)",
-    "company": "string",
-    "segment": "string (MSP, healthcare, education, etc.)",
-    "employeeRange": "string",
-    "microsoftFootprint": "array of strings describing current Microsoft tooling",
-    "useCase": "string (core workload or problem statement)",
-    "buyerPersona": "string",
-    "leadSource": "string",
-    "owner": "string (current SDR or account owner)",
-    "stage": "string (New lead, Active, Meeting booked, Handoff ready, Nurture, Disqualified)",
-    "stageEnteredAt": "ISO timestamp",
-    "createdAt": "ISO timestamp",
-    "lastTouchAt": "ISO timestamp",
-    "nextTouchDueAt": "ISO timestamp or empty string",
-    "painPoints": "array of strings",
-    "objections": "array of strings",
-    "buyingSignals": "array of strings",
-    "activities": "array of typed activity entries",
-    "playbookMatches": "array of playbook identifiers",
-    "review": "object with deduplication, stageCriteria, nextStepPlan, handoffNotes, playbookStatus",
-    "scorecard": "object describing current scoring metrics and total",
-    "aiSummary": "string",
-    "recommendedNextAction": "string",
-    "crmCompleteness": "number (0-100)",
-    "disqualificationReason": "string"
-  },
-  "allowedValues": {
-    "stages": [
-      "New lead",
-      "Active",
-      "Meeting booked",
-      "Handoff ready",
-      "Nurture",
-      "Disqualified"
-    ],
-    "activityTypes": [
-      "outbound-email",
-      "call-attempt",
-      "linkedin-touch",
-      "reply-received",
-      "meeting-booked",
-      "enrichment-update",
-      "ownership-changed",
-      "stage-changed",
-      "ai-draft-used",
-      "note-added"
-    ],
-    "playbookStatus": ["updated", "not-needed", ""]
+  "description": "Defines the prospect record fields that HostDesk uses for queue routing, cadence, activity logging, and stage gating.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "subject",
+    "company",
+    "segment",
+    "employeeRange",
+    "microsoftFootprint",
+    "useCase",
+    "buyerPersona",
+    "leadSource",
+    "owner",
+    "stage",
+    "stageEnteredAt",
+    "createdAt",
+    "lastTouchAt",
+    "nextTouchDueAt",
+    "painPoints",
+    "objections",
+    "buyingSignals",
+    "activities",
+    "playbookMatches",
+    "review",
+    "scorecard",
+    "aiSummary",
+    "recommendedNextAction",
+    "crmCompleteness",
+    "disqualificationReason"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "subject": { "type": "string", "minLength": 1 },
+    "company": { "type": "string", "minLength": 1 },
+    "segment": { "type": "string", "minLength": 1 },
+    "employeeRange": { "type": "string", "minLength": 1 },
+    "microsoftFootprint": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "useCase": { "type": "string", "minLength": 1 },
+    "buyerPersona": { "type": "string" },
+    "leadSource": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string" },
+    "stage": {
+      "type": "string",
+      "enum": ["New lead", "Active", "Meeting booked", "Handoff ready", "Nurture", "Disqualified"]
+    },
+    "stageEnteredAt": { "type": "string", "format": "date-time" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "lastTouchAt": { "type": "string", "format": "date-time" },
+    "nextTouchDueAt": {
+      "anyOf": [
+        { "type": "string", "format": "date-time" },
+        { "const": "" }
+      ]
+    },
+    "painPoints": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "objections": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "buyingSignals": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "owner",
+          "timestamp",
+          "channel",
+          "outcome",
+          "summary",
+          "nextStep",
+          "crmUpdated"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": {
+            "type": "string",
+            "enum": [
+              "outbound-email",
+              "call-attempt",
+              "linkedin-touch",
+              "reply-received",
+              "meeting-booked",
+              "enrichment-update",
+              "ownership-changed",
+              "stage-changed",
+              "ai-draft-used",
+              "note-added"
+            ]
+          },
+          "owner": { "type": "string", "minLength": 1 },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "channel": { "type": "string", "minLength": 1 },
+          "outcome": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "nextStep": { "type": "string", "minLength": 1 },
+          "crmUpdated": { "type": "boolean" }
+        }
+      }
+    },
+    "playbookMatches": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deduplication", "stageCriteria", "nextStepPlan", "handoffNotes", "playbookStatus"],
+      "properties": {
+        "deduplication": { "type": "string", "minLength": 1 },
+        "stageCriteria": { "type": "string", "minLength": 1 },
+        "nextStepPlan": { "type": "string", "minLength": 1 },
+        "handoffNotes": { "type": "string", "minLength": 1 },
+        "playbookStatus": {
+          "type": "string",
+          "enum": ["updated", "not-needed", ""]
+        }
+      }
+    },
+    "scorecard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "metrics"],
+      "properties": {
+        "total": { "type": "number", "minimum": 0, "maximum": 100 },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "value", "max", "note"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 },
+              "value": { "type": "number", "minimum": 0, "maximum": 100 },
+              "max": { "type": "number", "minimum": 0, "maximum": 100 },
+              "note": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "aiSummary": { "type": "string", "minLength": 1 },
+    "recommendedNextAction": { "type": "string", "minLength": 1 },
+    "crmCompleteness": { "type": "number", "minimum": 0, "maximum": 100 },
+    "disqualificationReason": { "type": "string" }
   }
 }

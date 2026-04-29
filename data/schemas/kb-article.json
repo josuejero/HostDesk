@@ -1,15 +1,26 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hostdesk.local/schemas/kb-article.json",
   "title": "Playbook schema",
-  "summary": "Defines the metadata used for keyword matching and playbook suggestions inside the sales-ops workflow.",
-  "fields": {
-    "id": "string",
-    "title": "string",
-    "summary": "string",
-    "keywords": "array of strings",
-    "focusArea": "string",
-    "link": "URL",
-    "labels": "optional array of strings (e.g. 'avd-migration', 'pipeline-hygiene')",
-    "audience": "optional string"
-  },
-  "notes": "At least one keyword should map back to record subjects, use cases, pain points, or activity notes for reliable suggestions."
+  "description": "Defines the metadata used for keyword matching and playbook suggestions inside the sales-ops workflow.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "summary", "keywords", "labels", "focusArea", "link"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "keywords": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "labels": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "focusArea": { "type": "string", "minLength": 1 },
+    "link": { "type": "string", "format": "uri" }
+  }
 }

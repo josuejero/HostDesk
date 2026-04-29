@@ -47,3 +47,28 @@ test('authenticated sales-ops flow', async ({ page }) => {
   await page.getByRole('button', { name: /Logout/i }).click()
   await expect(page.getByRole('button', { name: /^Login$/i })).toBeVisible()
 })
+
+test('matched playbook note persists after reload', async ({ page }) => {
+  await page.goto('/')
+
+  await page.getByRole('button', { name: /Need an account/i }).click()
+  await page.getByLabel('Display name').fill('Playwright Notes Tester')
+  await page.getByLabel('Email').fill(`playwright-notes-${Date.now()}@example.com`)
+  await page.getByLabel('Password').fill('Password123!')
+  await page.getByRole('button', { name: /Create account/i }).click()
+
+  await expect(page.getByText(/records matching filters/i)).toBeVisible()
+
+  await page.getByRole('button', { name: /Browse library/i }).click()
+  await page.getByRole('button', { name: 'Jump into this scenario' }).first().click()
+  await expect(page.getByText('Northline MSP Group', { exact: true }).first()).toBeVisible()
+
+  await page.getByRole('button', { name: /^Save note$/i }).first().click()
+  await expect(page.getByText(/Added ".+" to the record playbooks/i)).toBeVisible()
+  await expect(page.locator('.internal-notes-panel').getByText(/Matched playbook/i)).toBeVisible()
+
+  await page.reload()
+
+  await expect(page.getByText('Northline MSP Group', { exact: true }).first()).toBeVisible()
+  await expect(page.locator('.internal-notes-panel').getByText(/Matched playbook/i)).toBeVisible()
+})

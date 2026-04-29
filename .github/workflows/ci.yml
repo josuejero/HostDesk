@@ -19,6 +19,7 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
+      - run: npm run data:validate
       - run: docker compose up -d --build
       - name: Wait for API health
         run: |
@@ -28,6 +29,8 @@ jobs:
           done
           docker compose logs api mysql
           exit 1
+      - name: PHP syntax check
+        run: docker compose exec -T api sh -lc "find /app/api -name '*.php' -print0 | xargs -0 -n1 php -l"
       - run: npm run lint
       - run: npm run build
       - run: npm run test

@@ -1,14 +1,41 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hostdesk.local/schemas/canned-reply.json",
   "title": "Outreach template schema",
-  "summary": "Captures reusable outreach structures that remain editable before a user logs the activity.",
-  "fields": {
-    "id": "string",
-    "title": "string",
-    "tone": "string",
-    "category": "string (first-touch, follow-up, objection-handling, meeting-confirmation, handoff-intro, nurture)",
-    "segments": "object containing opener, valueProp, nextStep",
-    "editable": "boolean",
-    "keywords": "array of strings"
-  },
-  "notes": "Templates should stay lightweight enough that the user can personalize the motion before logging the outreach."
+  "description": "Captures reusable outreach structures that remain editable before a user logs the activity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "tone", "category", "segments", "editable", "keywords"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "tone": { "type": "string", "minLength": 1 },
+    "category": {
+      "type": "string",
+      "enum": [
+        "first-touch",
+        "follow-up",
+        "objection-handling",
+        "meeting-confirmation",
+        "handoff-intro",
+        "nurture"
+      ]
+    },
+    "segments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["opener", "valueProp", "nextStep"],
+      "properties": {
+        "opener": { "type": "string", "minLength": 1 },
+        "valueProp": { "type": "string", "minLength": 1 },
+        "nextStep": { "type": "string", "minLength": 1 }
+      }
+    },
+    "editable": { "type": "boolean" },
+    "keywords": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
 }

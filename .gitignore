@@ -20,6 +20,10 @@ metrics/reports/playwright-results/
 metrics/reports/lighthouse/
 metrics/reports/*.sarif
 metrics/reports/npm-audit.json
+metrics/reports/npm-audit-prod.json
+__MACOSX/
+repomix-output.xml
+*.zip
 
 # Editor directories and files
 .vscode/*

@@ -4,10 +4,15 @@ Run this before updating the README or using metrics in a job application.
 
 ```bash
 npm ci
+npm run data:validate
+npm run php:lint
 npm run lint
 npm run build
 npm run test
 npm run test:coverage
+npm run audit:prod
+npm run audit:prod:json
+npm run audit:json
 
 docker compose up -d --build
 for i in {1..30}; do
@@ -18,8 +23,7 @@ HOSTDESK_API_BASE_URL=http://127.0.0.1:8080 npm run test:api
 npm run test:e2e
 docker compose down
 
-npm run metrics:static
-npm run audit:json
+npm run metrics:all
 ```
 
 After running the commands:
@@ -28,3 +32,5 @@ After running the commands:
 2. Commit updated `metrics/latest.json` if you want a checked-in snapshot.
 3. Keep generated HTML reports out of the repo unless you intentionally publish them.
 4. Link to GitHub Actions artifacts for coverage, Playwright, and Lighthouse evidence.
+5. Describe Lighthouse as a static frontend baseline, not full-stack application performance.
+6. Keep runtime audit values separate from the full dev-tooling audit values.

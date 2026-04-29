@@ -1,10 +1,11 @@
 # HostDesk
 
 [![CI](https://github.com/josuejero/HostDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/ci.yml)
-[![Build HostDesk](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml)
+[![Deploy static preview](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml)
 [![Lighthouse CI](https://github.com/josuejero/HostDesk/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/lighthouse.yml)
 [![CodeQL](https://github.com/josuejero/HostDesk/actions/workflows/codeql.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml)
+[![OpenSSF Scorecard workflow](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/josuejero/HostDesk/badge)](https://scorecard.dev/viewer/?uri=github.com/josuejero/HostDesk)
 
 HostDesk is a full-stack workflow simulator with a React/TypeScript frontend, PHP JSON API, MySQL persistence, Docker Compose runtime, seeded demo data, authenticated sessions, CSRF-protected mutations, SQL-backed workflow metrics, and automated validation through Vitest, API integration tests, Playwright E2E tests, and GitHub Actions.
 
@@ -18,30 +19,31 @@ The app models a saved pipeline instead of a browser-only demo. Users register o
 | API surface | 17 REST-style route entries across auth, prospects, cadence tasks, stage transitions, metrics, and demo reset |
 | Data model | 7 MySQL tables with 7 foreign keys and 10 indexes |
 | Demo dataset | 9 seeded prospect scenarios, 8 KB articles, 7 canned reply templates |
-| Testing | Vitest unit/component tests, PHP/MySQL API integration test, Playwright E2E flow |
-| CI | GitHub Actions runs install, Docker startup, API health check, lint, build, unit tests, API tests, coverage, and E2E tests |
+| Testing | Vitest frontend tests, Docker-backed PHP/MySQL API integration tests, Playwright E2E flows |
+| CI | GitHub Actions runs install, seed-data validation, Docker startup, API health check, PHP syntax check, lint, build, tests, coverage, and E2E tests |
 | Security controls | Password hashing, login-attempt lockout, session ID regeneration, CSRF token validation, authenticated API mutations |
 
 ## Quick links
 - **Live demo:** [GitHub Pages static frontend preview](https://josuejero.github.io/HostDesk/) for the built UI shell; use local Docker for the full API-backed demo
 - **Screenshots:** [login](public/images/screenshots/login.svg), [queue](public/images/screenshots/prospect-queue.svg), [detail](public/images/screenshots/prospect-detail.svg), [activity flow](public/images/screenshots/notes-activity-flow.svg), [stage transition](public/images/screenshots/stage-transition.svg), [metrics](public/images/screenshots/metrics.svg), [test output](public/images/screenshots/test-output.svg)
 - **Test report:** `npm run test`, `npm run test:coverage`, `npm run test:api`, and `npm run test:e2e`
-- **CI workflow:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`, `.github/workflows/lighthouse.yml`, `.github/workflows/codeql.yml`
+- **CI and deployment workflows:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`, `.github/workflows/lighthouse.yml`, `.github/workflows/codeql.yml`
 - **Architecture docs:** `docs/architecture.md`, `docs/api-reference.md`, `docs/development.md`, `docs/project-metrics.md`
 - **Main code to inspect:** `src/`, `api/`, `tests/`, `data/scenario-catalog.json`
 
 ## Engineering evidence
 
-| Evidence | Where to verify |
-|---|---|
-| Project metrics | `docs/project-metrics.md`, `metrics/latest.json` |
-| Test matrix | `docs/test-matrix.md` |
-| Security checklist | `docs/security-checklist.md` |
-| CI validation | GitHub Actions `CI` workflow |
-| Browser E2E report | Playwright artifact from the latest CI run |
-| Coverage report | Coverage artifact from the latest CI run |
-| Lighthouse report | Lighthouse CI artifact |
-| Dependency/security alerts | GitHub Security tab |
+HostDesk includes 17 API route entries, a 7-table MySQL schema with 7 foreign keys and 10 indexes, 9 seeded workflow scenarios, session authentication, CSRF-protected mutations, SQL-backed workflow metrics, and CI validation across linting, TypeScript build, frontend tests, API integration tests, coverage, seed-data schemas, PHP syntax, and Playwright E2E tests.
+
+Latest measured baseline:
+
+- Frontend coverage: 70.94% statements, 61.76% branches, 71.29% functions, 71.36% lines
+- Static frontend Lighthouse: 100 Performance, 100 Accessibility, 96 Best Practices, 1.66s LCP, 0 CLS, 0ms TBT
+- Security baseline: password hashing, session ID regeneration, CSRF validation, login-attempt lockout, runtime dependency audit with 0 high/critical vulnerabilities, full dependency audit with 0 high/critical vulnerabilities, Dependabot, CodeQL for JS/TS and Actions, OpenSSF Scorecard
+
+The GitHub Pages demo is deployed as a static frontend preview. The full API-backed app runs locally with Docker Compose.
+
+Supporting evidence lives in `docs/project-metrics.md`, `metrics/latest.json`, `docs/test-matrix.md`, `docs/security-checklist.md`, and the GitHub Actions artifacts for coverage, Playwright, and Lighthouse.
 
 ## Employer scan
 **Best fit roles:** Junior Full-Stack Developer, Software Developer, Application Developer  
@@ -186,6 +188,8 @@ These values are loaded from `.env` by the PHP bootstrap and partly reused by Vi
 
 ```bash
 npm run lint
+npm run php:lint
+npm run data:validate
 npm run test
 npm run test:api
 npm run test:e2e
@@ -236,9 +240,9 @@ Every API response uses the same envelope:
 
 See [docs/api-reference.md](docs/api-reference.md) for payloads, stage-gate rules, CSRF behavior, and error codes.
 
-## CI And Build Automation
+## CI And Deployment Automation
 
 - `.github/workflows/ci.yml` runs lint, frontend tests, real API tests, and Playwright against the Docker Compose stack.
-- `.github/workflows/deploy.yml` currently validates that the frontend bundle builds with `npm run build`.
+- `.github/workflows/deploy.yml` builds the Vite static preview with `VITE_BASE_PATH=/HostDesk/`, uploads `dist/` as a Pages artifact, and deploys it to GitHub Pages.
 
-That second workflow is a build check, not a full deployment pipeline. The generated frontend bundle still needs an API host mounted at `/api` to work outside local development.
+The Pages deployment is intentionally a static UI preview. The generated frontend bundle still needs an API host mounted at `/api` for full authenticated PHP/MySQL behavior outside local development.

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hostdesk.local/schemas/scenario-catalog.json",
+  "title": "Scenario catalog schema",
+  "description": "Validates the seeded workflow scenarios, their lead records, account profiles, and handoff plans.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "bucket", "title", "description", "tags", "record", "accountProfile", "handoffPlan"],
+    "properties": {
+      "id": { "type": "string", "minLength": 1 },
+      "bucket": { "type": "string", "minLength": 1 },
+      "title": { "type": "string", "minLength": 1 },
+      "description": { "type": "string", "minLength": 1 },
+      "tags": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "record": { "$ref": "https://hostdesk.local/schemas/ticket.json" },
+      "accountProfile": { "$ref": "https://hostdesk.local/schemas/customer-account.json" },
+      "handoffPlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["currentPath", "path", "notes"],
+        "properties": {
+          "currentPath": { "type": "string", "minLength": 1 },
+          "path": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "notes": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

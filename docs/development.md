@@ -54,6 +54,8 @@ npm run dev
 npm run build
 npm run preview
 npm run lint
+npm run php:lint
+npm run data:validate
 ```
 
 ### Tests
@@ -153,22 +155,28 @@ Current variables from `.env.example`:
 `.github/workflows/ci.yml` does the full validation pass:
 
 1. `npm ci`
-2. `docker compose up -d --build`
-3. wait for `GET /api/health`
-4. `npm run lint`
-5. `npm run test`
-6. `npm run test:api`
-7. install Playwright browsers
-8. `npm run test:e2e`
+2. `npm run data:validate`
+3. `docker compose up -d --build`
+4. wait for `GET /api/health`
+5. Docker-backed PHP syntax check
+6. `npm run lint`
+7. `npm run build`
+8. `npm run test`
+9. `npm run test:coverage`
+10. `npm run test:api`
+11. install Playwright browsers
+12. `npm run test:e2e`
 
-### Build Workflow
+### Static Preview Deployment
 
-`.github/workflows/deploy.yml` currently runs:
+`.github/workflows/deploy.yml` publishes the static Vite preview to GitHub Pages:
 
 1. `npm ci`
-2. `npm run build`
+2. `npm run build` with `VITE_BASE_PATH=/HostDesk/`
+3. upload `dist/` with `actions/upload-pages-artifact`
+4. deploy the artifact with `actions/deploy-pages`
 
-Despite the filename, that workflow only confirms the frontend bundle can be built. It does not provision or publish the PHP/MySQL runtime.
+This workflow deploys only the static frontend preview. It does not provision the PHP/MySQL API runtime, so the full authenticated app still requires Docker Compose locally or a separate API host mounted at `/api`.
 
 ## Working With The Seed Data
 
