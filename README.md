@@ -1,16 +1,47 @@
 # HostDesk
 
-HostDesk is a full-stack SaaS-style workflow simulator for researching, qualifying, routing, and following up with cloud sales prospects. It uses a React/TypeScript frontend, PHP JSON API, MySQL persistence, session authentication, CSRF-protected mutations, Docker Compose orchestration, and automated tests across frontend, API, and end-to-end flows. This project demonstrates full-stack application development, REST-style APIs, SQL-backed workflows, authentication, data modeling, test automation, and local deployment.
+[![CI](https://github.com/josuejero/HostDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/ci.yml)
+[![Build HostDesk](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/deploy.yml)
+[![Lighthouse CI](https://github.com/josuejero/HostDesk/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/lighthouse.yml)
+[![CodeQL](https://github.com/josuejero/HostDesk/actions/workflows/codeql.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml/badge.svg)](https://github.com/josuejero/HostDesk/actions/workflows/scorecard.yml)
+
+HostDesk is a full-stack workflow simulator with a React/TypeScript frontend, PHP JSON API, MySQL persistence, Docker Compose runtime, seeded demo data, authenticated sessions, CSRF-protected mutations, SQL-backed workflow metrics, and automated validation through Vitest, API integration tests, Playwright E2E tests, and GitHub Actions.
 
 The app models a saved pipeline instead of a browser-only demo. Users register or sign in, receive their own seeded workspace, and then work through queue slices, stage gates, notes, activity logging, guided research, canned outreach, deterministic AI assist, and metrics that are computed from persisted activity.
+
+## Project evidence
+
+| Area | Evidence |
+|---|---|
+| Full-stack scope | React/TypeScript frontend, PHP JSON API, MySQL persistence, Docker Compose runtime |
+| API surface | 17 REST-style route entries across auth, prospects, cadence tasks, stage transitions, metrics, and demo reset |
+| Data model | 7 MySQL tables with 7 foreign keys and 10 indexes |
+| Demo dataset | 9 seeded prospect scenarios, 8 KB articles, 7 canned reply templates |
+| Testing | Vitest unit/component tests, PHP/MySQL API integration test, Playwright E2E flow |
+| CI | GitHub Actions runs install, Docker startup, API health check, lint, build, unit tests, API tests, coverage, and E2E tests |
+| Security controls | Password hashing, login-attempt lockout, session ID regeneration, CSRF token validation, authenticated API mutations |
 
 ## Quick links
 - **Live demo:** [GitHub Pages static frontend preview](https://josuejero.github.io/HostDesk/) for the built UI shell; use local Docker for the full API-backed demo
 - **Screenshots:** [login](public/images/screenshots/login.svg), [queue](public/images/screenshots/prospect-queue.svg), [detail](public/images/screenshots/prospect-detail.svg), [activity flow](public/images/screenshots/notes-activity-flow.svg), [stage transition](public/images/screenshots/stage-transition.svg), [metrics](public/images/screenshots/metrics.svg), [test output](public/images/screenshots/test-output.svg)
-- **Test report:** `npm run test`, `npm run test:api`, and `npm run test:e2e`
-- **CI workflow:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`
-- **Architecture docs:** `docs/architecture.md`, `docs/api-reference.md`, `docs/development.md`
+- **Test report:** `npm run test`, `npm run test:coverage`, `npm run test:api`, and `npm run test:e2e`
+- **CI workflow:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`, `.github/workflows/lighthouse.yml`, `.github/workflows/codeql.yml`
+- **Architecture docs:** `docs/architecture.md`, `docs/api-reference.md`, `docs/development.md`, `docs/project-metrics.md`
 - **Main code to inspect:** `src/`, `api/`, `tests/`, `data/scenario-catalog.json`
+
+## Engineering evidence
+
+| Evidence | Where to verify |
+|---|---|
+| Project metrics | `docs/project-metrics.md`, `metrics/latest.json` |
+| Test matrix | `docs/test-matrix.md` |
+| Security checklist | `docs/security-checklist.md` |
+| CI validation | GitHub Actions `CI` workflow |
+| Browser E2E report | Playwright artifact from the latest CI run |
+| Coverage report | Coverage artifact from the latest CI run |
+| Lighthouse report | Lighthouse CI artifact |
+| Dependency/security alerts | GitHub Security tab |
 
 ## Employer scan
 **Best fit roles:** Junior Full-Stack Developer, Software Developer, Application Developer  

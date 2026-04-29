@@ -11,6 +11,15 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage/
+playwright-report/
+.lighthouseci/
+metrics/reports/coverage/
+metrics/reports/playwright/
+metrics/reports/playwright-results/
+metrics/reports/lighthouse/
+metrics/reports/*.sarif
+metrics/reports/npm-audit.json
 
 # Editor directories and files
 .vscode/*
